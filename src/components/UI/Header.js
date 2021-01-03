@@ -14,43 +14,13 @@ import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import CloseIcon from '@material-ui/icons/Close'
+import {Link} from "react-router-dom"
 
 const useScrollStyles = makeStyles(theme => ({
     root: {
         position: 'fixed',
         bottom: theme.spacing(2),
         right: theme.spacing(2),
-    }
-}))
-
-const useStyles = makeStyles(theme => ({
-    drawerMenu: {
-        ...theme.mixins.toolbar,
-        display: 'flex',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        color: 'white',
-        marginTop: '.4em'
-    },
-    drawerItems: {
-        color: 'white'
-    },
-    drawerContainer: {
-      backgroundColor: '#474747'
-    },
-    appbar: {
-        backgroundColor: '#eeeeee',
-        color: '#000'
-    },
-    fab: {
-        backgroundColor: 'gray',
-        color: 'white'
-    },
-    register: {
-        ...theme.typography.roundedButton
-    },
-    tab: {
-        padding: 0
     }
 }))
 
@@ -90,6 +60,42 @@ function ElevationScroll({children}) {
     })
 }
 
+const useStyles = makeStyles(theme => ({
+    drawerMenu: {
+        ...theme.mixins.toolbar,
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        color: 'white',
+        marginTop: '.4em'
+    },
+    drawerItems: {
+        color: 'white'
+    },
+    drawerContainer: {
+        backgroundColor: '#474747'
+    },
+    appbar: {
+        backgroundColor: '#eeeeee',
+        color: '#000'
+    },
+    fab: {
+        backgroundColor: 'gray',
+        color: 'white'
+    },
+    register: {
+        ...theme.typography.roundedButton
+    },
+    tab: {
+        display: 'none'
+    },
+    logo: {
+        textDecoration: 'none',
+        color: 'inherit'
+    }
+
+}))
+
 const Header = ({props}) => {
     const classes = useStyles()
     const [tab, setTab] = useState(0)
@@ -102,7 +108,7 @@ const Header = ({props}) => {
                         <Grid container alignItems='center' justify='space-between'>
                             <Grid item>
                                 <Grid container alignItems='center'>
-                                    <Typography variant='h5'>Servicario &nbsp;</Typography>
+                                    <Typography className={classes.logo} variant='h5' component={Link} to='/'>Servicario &nbsp;</Typography>
                                     <SwipeableDrawer
                                         ModalProps={{BackdropProps: {invisible: true}}}
                                         classes={{paper: classes.drawerContainer}}
@@ -128,14 +134,18 @@ const Header = ({props}) => {
                                 </Grid>
                             </Grid>
                             <Grid item>
-                                <Tabs value='Home' value={tab}
-                                      onChange={(event, newValue) => setTab(newValue)}>
-                                    <Tab classes={{root: classes.tab}} label='Home'/>
-                                    <Tab classes={{root: classes.tab}} label='Services'/>
-                                    <Tab classes={{root: classes.tab}} label='FAQ'/>
-                                    <Tab classes={{root: classes.tab}} label='Dropdown'/>
-                                    <Tab classes={{root: classes.tab}} label='Login'/>
-                                    <Tab className={classes.register} component={Button} color='secondary' variant='contained' classes={{root: classes.tab}} label='Register'/>
+                                <Tabs value={tab}
+                                      style={{borderBottom: 0 }}
+                                      onChange={(event, newValue) => setTab(newValue)}
+                                      TabIndicatorProps={{className: classes.tab}}>
+                                    <Tab label='Home'/>
+                                    <Tab label='Services'/>
+                                    <Tab label='FAQ'/>
+                                    <Tab label='Dropdown'/>
+                                    <Tab label='Login'/>
+                                    <Tab
+                                         disableRipple
+                                         label={<Button className={classes.register} variant='contained' color='secondary' component='span'>Register</Button>}/>
                                 </Tabs>
                             </Grid>
                         </Grid>

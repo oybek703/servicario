@@ -10,9 +10,9 @@ function App() {
   return (
       <ThemeProvider theme={theme}>
           <CssBaseline/>
-          <Header/>
           <BrowserRouter>
-            <Switch>
+              <Header/>
+              <Switch>
                 <Route path='/' exact component={Home}/>
             </Switch>
           </BrowserRouter>
