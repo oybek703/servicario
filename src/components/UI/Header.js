@@ -1,13 +1,19 @@
-import React, {Fragment} from 'react'
+import React, {Fragment, useState} from 'react'
 import AppBar from "@material-ui/core/AppBar"
-import {IconButton, Toolbar} from "@material-ui/core"
+import {Button, IconButton, Tabs, Toolbar, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/core/styles"
 import useScrollTrigger from "@material-ui/core/useScrollTrigger"
 import Zoom from "@material-ui/core/Zoom"
 import MenuIcon from '@material-ui/icons/Menu'
 import Fab from "@material-ui/core/Fab"
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
-import CssBaseline from "@material-ui/core/CssBaseline"
+import Grid from "@material-ui/core/Grid"
+import Tab from "@material-ui/core/Tab"
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
+import List from "@material-ui/core/List"
+import ListItem from "@material-ui/core/ListItem"
+import ListItemText from "@material-ui/core/ListItemText"
+import CloseIcon from '@material-ui/icons/Close'
 
 const useScrollStyles = makeStyles(theme => ({
     root: {
@@ -18,8 +24,33 @@ const useScrollStyles = makeStyles(theme => ({
 }))
 
 const useStyles = makeStyles(theme => ({
+    drawerMenu: {
+        ...theme.mixins.toolbar,
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        color: 'white',
+        marginTop: '.4em'
+    },
+    drawerItems: {
+        color: 'white'
+    },
+    drawerContainer: {
+      backgroundColor: '#474747'
+    },
     appbar: {
-        backgroundColor: '#eeeeee'
+        backgroundColor: '#eeeeee',
+        color: '#000'
+    },
+    fab: {
+        backgroundColor: 'gray',
+        color: 'white'
+    },
+    register: {
+        ...theme.typography.roundedButton
+    },
+    tab: {
+        padding: 0
     }
 }))
 
@@ -28,7 +59,7 @@ function ScrollTop({children}) {
     const trigger = useScrollTrigger({
         target: window,
         disableHysteresis: true,
-        threshold: 100,
+        threshold: 300,
     })
 
     const handleClick = () => {
@@ -48,18 +79,72 @@ function ScrollTop({children}) {
     )
 }
 
+function ElevationScroll({children}) {
+    const trigger = useScrollTrigger({
+        disableHysteresis: true,
+        threshold: 0,
+        target: window,
+    })
+    return React.cloneElement(children, {
+        elevation: trigger ? 6 : 0,
+    })
+}
+
 const Header = ({props}) => {
     const classes = useStyles()
+    const [tab, setTab] = useState(0)
+    const [drawer, setDrawer] = useState(false)
     return (
         <Fragment>
-            <AppBar classes={{root: classes.appbar}} >
-                <Toolbar>
-                    <IconButton color='secondary'><MenuIcon fontSize='large' /></IconButton>
-                </Toolbar>
-            </AppBar>
+            <ElevationScroll {...props}>
+                <AppBar elevation={0} classes={{root: classes.appbar}} >
+                    <Toolbar>
+                        <Grid container alignItems='center' justify='space-between'>
+                            <Grid item>
+                                <Grid container alignItems='center'>
+                                    <Typography variant='h5'>Servicario &nbsp;</Typography>
+                                    <SwipeableDrawer
+                                        ModalProps={{BackdropProps: {invisible: true}}}
+                                        classes={{paper: classes.drawerContainer}}
+                                        open={drawer}
+                                        onOpen={() =>
+                                        {setDrawer(true)}}
+                                        onClose={() => setDrawer(false)}>
+                                        <div className={classes.drawerMenu} >
+                                            <Typography variant='h4'>Menu</Typography>
+                                            <IconButton color='inherit' onClick={() => setDrawer(false)}>
+                                                <CloseIcon/>
+                                            </IconButton>
+                                        </div>
+                                        <List disablePadding className={classes.drawerItems}>
+                                            {
+                                                ['User', 'Message', 'Images', 'Settings'].map(item => (
+                                                    <ListItem key={item} button><ListItemText>{item}</ListItemText></ListItem>
+                                                ))
+                                            }
+                                        </List>
+                                    </SwipeableDrawer>
+                                    <IconButton onClick={() => setDrawer(!drawer)} color='secondary'><MenuIcon /></IconButton>
+                                </Grid>
+                            </Grid>
+                            <Grid item>
+                                <Tabs value='Home' value={tab}
+                                      onChange={(event, newValue) => setTab(newValue)}>
+                                    <Tab classes={{root: classes.tab}} label='Home'/>
+                                    <Tab classes={{root: classes.tab}} label='Services'/>
+                                    <Tab classes={{root: classes.tab}} label='FAQ'/>
+                                    <Tab classes={{root: classes.tab}} label='Dropdown'/>
+                                    <Tab classes={{root: classes.tab}} label='Login'/>
+                                    <Tab className={classes.register} component={Button} color='secondary' variant='contained' classes={{root: classes.tab}} label='Register'/>
+                                </Tabs>
+                            </Grid>
+                        </Grid>
+                    </Toolbar>
+                </AppBar>
+            </ElevationScroll>
             <Toolbar id="back-to-top-anchor" />
             <ScrollTop {...props}>
-                <Fab color="secondary" size="small" aria-label="scroll back to top">
+                <Fab  classes={{root: classes.fab}} color="secondary" size="medium" aria-label="scroll back to top">
                     <KeyboardArrowUpIcon />
                 </Fab>
             </ScrollTop>
