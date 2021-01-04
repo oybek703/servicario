@@ -1,6 +1,6 @@
 import React from 'react'
 import Card from '@material-ui/core/Card'
-import {Button, CardContent, CardHeader, CardMedia, makeStyles, Typography} from "@material-ui/core"
+import {Button, CardContent, CardHeader, makeStyles, Typography} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import {Link} from "react-router-dom"
 
@@ -10,7 +10,7 @@ const usesStyles = makeStyles(theme => ({
         maxWidth: '25em'
     },
     cardImg: {
-        maxWidth: '25em',
+        maxWidth: '15em',
         maxHeight: '15em'
     },
     learnBtn: {
@@ -24,7 +24,9 @@ const Service = ({service}) => {
     return (
         <Card variant='outlined' className={classes.card}>
             <CardHeader title={<Typography align='center'>{service.title}</Typography>}/>
-            <CardMedia image={service.image}  className={classes.cardImg} component='img'/>
+            <Grid container  justify='center'>
+                <img  className={classes.cardImg} src={service.image} alt={service.title}/>
+            </Grid>
             <CardContent>
                 <Typography align='center' paragraph variant='body2'>{service.description}</Typography>
                 <Grid container justify='center'>
