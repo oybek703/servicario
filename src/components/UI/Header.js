@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react'
+import React, {Fragment, useEffect, useState} from 'react'
 import AppBar from "@material-ui/core/AppBar"
 import {Button, IconButton, Tabs, Toolbar, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/core/styles"
@@ -14,43 +14,13 @@ import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import CloseIcon from '@material-ui/icons/Close'
+import {Link, withRouter} from "react-router-dom"
 
 const useScrollStyles = makeStyles(theme => ({
     root: {
         position: 'fixed',
         bottom: theme.spacing(2),
         right: theme.spacing(2),
-    }
-}))
-
-const useStyles = makeStyles(theme => ({
-    drawerMenu: {
-        ...theme.mixins.toolbar,
-        display: 'flex',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        color: 'white',
-        marginTop: '.4em'
-    },
-    drawerItems: {
-        color: 'white'
-    },
-    drawerContainer: {
-      backgroundColor: '#474747'
-    },
-    appbar: {
-        backgroundColor: '#eeeeee',
-        color: '#000'
-    },
-    fab: {
-        backgroundColor: 'gray',
-        color: 'white'
-    },
-    register: {
-        ...theme.typography.roundedButton
-    },
-    tab: {
-        padding: 0
     }
 }))
 
@@ -90,19 +60,60 @@ function ElevationScroll({children}) {
     })
 }
 
-const Header = ({props}) => {
+const useStyles = makeStyles(theme => ({
+    drawerMenu: {
+        ...theme.mixins.toolbar,
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        color: 'white',
+        marginTop: '.4em'
+    },
+    drawerItems: {
+        color: 'white'
+    },
+    drawerContainer: {
+        backgroundColor: '#474747'
+    },
+    appbar: {
+        backgroundColor: '#eeeeee',
+        color: '#000'
+    },
+    fab: {
+        backgroundColor: 'gray',
+        color: 'white'
+    },
+    register: {
+        ...theme.typography.roundedButton
+    },
+    tab: {
+        display: 'none'
+    },
+    logo: {
+        textDecoration: 'none',
+        color: 'inherit'
+    }
+
+}))
+
+const Header = (props) => {
     const classes = useStyles()
+    const {location: {pathname}} = props
     const [tab, setTab] = useState(0)
     const [drawer, setDrawer] = useState(false)
+    useEffect(() => {
+            pathname.includes('services') && setTab(1)
+            pathname === '/' && setTab(0)
+    }, [pathname])
     return (
         <Fragment>
-            <ElevationScroll {...props}>
+            <ElevationScroll >
                 <AppBar elevation={0} classes={{root: classes.appbar}} >
                     <Toolbar>
                         <Grid container alignItems='center' justify='space-between'>
                             <Grid item>
                                 <Grid container alignItems='center'>
-                                    <Typography variant='h5'>Servicario &nbsp;</Typography>
+                                    <Typography className={classes.logo} variant='h5' component={Link} to='/'>Servicario &nbsp;</Typography>
                                     <SwipeableDrawer
                                         ModalProps={{BackdropProps: {invisible: true}}}
                                         classes={{paper: classes.drawerContainer}}
@@ -128,14 +139,20 @@ const Header = ({props}) => {
                                 </Grid>
                             </Grid>
                             <Grid item>
-                                <Tabs value='Home' value={tab}
-                                      onChange={(event, newValue) => setTab(newValue)}>
-                                    <Tab classes={{root: classes.tab}} label='Home'/>
-                                    <Tab classes={{root: classes.tab}} label='Services'/>
-                                    <Tab classes={{root: classes.tab}} label='FAQ'/>
-                                    <Tab classes={{root: classes.tab}} label='Dropdown'/>
-                                    <Tab classes={{root: classes.tab}} label='Login'/>
-                                    <Tab className={classes.register} component={Button} color='secondary' variant='contained' classes={{root: classes.tab}} label='Register'/>
+                                <Tabs value={tab}
+                                      style={{borderBottom: 0 }}
+                                      onChange={(event, newValue) => setTab(newValue)}
+                                      TabIndicatorProps={{className: classes.tab}}>
+                                    <Tab component={Link} to='/' label='Home'/>
+                                    <Tab component={Link} to='/services' label='Services'/>
+                                    <Tab component={Link} to='/faq' label='FAQ'/>
+                                    <Tab component={Link} to='/' label='Dropdown'/>
+                                    <Tab component={Link} to='login/' label='Login'/>
+                                    <Tab
+                                         disableRipple
+                                         component={Link}
+                                         to='/register'
+                                         label={<Button className={classes.register} variant='contained' color='secondary' component='span'>Register</Button>}/>
                                 </Tabs>
                             </Grid>
                         </Grid>
@@ -152,4 +169,4 @@ const Header = ({props}) => {
     )
 }
 
-export default Header
+export default withRouter(Header)

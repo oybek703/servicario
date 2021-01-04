@@ -5,15 +5,17 @@ import {BrowserRouter, Switch, Route} from "react-router-dom"
 import Header from "./UI/Header"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import Home from "./Home"
+import ServicePage from "./ServicePage"
 
 function App() {
   return (
       <ThemeProvider theme={theme}>
           <CssBaseline/>
-          <Header/>
           <BrowserRouter>
-            <Switch>
+              <Header/>
+              <Switch>
                 <Route path='/' exact component={Home}/>
+                <Route path='/services/:id' component={ServicePage}/>
             </Switch>
           </BrowserRouter>
       </ThemeProvider>

@@ -1,15 +1,18 @@
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme"
 
+const lightBlue = '#4fc1ea'
+const lightOrange = '#f39200'
+
 const theme = createMuiTheme({
     palette: {
         common: {
             dark: '#5b5b5b'
         },
         secondary: {
-            main: '#f39200'
+            main: lightOrange
         },
         primary: {
-            main: '#4fc1ea'
+            main: lightBlue
         }
     },
     typography: {
@@ -26,12 +29,15 @@ const theme = createMuiTheme({
             root: {
                 '@media (min-width: 600px)': {
                     minWidth: 70
+                },
+                '&$selected': {
+                    color: lightOrange
                 }
             }
         },
         MuiDrawer: {
             paper: {
-                minWidth: 180
+                minWidth: 200
             }
         },
         MuiButton: {
