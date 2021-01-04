@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react'
+import React, {Fragment, useEffect, useState} from 'react'
 import AppBar from "@material-ui/core/AppBar"
 import {Button, IconButton, Tabs, Toolbar, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/core/styles"
@@ -14,7 +14,7 @@ import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import CloseIcon from '@material-ui/icons/Close'
-import {Link} from "react-router-dom"
+import {Link, withRouter} from "react-router-dom"
 
 const useScrollStyles = makeStyles(theme => ({
     root: {
@@ -96,13 +96,18 @@ const useStyles = makeStyles(theme => ({
 
 }))
 
-const Header = ({props}) => {
+const Header = (props) => {
     const classes = useStyles()
+    const {location: {pathname}} = props
     const [tab, setTab] = useState(0)
     const [drawer, setDrawer] = useState(false)
+    useEffect(() => {
+            pathname.includes('services') && setTab(1)
+            pathname === '/' && setTab(0)
+    }, [pathname])
     return (
         <Fragment>
-            <ElevationScroll {...props}>
+            <ElevationScroll >
                 <AppBar elevation={0} classes={{root: classes.appbar}} >
                     <Toolbar>
                         <Grid container alignItems='center' justify='space-between'>
@@ -138,13 +143,15 @@ const Header = ({props}) => {
                                       style={{borderBottom: 0 }}
                                       onChange={(event, newValue) => setTab(newValue)}
                                       TabIndicatorProps={{className: classes.tab}}>
-                                    <Tab label='Home'/>
-                                    <Tab label='Services'/>
-                                    <Tab label='FAQ'/>
-                                    <Tab label='Dropdown'/>
-                                    <Tab label='Login'/>
+                                    <Tab component={Link} to='/' label='Home'/>
+                                    <Tab component={Link} to='/services' label='Services'/>
+                                    <Tab component={Link} to='/faq' label='FAQ'/>
+                                    <Tab component={Link} to='/' label='Dropdown'/>
+                                    <Tab component={Link} to='login/' label='Login'/>
                                     <Tab
                                          disableRipple
+                                         component={Link}
+                                         to='/register'
                                          label={<Button className={classes.register} variant='contained' color='secondary' component='span'>Register</Button>}/>
                                 </Tabs>
                             </Grid>
@@ -162,4 +169,4 @@ const Header = ({props}) => {
     )
 }
 
-export default Header
+export default withRouter(Header)
