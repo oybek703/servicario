@@ -40,6 +40,7 @@ const Home = () => {
         <Fragment>
             <Container>
                 <Grid container alignItems='center' justify='space-evenly' className={classes.manage}>
+
                 <Grid item>
                     <Typography variant='h3' paragraph gutterBottom>Manage, Deploy.</Typography>
                     <Typography className={classes.dark} gutterBottom paragraph>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</Typography>
