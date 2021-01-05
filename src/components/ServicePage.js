@@ -24,7 +24,7 @@ const ServicePage = ({match}) => {
         <Container>
             <Grid className={classes.page} container justify='center' alignItems='center'>
                 {
-                    (loading || !item) ? <CircularProgress color='secondary'/> : <Card variant='elevation'>
+                    (loading || !item) ? <CircularProgress color='secondary'/> : <Card elevation={0} raised variant='elevation'>
                         <Grid container alignItems='center'>
                             <Grid item sm>
                                 <CardMedia image={item.image} component='img'/>
