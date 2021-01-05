@@ -1,8 +1,7 @@
-import React, {Fragment} from 'react'
+import React, {Fragment, useEffect, useState} from 'react'
 import {Button, Container, makeStyles, Typography} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import worker from '../assets/images/worker.svg'
-import services from "../store"
 import Service from "./UI/Service"
 
 const useStyles = makeStyles(theme => ({
@@ -36,11 +35,14 @@ const useStyles = makeStyles(theme => ({
 
 const Home = () => {
     const classes = useStyles()
+    const [services, setServices] = useState([])
+    useEffect(() => {
+
+    }, [])
     return (
         <Fragment>
             <Container>
                 <Grid container alignItems='center' justify='space-evenly' className={classes.manage}>
-
                 <Grid item>
                     <Typography variant='h3' paragraph gutterBottom>Manage, Deploy.</Typography>
                     <Typography className={classes.dark} gutterBottom paragraph>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</Typography>

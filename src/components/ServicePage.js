@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {Button, CardContent, CardMedia, Container, makeStyles, Typography} from "@material-ui/core"
 import Card from "@material-ui/core/Card"
 import Grid from "@material-ui/core/Grid"
-import services from "../store"
+import services from "../redux/store"
 import CircularProgress from "@material-ui/core/CircularProgress"
 
 const useStyles = makeStyles(theme => ({
