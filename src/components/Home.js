@@ -5,6 +5,7 @@ import worker from '../assets/images/worker.svg'
 import Service from "./UI/Service"
 import {useDispatch, useSelector} from "react-redux"
 import {fetchServices} from "../redux/actions"
+import CircularProgress from "@material-ui/core/CircularProgress"
 
 const useStyles = makeStyles(theme => ({
     manage: {
@@ -38,8 +39,7 @@ const useStyles = makeStyles(theme => ({
 const Home = () => {
     const classes = useStyles()
     const dispatch = useDispatch()
-    const state = useSelector(theme => theme.services)
-    const [services, setServices] = useState([])
+    const {items, loading} = useSelector(theme => theme.services)
     useEffect(() => {
         dispatch(fetchServices())
     }, [])
@@ -65,7 +65,16 @@ const Home = () => {
                 </Grid>
                 <Grid item>
                     <Grid container justify='space-evenly'>
-                        {services.map((service, index) => <Grid key={index} item><Service service={service}/></Grid>)}
+                        {
+                            loading
+                                ? <CircularProgress color='secondary'/>
+                                : <Fragment>
+                                    {
+                                        items.map((service, index) => <Grid key={index} item><Service service={service}/></Grid>)
+                                    }
+                                </Fragment>
+                        }
+
                     </Grid>
                 </Grid>
             </Grid>
