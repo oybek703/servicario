@@ -1,5 +1,6 @@
 import {applyMiddleware, compose, createStore} from "redux"
 import rootReducer from "./reducers"
+import thunk from "redux-thunk"
 
 const logMiddleware = ({getState}) => dispatch => action => {
     console.group('%c action', 'color: lightgreen', action.type)
@@ -21,7 +22,7 @@ const thunkMiddleware = ({getState}) => dispatch => action => {
 const store = createStore(
     rootReducer,
     compose(
-        applyMiddleware(thunkMiddleware, logMiddleware),
+        applyMiddleware(thunk, logMiddleware),
         window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f
     )
 )

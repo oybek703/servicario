@@ -17,8 +17,8 @@ const ServicePage = ({match}) => {
     const [loading, setLoading] =  useState(true)
     const [service, setService] = useState(null)
     useEffect(() => {
-        setService(services.find(s => s.id === id))
-        setLoading(false)
+        // setService(services.find(s => s.id === id))
+        // setLoading(false)
     }, [])
     return (
         <Container>

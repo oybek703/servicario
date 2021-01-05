@@ -3,6 +3,8 @@ import {Button, Container, makeStyles, Typography} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import worker from '../assets/images/worker.svg'
 import Service from "./UI/Service"
+import {useDispatch, useSelector} from "react-redux"
+import {fetchServices} from "../redux/actions"
 
 const useStyles = makeStyles(theme => ({
     manage: {
@@ -35,9 +37,11 @@ const useStyles = makeStyles(theme => ({
 
 const Home = () => {
     const classes = useStyles()
+    const dispatch = useDispatch()
+    const state = useSelector(theme => theme.services)
     const [services, setServices] = useState([])
     useEffect(() => {
-
+        dispatch(fetchServices())
     }, [])
     return (
         <Fragment>
