@@ -51,6 +51,11 @@ const theme = createMuiTheme({
                     backgroundColor: lightBlue
                 }
             }
+        },
+        MuiLink: {
+            root: {
+                cursor: 'pointer'
+            }
         }
     }
 })

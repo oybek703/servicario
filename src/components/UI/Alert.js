@@ -31,7 +31,10 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: ({type}) => getBackGroundColor(type),
         color:  ({type}) => getColor(type),
         borderRadius: '5px',
-        margin: '1em auto'
+        margin: '1em auto',
+        [theme.breakpoints.down('sm')]: {
+            maxWidth: '20em'
+        }
     }
 }))
 
