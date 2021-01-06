@@ -6,6 +6,8 @@ import Service from "./UI/Service"
 import {useDispatch, useSelector} from "react-redux"
 import {fetchServices} from "../redux/actions"
 import CircularProgress from "@material-ui/core/CircularProgress"
+import Alert from "./UI/Alert"
+
 
 const useStyles = makeStyles(theme => ({
     manage: {
@@ -39,7 +41,7 @@ const useStyles = makeStyles(theme => ({
 const Home = () => {
     const classes = useStyles()
     const dispatch = useDispatch()
-    const {items, loading} = useSelector(theme => theme.services)
+    const {items, loading, error} = useSelector(theme => theme.services)
     useEffect(() => {
         dispatch(fetchServices())
     }, [dispatch])
@@ -68,7 +70,7 @@ const Home = () => {
                         {
                             loading
                                 ? <CircularProgress color='secondary'/>
-                                : <Fragment>
+                                : error ? <Alert/> : <Fragment>
                                     {
                                         items.map((service, index) => <Grid key={index} item><Service service={service}/></Grid>)
                                     }

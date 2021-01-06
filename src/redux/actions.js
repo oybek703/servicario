@@ -2,7 +2,7 @@ import {firestore} from "../firebase"
 import {
     FETCH_SERVICE_ERROR,
     FETCH_SERVICE_START,
-    FETCH_SERVICE_SUCCESS,
+    FETCH_SERVICE_SUCCESS, FETCH_SERVICES_ERROR,
     FETCH_SERVICES_START,
     FETCH_SERVICES_SUCCESS
 } from "./types"
@@ -11,13 +11,15 @@ import {
 export function fetchServices() {
    return async dispatch => {
        try {
-           let items = []
            dispatch({type: FETCH_SERVICES_START})
            const snapshot = await firestore.collection('services').get()
-           items = snapshot.docs.map(doc => doc.data())
-           dispatch({type: FETCH_SERVICES_SUCCESS, payload: items})
+           const cache = snapshot.metadata.fromCache
+           if(cache) {
+               throw new Error('Network is not available cache rejected!')
+           }
+           dispatch({type: FETCH_SERVICES_SUCCESS, payload: snapshot.docs.map(doc => doc.data())})
        } catch (e) {
-           console.error(`Error while loading services: `, e)
+           dispatch({type: FETCH_SERVICES_ERROR, payload: e.message})
        }
    }
 }

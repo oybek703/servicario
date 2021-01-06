@@ -44,6 +44,13 @@ const theme = createMuiTheme({
             label: {
                 textTransform: 'none'
             }
+        },
+        MuiListItem: {
+            root: {
+                '&$selected': {
+                    backgroundColor: lightBlue
+                }
+            }
         }
     }
 })
