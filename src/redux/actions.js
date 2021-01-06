@@ -1,6 +1,7 @@
 import {firestore} from "../firebase"
 import {FETCH_SERVICE_START, FETCH_SERVICE_SUCCESS, FETCH_SERVICES_START, FETCH_SERVICES_SUCCESS} from "./types"
 
+//SERVICES
 export function fetchServices() {
    return async dispatch => {
        try {
@@ -22,3 +23,5 @@ export function fetchService(serviceId) {
         dispatch({type: FETCH_SERVICE_SUCCESS, payload: {...snapshot.data()}})
     }
 }
+
+//PROFILES

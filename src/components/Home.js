@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react'
+import React, {Fragment, useEffect} from 'react'
 import {Button, Container, makeStyles, Typography} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import worker from '../assets/images/worker.svg'
@@ -42,7 +42,7 @@ const Home = () => {
     const {items, loading} = useSelector(theme => theme.services)
     useEffect(() => {
         dispatch(fetchServices())
-    }, [])
+    }, [dispatch])
     return (
         <Fragment>
             <Container>

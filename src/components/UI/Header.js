@@ -1,6 +1,6 @@
 import React, {Fragment, useEffect, useState} from 'react'
 import AppBar from "@material-ui/core/AppBar"
-import {Button, IconButton, Tabs, Toolbar, Typography} from "@material-ui/core"
+import {Button, IconButton, Tabs, Toolbar, Typography, useMediaQuery} from "@material-ui/core"
 import {makeStyles} from "@material-ui/core/styles"
 import useScrollTrigger from "@material-ui/core/useScrollTrigger"
 import Zoom from "@material-ui/core/Zoom"
@@ -92,8 +92,10 @@ const useStyles = makeStyles(theme => ({
     logo: {
         textDecoration: 'none',
         color: 'inherit'
+    },
+    listItem: {
+        textAlign: 'center'
     }
-
 }))
 
 const Header = (props) => {
@@ -101,9 +103,19 @@ const Header = (props) => {
     const {location: {pathname}} = props
     const [tab, setTab] = useState(0)
     const [drawer, setDrawer] = useState(false)
+    const [menuDrawer, setMenuDrawer] = useState(false)
+    const [menuSelectedIndex, setMenuSelectedIndex] = useState(0)
+    const matchSM = useMediaQuery(theme => theme.breakpoints.down('sm'))
+    const routes = ['Home', 'Services', 'FAQ', 'Dropdown', 'Login', 'Register']
     useEffect(() => {
-            pathname.includes('services') && setTab(1)
-            pathname === '/' && setTab(0)
+            switch (pathname) {
+                case '/': setTab(0); setMenuSelectedIndex(0); break
+                case '/faq': setTab(2); setMenuSelectedIndex(2); break
+                case '/dropdown': setTab(3); setMenuSelectedIndex(3); break
+                case '/login': setTab(4); setMenuSelectedIndex(4); break
+                case '/register': setTab(5); setMenuSelectedIndex(5); break
+                default: setTab(1); setMenuSelectedIndex(1)
+            }
     }, [pathname])
     return (
         <Fragment>
@@ -139,21 +151,54 @@ const Header = (props) => {
                                 </Grid>
                             </Grid>
                             <Grid item>
-                                <Tabs value={tab}
-                                      style={{borderBottom: 0 }}
-                                      onChange={(event, newValue) => setTab(newValue)}
-                                      TabIndicatorProps={{className: classes.tab}}>
-                                    <Tab component={Link} to='/' label='Home'/>
-                                    <Tab component={Link} to='/services' label='Services'/>
-                                    <Tab component={Link} to='/faq' label='FAQ'/>
-                                    <Tab component={Link} to='/' label='Dropdown'/>
-                                    <Tab component={Link} to='login/' label='Login'/>
-                                    <Tab
-                                         disableRipple
-                                         component={Link}
-                                         to='/register'
-                                         label={<Button className={classes.register} variant='contained' color='secondary' component='span'>Register</Button>}/>
-                                </Tabs>
+                                {
+                                    matchSM
+                                        ? <Fragment>
+                                            <IconButton onClick={() => setMenuDrawer(true)}><MenuIcon/></IconButton>
+                                            <SwipeableDrawer
+                                                onClose={() => setMenuDrawer(false)}
+                                                onOpen={() => setMenuDrawer(true)}
+                                                open={menuDrawer}
+                                                anchor='right'>
+                                                <List disablePadding>
+                                                    {
+                                                        routes.map((route, index) => (
+                                                            <ListItem
+                                                                selected={index === menuSelectedIndex}
+                                                                classes={{root: classes.listItem}}
+                                                                onClick={() => {setMenuDrawer(false)}}
+                                                                key={route}
+                                                                component={Link}
+                                                                to={route === 'Home' ? '/' : `/${route.toLowerCase()}`}>
+                                                                <ListItemText>{route}</ListItemText>
+                                                            </ListItem>
+                                                        ))
+                                                    }
+                                                </List>
+                                            </SwipeableDrawer>
+                                        </Fragment>
+                                        : <Fragment>
+                                            <Tabs value={tab}
+                                                style={{borderBottom: 0 }}
+                                                onChange={(event, newValue) => setTab(newValue)}
+                                                TabIndicatorProps={{className: classes.tab}}>
+                                            {
+                                                routes.map(route => (
+                                                    route === 'Register'
+                                                        ? <Tab
+                                                            key={route}
+                                                            disableRipple
+                                                            component={Link}
+                                                            to={`/${route.toLowerCase()}`}
+                                                            label={<Button className={classes.register} variant='contained' color='secondary' component='span'>{route}</Button>}/>
+                                                        : route === 'Home'
+                                                            ? <Tab key={route} component={Link} to='/' label={route}/>
+                                                            : <Tab key={route} component={Link} to={`/${route.toLowerCase()}`} label={route}/>
+                                                ))
+                                            }
+                                        </Tabs>
+                                        </Fragment>
+                                }
                             </Grid>
                         </Grid>
                     </Toolbar>
