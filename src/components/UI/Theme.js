@@ -2,11 +2,12 @@ import createMuiTheme from "@material-ui/core/styles/createMuiTheme"
 
 const lightBlue = '#4fc1ea'
 const lightOrange = '#f39200'
+const darkGrey = '#5b5b5b'
 
 const theme = createMuiTheme({
     palette: {
         common: {
-            dark: '#5b5b5b'
+            dark: darkGrey
         },
         secondary: {
             main: lightOrange
