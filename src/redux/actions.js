@@ -1,5 +1,11 @@
 import {firestore} from "../firebase"
-import {FETCH_SERVICE_START, FETCH_SERVICE_SUCCESS, FETCH_SERVICES_START, FETCH_SERVICES_SUCCESS} from "./types"
+import {
+    FETCH_SERVICE_ERROR,
+    FETCH_SERVICE_START,
+    FETCH_SERVICE_SUCCESS,
+    FETCH_SERVICES_START,
+    FETCH_SERVICES_SUCCESS
+} from "./types"
 
 //SERVICES
 export function fetchServices() {
@@ -18,9 +24,13 @@ export function fetchServices() {
 
 export function fetchService(serviceId) {
     return async dispatch => {
-        dispatch({type: FETCH_SERVICE_START})
-        const snapshot = await firestore.collection('services').doc(serviceId).get()
-        dispatch({type: FETCH_SERVICE_SUCCESS, payload: {...snapshot.data()}})
+        try {
+            dispatch({type: FETCH_SERVICE_START})
+            const snapshot = await firestore.collection('services').doc(serviceId).get()
+            dispatch({type: FETCH_SERVICE_SUCCESS, payload: {...snapshot.data()}})
+        } catch (e) {
+            dispatch({type: FETCH_SERVICE_ERROR, payload: e.message})
+        }
     }
 }
 

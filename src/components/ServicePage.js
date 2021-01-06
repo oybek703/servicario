@@ -5,6 +5,7 @@ import Grid from "@material-ui/core/Grid"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import {useDispatch, useSelector} from "react-redux"
 import {fetchService} from "../redux/actions"
+import Alert from "./UI/Alert"
 
 const useStyles = makeStyles(theme => ({
     page: {
@@ -16,7 +17,7 @@ const ServicePage = ({match}) => {
     const {id} = match.params
     const classes = useStyles()
     const dispatch = useDispatch()
-    const {item, loading} = useSelector(state => state.service)
+    const {item, loading, error} = useSelector(state => state.service)
     useEffect(() => {
         dispatch(fetchService(id))
     }, [id, dispatch])
@@ -24,7 +25,7 @@ const ServicePage = ({match}) => {
         <Container>
             <Grid className={classes.page} container justify='center' alignItems='center'>
                 {
-                    (loading || !item) ? <CircularProgress color='secondary'/> : <Card elevation={0} raised variant='elevation'>
+                    loading ? <CircularProgress color='secondary'/> : error ? <Alert/> : <Card elevation={0} raised variant='elevation'>
                         <Grid container alignItems='center'>
                             <Grid item sm>
                                 <CardMedia image={item.image} component='img'/>

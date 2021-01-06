@@ -15,6 +15,9 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import CloseIcon from '@material-ui/icons/Close'
 import {Link, withRouter} from "react-router-dom"
+import Divider from "@material-ui/core/Divider"
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
+import Tooltip from "@material-ui/core/Tooltip"
 
 const useScrollStyles = makeStyles(theme => ({
     root: {
@@ -94,6 +97,11 @@ const useStyles = makeStyles(theme => ({
         color: 'inherit'
     },
     listItem: {
+        textAlign: 'center',
+        paddingTop: '1em'
+    },
+    menuRegister: {
+        width: '100%',
         textAlign: 'center'
     }
 }))
@@ -135,10 +143,9 @@ const Header = (props) => {
                                         onClose={() => setDrawer(false)}>
                                         <div className={classes.drawerMenu} >
                                             <Typography variant='h4'>Menu</Typography>
-                                            <IconButton color='inherit' onClick={() => setDrawer(false)}>
-                                                <CloseIcon/>
-                                            </IconButton>
+                                            <IconButton color='inherit' onClick={() => setDrawer(false)}><CloseIcon/></IconButton>
                                         </div>
+                                        <Divider/>
                                         <List disablePadding className={classes.drawerItems}>
                                             {
                                                 ['User', 'Message', 'Images', 'Settings'].map(item => (
@@ -151,23 +158,45 @@ const Header = (props) => {
                                 </Grid>
                             </Grid>
                             <Grid item>
-                                {
-                                    matchSM
-                                        ? <Fragment>
-                                            <IconButton onClick={() => setMenuDrawer(true)}><MenuIcon/></IconButton>
+                                {matchSM
+                                    ? <Fragment>
+                                            <IconButton onClick={() => setMenuDrawer(true)}>
+                                                <MenuIcon color='primary'/>
+                                            </IconButton>
                                             <SwipeableDrawer
                                                 onClose={() => setMenuDrawer(false)}
                                                 onOpen={() => setMenuDrawer(true)}
                                                 open={menuDrawer}
                                                 anchor='right'>
+                                                    <div className={classes.drawerMenu}>
+                                                        <Tooltip title='Close'>
+                                                            <IconButton onClick={() => setMenuDrawer(false)}>
+                                                                <ArrowForwardIosIcon color='primary'/>
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                        <Divider/>
+                                                    </div>
+                                                    <Divider/>
                                                 <List disablePadding>
                                                     {
                                                         routes.map((route, index) => (
-                                                            <ListItem
+                                                            route === 'Register'
+                                                                ? <ListItem
+                                                                    key={route}
+                                                                    selected={index === menuSelectedIndex}
+                                                                    classes={{root: classes.listItem}}
+                                                                    onClick={() => {setMenuDrawer(false)}}
+                                                                    component={Link}
+                                                                    to='/register'>
+                                                                    <Button component='span' variant='contained' color='secondary' className={`${classes.register} ${classes.menuRegister}`}>
+                                                                        <ListItemText>Sign Up</ListItemText>
+                                                                    </Button>
+                                                                </ListItem>
+                                                                : <ListItem
+                                                                key={route}
                                                                 selected={index === menuSelectedIndex}
                                                                 classes={{root: classes.listItem}}
                                                                 onClick={() => {setMenuDrawer(false)}}
-                                                                key={route}
                                                                 component={Link}
                                                                 to={route === 'Home' ? '/' : `/${route.toLowerCase()}`}>
                                                                 <ListItemText>{route}</ListItemText>
@@ -177,7 +206,7 @@ const Header = (props) => {
                                                 </List>
                                             </SwipeableDrawer>
                                         </Fragment>
-                                        : <Fragment>
+                                    : <Fragment>
                                             <Tabs value={tab}
                                                 style={{borderBottom: 0 }}
                                                 onChange={(event, newValue) => setTab(newValue)}
