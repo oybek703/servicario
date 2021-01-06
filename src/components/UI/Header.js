@@ -103,6 +103,11 @@ const useStyles = makeStyles(theme => ({
     menuRegister: {
         width: '100%',
         textAlign: 'center'
+    },
+    listItemBtn: {
+        '&.Mui-selected': {
+            backgroundColor: 'transparent'
+        }
     }
 }))
 
@@ -184,7 +189,7 @@ const Header = (props) => {
                                                                 ? <ListItem
                                                                     key={route}
                                                                     selected={index === menuSelectedIndex}
-                                                                    classes={{root: classes.listItem}}
+                                                                    classes={{root: classes.listItemBtn}}
                                                                     onClick={() => {setMenuDrawer(false)}}
                                                                     component={Link}
                                                                     to='/register'>

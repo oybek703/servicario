@@ -7,6 +7,9 @@ import Card from "@material-ui/core/Card"
 import Link from "@material-ui/core/Link"
 
 const useStyles = makeStyles(theme => ({
+    main: {
+        marginTop: '1em'
+    },
     darkText: {
         color: theme.palette.common.dark
     },
@@ -24,7 +27,7 @@ const RegisterPage = () => {
     const classes = useStyles()
     return (
         <Container>
-            <Grid container direction='column' alignItems='center'>
+            <Grid container direction='column' alignItems='center' className={classes.main}>
                 <Grid item>
                     <Typography className={classes.darkText} variant='h3' gutterBottom align='center'>Register</Typography>
                     <Typography className={classes.darkText} paragraph gutterBottom  align='center'>Please register to proceed.</Typography>
@@ -49,7 +52,7 @@ const RegisterPage = () => {
                             <TextField variant='outlined' fullWidth label='Confirm Password'/>
                         </Grid>
                         <Grid container justify='center'>
-                            <Button variant='contained' fullWidth color='primary'>Register</Button>
+                            <Button variant='contained' fullWidth color='secondary'>Register</Button>
                         </Grid>
                     </form>
                         </CardContent>
@@ -57,6 +60,8 @@ const RegisterPage = () => {
                 </Grid>
                 <Grid item className={classes.formFields}>
                     <Link>Sign In With Google</Link>
+                    <Typography component='span' color='primary'>{' | '}</Typography>
+                    <Link>Sign In</Link>
                     <Typography component='span' color='primary'>{' | '}</Typography>
                     <Link>Need Help?</Link>
                 </Grid>

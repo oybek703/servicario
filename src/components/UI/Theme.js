@@ -42,7 +42,9 @@ const theme = createMuiTheme({
         },
         MuiButton: {
             label: {
-                textTransform: 'none'
+                textTransform: 'none',
+                color: 'white',
+                fontSize: '1.2em'
             }
         },
         MuiListItem: {

@@ -7,6 +7,7 @@ import CssBaseline from "@material-ui/core/CssBaseline"
 import Home from "./Home"
 import ServicePage from "./ServicePage"
 import RegisterPage from "./RegisterPage"
+import LoginPage from "./LoginPage"
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
                 <Route path='/' exact component={Home}/>
                 <Route path='/services/:id' component={ServicePage}/>
                 <Route path='/register' component={RegisterPage}/>
+                <Route path='/login' component={LoginPage}/>
             </Switch>
           </BrowserRouter>
       </ThemeProvider>
