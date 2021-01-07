@@ -55,7 +55,7 @@ const RegisterPage = () => {
             case 'email': /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/.test(value)  ? setEmailHelperText('') : setEmailHelperText('Email should be valid email address.'); break
             case 'password': value.length < 6 ? setPasswordHelperText('Password should be at least 6 characters long.') : setPasswordHelperText(''); break
             case 'confirmpassword': value === formData.password ? setConfirmPasswordHelperText('') : setConfirmPasswordHelperText('Password confirmation should match.'); break
-            default: return
+            default: /(https?:\/\/.*\.(?:png|jpg|svg|jpeg))/.test(value) || !value ? setAvatarHelperText('') : setAvatarHelperText('Avatar should be valid image url. Accepted: png, jpg, svg, jpeg')
         }
     }
     const handleSubmit = e => {
@@ -66,7 +66,7 @@ const RegisterPage = () => {
     console.log(user)
     useEffect(() => {
       const btnStatus = !!formData.name && !!formData.email && !!formData.password && !!formData.confirmpassword &&
-      !nameHelperText && !emailHelperText && !passwordHelperText && !confirmpasswordHelperText
+      !nameHelperText && !emailHelperText && !passwordHelperText && !confirmpasswordHelperText && !avatarHelperText
         setBtnDisabled(!btnStatus)
         // eslint-disable-next-line
     }, [formData])
@@ -90,7 +90,14 @@ const RegisterPage = () => {
                                                helperText={emailHelperText} onChange={handleChange} value={formData.email} name='email' required variant='outlined' fullWidth label='Email'/>
                                 </Grid>
                                 <Grid container justify='flex-start' alignItems='center'>
-                                    <TextField onChange={handleChange} value={formData.avatar} name='avatar' variant='outlined' fullWidth placeholder='Avatar URL'/>
+                                    <TextField
+                                        onChange={handleChange}
+                                        value={formData.avatar}
+                                        name='avatar' variant='outlined' fullWidth
+                                        label='Avatar' placeholder='https://www.example.com/user.jpg'
+                                        error={!!avatarHelperText}
+                                        helperText={avatarHelperText}
+                                        />
                                 </Grid>
                                 <Grid container className={classes.formFields} justify='center'>
                                     <TextField type={showPassword ? 'text' : 'password'}
