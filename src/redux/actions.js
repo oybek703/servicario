@@ -1,13 +1,16 @@
 import {firestore} from "../firebase"
+import firebase from 'firebase/app'
+import 'firebase/auth'
 import {
     FETCH_SERVICE_ERROR,
     FETCH_SERVICE_START,
     FETCH_SERVICE_SUCCESS, FETCH_SERVICES_ERROR,
     FETCH_SERVICES_START,
-    FETCH_SERVICES_SUCCESS
+    FETCH_SERVICES_SUCCESS, REGISTER_USER_ERROR, REGISTER_USER_START, REGISTER_USER_SUCCESS
 } from "./types"
 
 //SERVICES
+
 export function fetchServices() {
    return async dispatch => {
        try {
@@ -37,3 +40,15 @@ export function fetchService(serviceId) {
 }
 
 //PROFILES
+
+export const registerNewUser = ({name, email, password, avatar}) => {
+    return async dispatch => {
+        try {
+            dispatch({type: REGISTER_USER_START})
+            const {user} = await firebase.auth().createUserWithEmailAndPassword(email, password)
+            dispatch({type: REGISTER_USER_SUCCESS, payload: user})
+        } catch (e) {
+            dispatch({type: REGISTER_USER_ERROR, payload: e.message})
+        }
+    }
+}

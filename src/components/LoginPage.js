@@ -18,7 +18,10 @@ const useStyles = makeStyles(theme => ({
     formFields: {
         minWidth: '25em',
         margin: '1em auto 1.5em',
-        textAlign: 'center'
+        textAlign: 'center',
+        [theme.breakpoints.down('sm')]: {
+            minWidth: '20em'
+        }
     },
     form: {
         backgroundColor: 'transparent'

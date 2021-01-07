@@ -10,6 +10,9 @@ import Alert from "./UI/Alert"
 const useStyles = makeStyles(theme => ({
     page: {
         marginTop: '6em'
+    },
+    learn: {
+        color: 'grey'
     }
 }))
 
@@ -35,7 +38,7 @@ const ServicePage = ({match}) => {
                                     <Typography align='center' variant='h5' gutterBottom>{item.title}</Typography>
                                     <Typography align='center' variant='body2' gutterBottom paragraph>{item.description}</Typography>
                                     <Grid container justify='center'>
-                                        <Button color='primary' variant='outlined'>Learn More</Button>
+                                        <Button color='primary' classes={{label: classes.learn}} variant='outlined'>Learn More</Button>
                                     </Grid>
                                 </CardContent>
                             </Grid>

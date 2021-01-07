@@ -21,7 +21,7 @@ const theme = createMuiTheme({
         fontWeightRegular: 500,
         roundedButton: {
             borderRadius: 50,
-            color: 'white',
+            color: 'blue',
             minWidth: 100,
         }
     },
@@ -58,6 +58,14 @@ const theme = createMuiTheme({
         MuiLink: {
             root: {
                 cursor: 'pointer'
+            }
+        },
+        MuiButtonBase: {
+            root: {
+                '&$disabled': {
+                    cursor: 'not-allowed',
+                    pointerEvents: 'fill'
+                }
             }
         }
     }
