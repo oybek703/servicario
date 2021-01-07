@@ -79,7 +79,7 @@ const RegisterPage = () => {
             }
         }
     // eslint-disable-next-line
-    }, [loading])
+    }, [error])
     if(user) {
         return <Redirect to='/'/>
     }
