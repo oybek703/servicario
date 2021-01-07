@@ -10,6 +10,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import {useDispatch, useSelector} from "react-redux"
 import {registerNewUser} from "../redux/actions"
 import CircularProgress from "@material-ui/core/CircularProgress"
+import {Redirect} from "react-router-dom"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -69,10 +70,12 @@ const RegisterPage = () => {
         // eslint-disable-next-line
     }, [formData, loading])
     useEffect(() => {
-        user && setFormData(formData => Object.keys(formData).reduce((acc, key) => {acc[key] = ''; return acc}, {}))
         error && error.code === 'auth/email-already-in-use' && setEmailHelperText('The email address is already in use by another account.')
     // eslint-disable-next-line
     }, [loading])
+    if(user) {
+        return <Redirect to='/'/>
+    }
     return (
         <Container>
             <Grid container direction='column' alignItems='center' className={classes.main}>

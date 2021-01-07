@@ -4,9 +4,15 @@ import 'firebase/auth'
 import {
     FETCH_SERVICE_ERROR,
     FETCH_SERVICE_START,
-    FETCH_SERVICE_SUCCESS, FETCH_SERVICES_ERROR,
+    FETCH_SERVICE_SUCCESS,
+    FETCH_SERVICES_ERROR,
     FETCH_SERVICES_START,
-    FETCH_SERVICES_SUCCESS, REGISTER_USER_ERROR, REGISTER_USER_START, REGISTER_USER_SUCCESS
+    FETCH_SERVICES_SUCCESS, LOGIN_USER_ERROR,
+    LOGIN_USER_START,
+    LOGIN_USER_SUCCESS, LOGOUT_USER,
+    REGISTER_USER_ERROR,
+    REGISTER_USER_START,
+    REGISTER_USER_SUCCESS
 } from "./types"
 
 //SERVICES
@@ -52,5 +58,24 @@ export const registerNewUser = ({name, email, password, avatar}) => {
         } catch (e) {
             dispatch({type: REGISTER_USER_ERROR, payload: {message: e.message, code: e.code}})
         }
+    }
+}
+
+export const signInUser = ({email, password}) => {
+    return async dispatch => {
+        try {
+            dispatch({type: LOGIN_USER_START})
+            const {user} = await firebase.auth().signInWithEmailAndPassword(email, password)
+            dispatch({type: LOGIN_USER_SUCCESS, payload: user})
+        } catch (e) {
+            dispatch({type: LOGIN_USER_ERROR, payload: {message: e.message, code: e.code}})
+        }
+    }
+}
+
+export const logoutUser = () => {
+    return async dispatch => {
+        await firebase.auth().signOut()
+        dispatch({type: LOGOUT_USER})
     }
 }

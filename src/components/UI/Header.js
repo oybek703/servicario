@@ -18,6 +18,11 @@ import {Link, withRouter} from "react-router-dom"
 import Divider from "@material-ui/core/Divider"
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
 import Tooltip from "@material-ui/core/Tooltip"
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import {useDispatch, useSelector} from "react-redux"
+import {logoutUser} from "../../redux/actions"
+
 
 const useScrollStyles = makeStyles(theme => ({
     root: {
@@ -112,14 +117,20 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Header = (props) => {
+    const {location: {pathname}, history} = props
     const classes = useStyles()
-    const {location: {pathname}} = props
+    const dispatch = useDispatch()
+    const {user} = useSelector(state => state.auth)
     const [tab, setTab] = useState(0)
     const [drawer, setDrawer] = useState(false)
     const [menuDrawer, setMenuDrawer] = useState(false)
     const [menuSelectedIndex, setMenuSelectedIndex] = useState(0)
     const matchSM = useMediaQuery(theme => theme.breakpoints.down('sm'))
     const routes = ['Home', 'Services', 'FAQ', 'Dropdown', 'Login', 'Register']
+    const signedUserRoutes = ['Home', 'Services', 'FAQ', 'Dropdown', 'Logout']
+    const handleLogout = () => {
+        dispatch(logoutUser())
+    }
     useEffect(() => {
             switch (pathname) {
                 case '/': setTab(0); setMenuSelectedIndex(0); break
@@ -217,13 +228,14 @@ const Header = (props) => {
                                                 onChange={(event, newValue) => setTab(newValue)}
                                                 TabIndicatorProps={{className: classes.tab}}>
                                             {
-                                                routes.map(route => (
-                                                    route === 'Register'
+                                                (user ? signedUserRoutes : routes).map(route => (
+                                                    route === 'Register' || route === 'Logout'
                                                         ? <Tab
                                                             key={route}
                                                             disableRipple
+                                                            onClick={route === 'Logout' ? handleLogout : () => {}}
                                                             component={Link}
-                                                            to={`/${route.toLowerCase()}`}
+                                                            to={route === 'Logout' ? '/' : `/${route.toLowerCase()}`}
                                                             label={<Button className={classes.register} variant='contained' color='secondary' component='span'>{route}</Button>}/>
                                                         : route === 'Home'
                                                             ? <Tab key={route} component={Link} to='/' label={route}/>

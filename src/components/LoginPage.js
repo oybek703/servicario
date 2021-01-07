@@ -7,6 +7,11 @@ import Card from "@material-ui/core/Card"
 import Link from "@material-ui/core/Link"
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
+import {useDispatch, useSelector} from "react-redux"
+import CircularProgress from "@material-ui/core/CircularProgress"
+import {Redirect} from "react-router-dom"
+import {signInUser} from "../redux/actions"
+import Alert from "./UI/Alert"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -30,6 +35,8 @@ const useStyles = makeStyles(theme => ({
 
 const LoginPage = () => {
     const classes = useStyles()
+    const dispatch = useDispatch()
+    const {loading, user, error} = useSelector(state => state.auth)
     const [formData, setFormData] = useState({email: '', password: ''})
     const [emailHelperText, setEmailHelperText] = useState('')
     const [passwordHelperText, setPasswordHelperText] = useState('')
@@ -48,17 +55,32 @@ const LoginPage = () => {
 
     const handleSubmit = e => {
         e.preventDefault()
-        console.log(formData)
+        dispatch(signInUser(formData))
     }
 
     useEffect(() => {
-        const btnStatus = !!formData.email && !!formData.password && !emailHelperText && !passwordHelperText
+        const btnStatus = !!formData.email && !!formData.password && !emailHelperText && !passwordHelperText && !loading
         setBtnDisabled(!btnStatus)
     //    eslint-disable-next-line
-    }, [formData])
+    }, [formData, loading])
+
+    useEffect(() => {
+        if(error) {
+            switch (error.code) {
+                case 'auth/user-not-found': setEmailHelperText('User email not found or deleted.'); break
+                case 'auth/wrong-password': setPasswordHelperText('Invalid user password.'); break
+                default: return
+            }
+        }
+    }, [error])
+
+    if(user) {
+        return <Redirect to='/'/>
+    }
 
     return (
         <Container>
+            {error && error.code === 'auth/network-request-failed' && <Alert />}
             <Grid container direction='column' alignItems='center' className={classes.main}>
                 <Grid item>
                     <Typography className={classes.darkText} variant='h3' gutterBottom align='center'>Login</Typography>
@@ -77,7 +99,10 @@ const LoginPage = () => {
                                                InputProps={{endAdornment: <IconButton onClick={() => setShowPassword(!showPassword)}>{showPassword ? <Visibility/> : <VisibilityOff/>}</IconButton>}}/>
                                 </Grid>
                                 <Grid container justify='center'>
-                                    <Button type='submit' disabled={btnDisabled} variant='contained' fullWidth color='primary'>Sign In</Button>
+                                    <Button type='submit' disabled={btnDisabled} variant='contained' fullWidth color='primary'
+                                            endIcon={loading && <CircularProgress size='20px'/>}>
+                                        Sign In
+                                    </Button>
                                 </Grid>
                             </form>
                         </CardContent>
