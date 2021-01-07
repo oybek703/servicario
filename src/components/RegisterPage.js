@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Button, CardContent, Container, IconButton, makeStyles} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import Typography from "@material-ui/core/Typography"
@@ -34,27 +34,36 @@ const useStyles = makeStyles(theme => ({
 const RegisterPage = () => {
     const classes = useStyles()
     const [formData, setFormData] = useState({name: '', email: '', avatar: '', password: '', confirmpassword: '' })
-    const [formValidity, setFormValidity] = useState({name: true, email: true, password: true, confirmpassword: true })
+    const [nameHelperText, setNameHelperText] = useState('')
+    const [emailHelperText, setEmailHelperText] = useState('')
+    const [passwordHelperText, setPasswordHelperText] = useState('')
+    const [confirmpasswordHelperText, setConfirmPasswordHelperText] = useState('')
+    const [btnDisabled, setBtnDisabled] = useState(true)
     const [filename, setFilename] = useState('')
     const [showPassword, setShowPassword] = useState(false)
-    const [disabled, setDisabled] = useState(true)
     const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
     const handleChange = e => {
         const {name, value, files} = e.target
         setFilename(filename => files ? files[0].name : filename)
         setFormData({...formData, [name]: value})
         switch (name) {
-            case 'name': setFormValidity({...formValidity, name: value.length >= 3 && !!value}); break
-            case 'email': setFormValidity({...formValidity, email: /^\w+[\w-\.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/.test(value)}); break
-            case 'password': setFormValidity({...formValidity, password: value.length >= 6 && !!value}); break
-            case 'confirmpassword': setFormValidity({...formValidity, confirmpassword: formData.password === value}); break
-            default: setFormValidity(formValidity => formValidity)
+            case 'name': value.length < 3 ? setNameHelperText('Name should be at least 3 characters long.') : setNameHelperText(''); break
+            case 'email': /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/.test(value)  ? setEmailHelperText('') : setEmailHelperText('Email should be valid email address.'); break
+            case 'password': value.length < 6 ? setPasswordHelperText('Password should be at least 6 characters long.') : setPasswordHelperText(''); break
+            case 'confirmpassword': value === formData.password ? setConfirmPasswordHelperText('') : setConfirmPasswordHelperText('Password confirmation should match.'); break
+            default: return
         }
     }
     const handleSubmit = e => {
         e.preventDefault()
-        console.log(Object.values(formValidity).filter(t => t))
+        console.log(formData)
     }
+    useEffect(() => {
+      const btnStatus = !!formData.name && !!formData.email && !!formData.password && !!formData.confirmpassword &&
+      !nameHelperText && !emailHelperText && !passwordHelperText && !confirmpasswordHelperText
+        setBtnDisabled(!btnStatus)
+        // eslint-disable-next-line
+    }, [formData])
     return (
         <Container>
             <Grid container direction='column' alignItems='center' className={classes.main}>
@@ -67,15 +76,15 @@ const RegisterPage = () => {
                         <CardContent>
                             <form noValidate onSubmit={handleSubmit} autoComplete='off'>
                                 <Grid container className={classes.formFields} justify='center'>
-                                    <TextField error={!formValidity.name}
-                                               helperText={!formValidity.name && 'Name must have at least 3 characters.'} onChange={handleChange} value={formData.name} name='name' required variant='outlined' fullWidth label='Full Name'/>
+                                    <TextField error={!!nameHelperText}
+                                               helperText={nameHelperText} onChange={handleChange} value={formData.name} name='name' required variant='outlined' fullWidth label='Full Name'/>
                                 </Grid>
                                 <Grid container className={classes.formFields} justify='center'>
-                                    <TextField error={!formValidity.email}
-                                               helperText={!formValidity.email && 'Email must be valid email address.'} onChange={handleChange} value={formData.email} name='email' required variant='outlined' fullWidth label='Email'/>
+                                    <TextField error={!!emailHelperText}
+                                               helperText={emailHelperText} onChange={handleChange} value={formData.email} name='email' required variant='outlined' fullWidth label='Email'/>
                                 </Grid>
                                 <Grid container justify='flex-start' alignItems='center'>
-                                    <Button variant="contained" color='primary' component="label">
+                                    <Button size='small' variant="contained" color='primary' component="label">
                                         Upload file
                                         <input accept='.png, .jpg, .svg, .gif' name='avatar' value={formData.avatar} onChange={handleChange} type="file" hidden/>
                                     </Button>
@@ -83,8 +92,8 @@ const RegisterPage = () => {
                                 </Grid>
                                 <Grid container className={classes.formFields} justify='center'>
                                     <TextField type={showPassword ? 'text' : 'password'}
-                                               error={!formValidity.password}
-                                               helperText={!formValidity.password && 'Password must be at least 6 characters long.'} onChange={handleChange} value={formData.password}
+                                               error={!!passwordHelperText}
+                                               helperText={passwordHelperText} onChange={handleChange} value={formData.password}
                                                name='password'
                                                required
                                                variant='outlined'
@@ -93,12 +102,12 @@ const RegisterPage = () => {
                                                InputProps={{endAdornment: <IconButton onClick={() => setShowPassword(!showPassword)}>{showPassword ? <Visibility/> : <VisibilityOff/>}</IconButton>}}/>
                                 </Grid>
                                 <Grid container className={classes.formFields} justify='center'>
-                                    <TextField type={showPasswordConfirm ? 'text' : 'password'} error={!formValidity.confirmpassword}
-                                               helperText={!formValidity.confirmpassword && 'Password confirmation should match.'} onChange={handleChange} value={formData.confirmpassword} name='confirmpassword' required variant='outlined' fullWidth label='Confirm Password'
+                                    <TextField type={showPasswordConfirm ? 'text' : 'password'} error={!!confirmpasswordHelperText}
+                                               helperText={confirmpasswordHelperText} onChange={handleChange} value={formData.confirmpassword} name='confirmpassword' required variant='outlined' fullWidth label='Confirm Password'
                                                InputProps={{endAdornment: <IconButton onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}>{showPasswordConfirm ? <Visibility/> : <VisibilityOff/>}</IconButton>}}/>
                                 </Grid>
                                 <Grid container justify='center'>
-                                    <Button disabled={disabled} type='submit' variant='contained' fullWidth color='secondary'>Register</Button>
+                                    <Button disabled={btnDisabled} type='submit' variant='contained' fullWidth color='secondary'>Register</Button>
                                 </Grid>
                             </form>
                         </CardContent>
