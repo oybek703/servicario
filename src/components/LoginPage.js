@@ -1,10 +1,12 @@
-import React from 'react'
-import {Button, CardContent, Container, makeStyles} from "@material-ui/core"
+import React, {useEffect, useState} from 'react'
+import {Button, CardContent, Container, IconButton, makeStyles} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import Typography from "@material-ui/core/Typography"
 import TextField from "@material-ui/core/TextField"
 import Card from "@material-ui/core/Card"
 import Link from "@material-ui/core/Link"
+import Visibility from '@material-ui/icons/Visibility'
+import VisibilityOff from '@material-ui/icons/VisibilityOff'
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -25,6 +27,33 @@ const useStyles = makeStyles(theme => ({
 
 const LoginPage = () => {
     const classes = useStyles()
+    const [formData, setFormData] = useState({email: '', password: ''})
+    const [emailHelperText, setEmailHelperText] = useState('')
+    const [passwordHelperText, setPasswordHelperText] = useState('')
+    const [btnDisabled, setBtnDisabled] = useState(true)
+    const [showPassword, setShowPassword] = useState(false)
+
+    const handleChange = e => {
+        const {name, value} = e.target
+        setFormData({...formData, [name]: value})
+        switch (name) {
+            case 'email': /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/.test(value) ? setEmailHelperText('') : setEmailHelperText("Email address should be valid."); break
+            case 'password': value.length >= 6 ? setPasswordHelperText('') : setPasswordHelperText("Password should contain at least 6 characters."); break
+            default: return
+        }
+    }
+
+    const handleSubmit = e => {
+        e.preventDefault()
+        console.log(formData)
+    }
+
+    useEffect(() => {
+        const btnStatus = !!formData.email && !!formData.password && !emailHelperText && !passwordHelperText
+        setBtnDisabled(!btnStatus)
+    //    eslint-disable-next-line
+    }, [formData])
+
     return (
         <Container>
             <Grid container direction='column' alignItems='center' className={classes.main}>
@@ -35,15 +64,17 @@ const LoginPage = () => {
                 <Grid item>
                     <Card classes={{root: classes.form}} variant='outlined'>
                         <CardContent>
-                            <form>
+                            <form onSubmit={handleSubmit} autoComplete='off'>
                                 <Grid container className={classes.formFields} justify='center'>
-                                    <TextField variant='outlined' fullWidth label='Email'/>
+                                    <TextField error={!!emailHelperText} helperText={emailHelperText} name='email' value={formData.email} onChange={handleChange} variant='outlined' fullWidth label='Email'/>
                                 </Grid>
                                 <Grid container className={classes.formFields} justify='center'>
-                                    <TextField variant='outlined' fullWidth label='Password'/>
+                                    <TextField type={showPassword ? 'text' : 'password'}
+                                               error={!!passwordHelperText} helperText={passwordHelperText} name='password' value={formData.password} onChange={handleChange} variant='outlined' fullWidth label='Password'
+                                               InputProps={{endAdornment: <IconButton onClick={() => setShowPassword(!showPassword)}>{showPassword ? <Visibility/> : <VisibilityOff/>}</IconButton>}}/>
                                 </Grid>
                                 <Grid container justify='center'>
-                                    <Button variant='contained' fullWidth color='primary'>Sign In</Button>
+                                    <Button type='submit' disabled={btnDisabled} variant='contained' fullWidth color='primary'>Sign In</Button>
                                 </Grid>
                             </form>
                         </CardContent>
