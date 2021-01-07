@@ -9,11 +9,9 @@ import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import {useDispatch, useSelector} from "react-redux"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import CloseIcon from '@material-ui/icons/Close'
 import {Redirect} from "react-router-dom"
 import {signInUser} from "../redux/actions"
-import Alert from "./UI/Alert"
-import Snackbar from "@material-ui/core/Snackbar"
+import ErrorReport from "./UI/ErrorReport"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -83,7 +81,7 @@ const LoginPage = () => {
 
     return (
         <Container>
-            <Snackbar onClose={() => setSnackBar(false)} autoHideDuration={3000} open={snackbar} anchorOrigin={{horizontal: 'center', vertical: 'bottom'}}><Alert/></Snackbar>
+            <ErrorReport snackbar={snackbar} setSnackBar={setSnackBar}/>
             <Grid container direction='column' alignItems='center' className={classes.main}>
                 <Grid item>
                     <Typography className={classes.darkText} variant='h3' gutterBottom align='center'>Login</Typography>

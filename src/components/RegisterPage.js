@@ -11,8 +11,7 @@ import {useDispatch, useSelector} from "react-redux"
 import {registerNewUser} from "../redux/actions"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import {Redirect} from "react-router-dom"
-import Snackbar from "@material-ui/core/Snackbar"
-import Alert from "./UI/Alert"
+import ErrorReport from "./UI/ErrorReport"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -86,9 +85,7 @@ const RegisterPage = () => {
     }
     return (
         <Container>
-            <Snackbar open={snackbar} anchorOrigin={{vertical: 'top', horizontal: 'center'}} onClose={() => setSnackbar(false)} autoHideDuration={3000}>
-                <Alert/>
-            </Snackbar>
+            <ErrorReport snackbar={snackbar} setSnackBar={setSnackbar}/>
             <Grid container direction='column' alignItems='center' className={classes.main}>
                 <Grid item>
                     <Typography className={classes.darkText} variant='h3' gutterBottom align='center'>Register</Typography>
