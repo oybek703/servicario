@@ -12,7 +12,7 @@ const auth = (state = initialState, action) => {
         case REGISTER_USER_START:
             return {...state, loading: true, user: null, error: null}
         case REGISTER_USER_SUCCESS:
-            return {...state, loading: false, user: payload}
+            return {...state, loading: false, user: payload, error: null}
         case REGISTER_USER_ERROR:
             return {...state, loading: false, error: payload}
         default:

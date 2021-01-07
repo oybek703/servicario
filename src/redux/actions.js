@@ -46,9 +46,11 @@ export const registerNewUser = ({name, email, password, avatar}) => {
         try {
             dispatch({type: REGISTER_USER_START})
             const {user} = await firebase.auth().createUserWithEmailAndPassword(email, password)
+            const userProfile = {uid: user.uid, name, avatar, email, services: [], description: ''}
+            await firestore.collection('profiles').doc(user.uid).set(userProfile)
             dispatch({type: REGISTER_USER_SUCCESS, payload: user})
         } catch (e) {
-            dispatch({type: REGISTER_USER_ERROR, payload: e.message})
+            dispatch({type: REGISTER_USER_ERROR, payload: {message: e.message, code: e.code}})
         }
     }
 }

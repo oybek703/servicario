@@ -67,6 +67,11 @@ const theme = createMuiTheme({
                     pointerEvents: 'fill'
                 }
             }
+        },
+        MuiCircularProgress: {
+            colorPrimary: {
+                color: 'blue'
+            }
         }
     }
 })

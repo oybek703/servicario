@@ -9,6 +9,7 @@ import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import {useDispatch, useSelector} from "react-redux"
 import {registerNewUser} from "../redux/actions"
+import CircularProgress from "@material-ui/core/CircularProgress"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -49,7 +50,6 @@ const RegisterPage = () => {
     const handleChange = e => {
         const {name, value} = e.target
         setFormData({...formData, [name]: value})
-        const acceptedTypes = ['png', 'jpg', 'jpeg', 'svg', 'gif']
         switch (name) {
             case 'name': value.length < 3 ? setNameHelperText('Name should be at least 3 characters long.') : setNameHelperText(''); break
             case 'email': /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/.test(value)  ? setEmailHelperText('') : setEmailHelperText('Email should be valid email address.'); break
@@ -61,15 +61,18 @@ const RegisterPage = () => {
     const handleSubmit = e => {
         e.preventDefault()
         dispatch(registerNewUser(formData))
-        setFormData(formData => Object.keys(formData).reduce((acc, key) => {acc[key] = ''; return acc}, {}))
     }
-    console.log(user)
     useEffect(() => {
       const btnStatus = !!formData.name && !!formData.email && !!formData.password && !!formData.confirmpassword &&
-      !nameHelperText && !emailHelperText && !passwordHelperText && !confirmpasswordHelperText && !avatarHelperText
+      !nameHelperText && !emailHelperText && !passwordHelperText && !confirmpasswordHelperText && !avatarHelperText && !loading
         setBtnDisabled(!btnStatus)
         // eslint-disable-next-line
-    }, [formData])
+    }, [formData, loading])
+    useEffect(() => {
+        user && setFormData(formData => Object.keys(formData).reduce((acc, key) => {acc[key] = ''; return acc}, {}))
+        error && error.code === 'auth/email-already-in-use' && setEmailHelperText('The email address is already in use by another account.')
+    // eslint-disable-next-line
+    }, [loading])
     return (
         <Container>
             <Grid container direction='column' alignItems='center' className={classes.main}>
@@ -116,7 +119,7 @@ const RegisterPage = () => {
                                                InputProps={{endAdornment: <IconButton onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}>{showPasswordConfirm ? <Visibility/> : <VisibilityOff/>}</IconButton>}}/>
                                 </Grid>
                                 <Grid container justify='center'>
-                                    <Button disabled={btnDisabled} type='submit' variant='contained' fullWidth color='secondary'>Register</Button>
+                                    <Button disabled={btnDisabled} type='submit' variant='contained' fullWidth color='secondary' endIcon={loading && <CircularProgress size='20px'/>}>Register</Button>
                                 </Grid>
                             </form>
                         </CardContent>
