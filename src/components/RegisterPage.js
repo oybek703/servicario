@@ -11,6 +11,8 @@ import {useDispatch, useSelector} from "react-redux"
 import {registerNewUser} from "../redux/actions"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import {Redirect} from "react-router-dom"
+import Snackbar from "@material-ui/core/Snackbar"
+import Alert from "./UI/Alert"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -38,6 +40,7 @@ const useStyles = makeStyles(theme => ({
 const RegisterPage = () => {
     const classes = useStyles()
     const dispatch = useDispatch()
+    const [snackbar, setSnackbar] = useState(false)
     const {user, loading, error} = useSelector(state => state.auth)
     const [formData, setFormData] = useState({name: '', email: '', avatar: '', password: '', confirmpassword: '' })
     const [nameHelperText, setNameHelperText] = useState('')
@@ -70,7 +73,12 @@ const RegisterPage = () => {
         // eslint-disable-next-line
     }, [formData, loading])
     useEffect(() => {
-        error && error.code === 'auth/email-already-in-use' && setEmailHelperText('The email address is already in use by another account.')
+        if(error) {
+            switch (error.code) {
+                case 'auth/email-already-in-use': setEmailHelperText('The email address is already in use by another account.'); break
+                default: setSnackbar(true)
+            }
+        }
     // eslint-disable-next-line
     }, [loading])
     if(user) {
@@ -78,6 +86,9 @@ const RegisterPage = () => {
     }
     return (
         <Container>
+            <Snackbar open={snackbar} anchorOrigin={{vertical: 'top', horizontal: 'center'}} onClose={() => setSnackbar(false)} autoHideDuration={3000}>
+                <Alert/>
+            </Snackbar>
             <Grid container direction='column' alignItems='center' className={classes.main}>
                 <Grid item>
                     <Typography className={classes.darkText} variant='h3' gutterBottom align='center'>Register</Typography>

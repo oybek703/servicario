@@ -18,10 +18,13 @@ import {Link, withRouter} from "react-router-dom"
 import Divider from "@material-ui/core/Divider"
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
 import Tooltip from "@material-ui/core/Tooltip"
-import firebase from 'firebase/app'
-import 'firebase/auth'
 import {useDispatch, useSelector} from "react-redux"
 import {logoutUser} from "../../redux/actions"
+import Chip from "@material-ui/core/Chip"
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import {firestore} from "../../firebase"
+import Avatar from "@material-ui/core/Avatar"
 
 
 const useScrollStyles = makeStyles(theme => ({
@@ -117,7 +120,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Header = (props) => {
-    const {location: {pathname}, history} = props
+    const {location: {pathname}} = props
     const classes = useStyles()
     const dispatch = useDispatch()
     const {user} = useSelector(state => state.auth)
@@ -125,6 +128,8 @@ const Header = (props) => {
     const [drawer, setDrawer] = useState(false)
     const [menuDrawer, setMenuDrawer] = useState(false)
     const [menuSelectedIndex, setMenuSelectedIndex] = useState(0)
+    const [name, setName] = useState('')
+    const [avatar, setAvatar] = useState('')
     const matchSM = useMediaQuery(theme => theme.breakpoints.down('sm'))
     const routes = ['Home', 'Services', 'FAQ', 'Dropdown', 'Login', 'Register']
     const signedUserRoutes = ['Home', 'Services', 'FAQ', 'Dropdown', 'Logout']
@@ -140,7 +145,19 @@ const Header = (props) => {
                 case '/register': setTab(5); setMenuSelectedIndex(5); break
                 default: setTab(1); setMenuSelectedIndex(1)
             }
-    }, [pathname])
+    }, [pathname, user])
+    useEffect(() => {
+        const unsubscribeUser = firebase.auth().onAuthStateChanged(user => {
+            if(user) {
+                const {uid} = user
+                firestore.collection('profiles').doc(uid).get().then(snapshot => {
+                    setName(snapshot.data().name)
+                    setAvatar(snapshot.data().avatar)
+                })
+            }
+        })
+        return unsubscribeUser
+    }, [])
     return (
         <Fragment>
             <ElevationScroll >
@@ -171,6 +188,7 @@ const Header = (props) => {
                                         </List>
                                     </SwipeableDrawer>
                                     <IconButton onClick={() => setDrawer(!drawer)} color='secondary'><MenuIcon /></IconButton>
+                                    {user && name && avatar && <Chip avatar={<Avatar alt={name} src={avatar}/>} label={name}/>}
                                 </Grid>
                             </Grid>
                             <Grid item>
@@ -195,17 +213,17 @@ const Header = (props) => {
                                                     <Divider/>
                                                 <List disablePadding>
                                                     {
-                                                        routes.map((route, index) => (
-                                                            route === 'Register'
+                                                        (user ? signedUserRoutes : routes).map((route, index) => (
+                                                            route === 'Register' || route === 'Logout'
                                                                 ? <ListItem
                                                                     key={route}
                                                                     selected={index === menuSelectedIndex}
                                                                     classes={{root: classes.listItemBtn}}
-                                                                    onClick={() => {setMenuDrawer(false)}}
+                                                                    onClick={() => {setMenuDrawer(false); if(route === 'Logout') handleLogout()}}
                                                                     component={Link}
-                                                                    to='/register'>
+                                                                    to={route === 'Logout' ? '/' : '/register'}>
                                                                     <Button component='span' variant='contained' color='secondary' className={`${classes.register} ${classes.menuRegister}`}>
-                                                                        <ListItemText>Sign Up</ListItemText>
+                                                                        <ListItemText>{route}</ListItemText>
                                                                     </Button>
                                                                 </ListItem>
                                                                 : <ListItem

@@ -9,9 +9,11 @@ import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import {useDispatch, useSelector} from "react-redux"
 import CircularProgress from "@material-ui/core/CircularProgress"
+import CloseIcon from '@material-ui/icons/Close'
 import {Redirect} from "react-router-dom"
 import {signInUser} from "../redux/actions"
 import Alert from "./UI/Alert"
+import Snackbar from "@material-ui/core/Snackbar"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -36,6 +38,7 @@ const useStyles = makeStyles(theme => ({
 const LoginPage = () => {
     const classes = useStyles()
     const dispatch = useDispatch()
+    const [snackbar, setSnackBar] = useState(false)
     const {loading, user, error} = useSelector(state => state.auth)
     const [formData, setFormData] = useState({email: '', password: ''})
     const [emailHelperText, setEmailHelperText] = useState('')
@@ -69,7 +72,7 @@ const LoginPage = () => {
             switch (error.code) {
                 case 'auth/user-not-found': setEmailHelperText('User email not found or deleted.'); break
                 case 'auth/wrong-password': setPasswordHelperText('Invalid user password.'); break
-                default: return
+                default: setSnackBar(true)
             }
         }
     }, [error])
@@ -80,7 +83,7 @@ const LoginPage = () => {
 
     return (
         <Container>
-            {error && error.code === 'auth/network-request-failed' && <Alert />}
+            <Snackbar onClose={() => setSnackBar(false)} autoHideDuration={3000} open={snackbar} anchorOrigin={{horizontal: 'center', vertical: 'bottom'}}><Alert/></Snackbar>
             <Grid container direction='column' alignItems='center' className={classes.main}>
                 <Grid item>
                     <Typography className={classes.darkText} variant='h3' gutterBottom align='center'>Login</Typography>
