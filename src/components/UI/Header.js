@@ -85,7 +85,8 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'flex-end',
         alignItems: 'center',
         color: 'white',
-        marginTop: '.4em'
+        marginTop: '.4em',
+        marginRight: '.2em'
     },
     appbar: {
         backgroundColor: '#eeeeee',
@@ -228,8 +229,8 @@ const Header = (props) => {
                                                                         </ListItem>
                                                                     <Collapse in={mobileManage} unmountOnExit>
                                                                         <List disablePadding>
-                                                                            <ListItem classes={{root: classes.nested}} onClick={() => setDrawer(false)} component={Link} to='/services/new'><ListItemText>Create service</ListItemText></ListItem>
-                                                                            <ListItem classes={{root: classes.nested}} onClick={() => setDrawer(false)} component={Link} to='/services/my'><ListItemText>My services</ListItemText></ListItem>
+                                                                            <ListItem classes={{root: classes.nested}} onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/new'><ListItemText>Create service</ListItemText></ListItem>
+                                                                            <ListItem classes={{root: classes.nested}} onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/my'><ListItemText>My services</ListItemText></ListItem>
                                                                         </List>
                                                                     </Collapse>
                                                                 </Fragment>
@@ -259,7 +260,9 @@ const Header = (props) => {
                                                                    onMouseEnter={() => setManage(true)}
                                                                    onMouseLeave={handleDropdownClose}
                                                                    onClick={() => setTab(1)}
-                                                                   label={<ListItem><ListItemText>Manage</ListItemText><ExpandMore/></ListItem>}/>}
+                                                                   label={<ListItem><ListItemText>Manage</ListItemText>
+                                                                       {manage ? <ExpandLess/> : <ExpandMore/>}
+                                                                   </ListItem>}/>}
                                                 {user && <Tab
                                                     disableRipple
                                                     onClick={handleLogout}
@@ -299,8 +302,8 @@ const Header = (props) => {
                         <Paper square elevation={0} onMouseLeave={handleDropdownClose}>
                             <ClickAwayListener onClickAway={handleDropdownClose}>
                                 <MenuList classes={{root: classes.menu}} disablePadding onMouseEnter={() => setManage(true)} autoFocusItem={manage} id="menu-list-grow">
-                                    <MenuItem selected={false} component={Link} to='/services/new' onClick={handleDropdownClose}>Create service</MenuItem>
-                                    <MenuItem selected={false} component={Link} to='/services/my' onClick={handleDropdownClose}>My services</MenuItem>
+                                    <MenuItem component={Link} to='/services/new' onClick={handleDropdownClose}>Create service</MenuItem>
+                                    <MenuItem component={Link} to='/services/my' onClick={handleDropdownClose}>My services</MenuItem>
                                 </MenuList>
                             </ClickAwayListener>
                         </Paper>
