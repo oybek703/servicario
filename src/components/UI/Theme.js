@@ -29,12 +29,19 @@ const theme = createMuiTheme({
         MuiTab: {
             root: {
                 textTransform: 'none',
+                padding: '0 1px',
                 '@media (min-width: 600px)': {
-                    minWidth: 70
+                    minWidth: 110
                 },
                 '&$selected': {
                     color: lightOrange
+                },
+                '&:hover': {
+                    color: lightOrange
                 }
+            },
+            wrapper: {
+                fontSize: '1rem'
             }
         },
         MuiDrawer: {
@@ -53,6 +60,12 @@ const theme = createMuiTheme({
             root: {
                 '&$selected': {
                     backgroundColor: lightBlue
+                },
+                '&$focusVisible': {
+                    backgroundColor: 'transparent'
+                },
+                '&$gutters': {
+                    padding: '2px 10px'
                 }
             }
         },
@@ -72,6 +85,20 @@ const theme = createMuiTheme({
         MuiCircularProgress: {
             colorPrimary: {
                 color: 'blue'
+            }
+        },
+        MuiList: {
+            root: {
+                backgroundColor: '#eeeeee'
+            }
+        },
+        MuiMenuItem: {
+            root: {
+                minWidth: '12em',
+                '&:hover': {
+                    color: lightOrange,
+                    backgroundColor: 'transparent'
+                }
             }
         }
     }

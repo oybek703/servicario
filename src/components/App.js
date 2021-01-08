@@ -8,6 +8,8 @@ import Home from "./Home"
 import ServicePage from "./ServicePage"
 import RegisterPage from "./RegisterPage"
 import LoginPage from "./LoginPage"
+import CreateService from "./CreateService"
+import MyServices from "./MyServices"
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
               <Header/>
               <Switch>
                 <Route path='/' exact component={Home}/>
+                <Route path='/services/new' component={CreateService}/>
+                <Route path='/services/my' component={MyServices}/>
                 <Route path='/services/:id' component={ServicePage}/>
                 <Route path='/register' component={RegisterPage}/>
                 <Route path='/login' component={LoginPage}/>
