@@ -28,45 +28,22 @@ const theme = createMuiTheme({
     overrides: {
         MuiTab: {
             root: {
-                textTransform: 'none',
-                padding: '0 1px',
                 '@media (min-width: 600px)': {
                     minWidth: 110
-                },
-                '&$selected': {
-                    color: lightOrange
-                },
-                '&:hover': {
-                    color: lightOrange
                 }
-            },
-            wrapper: {
-                fontSize: '1rem'
             }
         },
         MuiDrawer: {
             paper: {
-                minWidth: 200
+                minWidth: 200,
+                backgroundColor: '#eeeeee'
             }
         },
         MuiButton: {
             label: {
-                textTransform: 'none',
+                // textTransform: 'none',
                 color: 'white',
-                fontSize: '1.2em'
-            }
-        },
-        MuiListItem: {
-            root: {
-                '&$selected': {
-                    backgroundColor: lightBlue
-                },
-                '&$focusVisible': {
-                    backgroundColor: 'transparent'
-                },
-                '&$gutters': {
-                    padding: '10px'
-                }
+                fontSize: '1em'
             }
         },
         MuiLink: {
@@ -87,18 +64,14 @@ const theme = createMuiTheme({
                 color: 'blue'
             }
         },
+        MuiListItemText: {
+            primary: {
+                fontSize: '1em'
+            }
+        },
         MuiList: {
             root: {
                 backgroundColor: '#eeeeee'
-            }
-        },
-        MuiMenuItem: {
-            root: {
-                minWidth: '9em',
-                '&:hover': {
-                    color: lightOrange,
-                    backgroundColor: 'transparent'
-                }
             }
         }
     }

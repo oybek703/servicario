@@ -13,10 +13,8 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
-import CloseIcon from '@material-ui/icons/Close'
 import {Link, withRouter} from "react-router-dom"
 import Divider from "@material-ui/core/Divider"
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
 import Tooltip from "@material-ui/core/Tooltip"
 import {useDispatch, useSelector} from "react-redux"
 import {logoutUser} from "../../redux/actions"
@@ -32,7 +30,9 @@ import ClickAwayListener from "@material-ui/core/ClickAwayListener"
 import MenuList from "@material-ui/core/MenuList"
 import MenuItem from "@material-ui/core/MenuItem"
 import Grow from "@material-ui/core/Grow"
-
+import {ArrowBackIos} from "@material-ui/icons"
+import ExpandLess from '@material-ui/icons/ExpandLess'
+import Collapse from "@material-ui/core/Collapse"
 
 const useScrollStyles = makeStyles(theme => ({
     root: {
@@ -82,16 +82,10 @@ const useStyles = makeStyles(theme => ({
     drawerMenu: {
         ...theme.mixins.toolbar,
         display: 'flex',
-        justifyContent: 'space-around',
+        justifyContent: 'flex-end',
         alignItems: 'center',
         color: 'white',
         marginTop: '.4em'
-    },
-    drawerItems: {
-        color: 'white'
-    },
-    drawerContainer: {
-        backgroundColor: '#474747'
     },
     appbar: {
         backgroundColor: '#eeeeee',
@@ -108,9 +102,6 @@ const useStyles = makeStyles(theme => ({
         '&:hover': {
             backgroundColor: 'transparent'
         }
-    },
-    tab: {
-        display: 'none'
     },
     logo: {
         textDecoration: 'none',
@@ -129,9 +120,8 @@ const useStyles = makeStyles(theme => ({
             backgroundColor: 'transparent'
         }
     },
-    menu: {
-        // paddingTop: '.5em',
-        // marginTop: '.5em'
+    nested: {
+        marginLeft: '4.2em'
     }
 }))
 
@@ -145,7 +135,7 @@ const Header = (props) => {
     const [tab, setTab] = useState(0)
     const [drawer, setDrawer] = useState(false)
     const [manage, setManage] = useState(false)
-    const [menuDrawer, setMenuDrawer] = useState(false)
+    const [mobileManage, setMobileManage] = useState(false)
     const [menuSelectedIndex, setMenuSelectedIndex] = useState(0)
     const [name, setName] = useState('')
     const [avatar, setAvatar] = useState('')
@@ -183,45 +173,27 @@ const Header = (props) => {
                             <Grid item>
                                 <Grid container alignItems='center'>
                                     <Typography className={classes.logo} variant='h5' component={Link} to='/'>Servicario &nbsp;</Typography>
-                                    <SwipeableDrawer
-                                        ModalProps={{BackdropProps: {invisible: true}}}
-                                        classes={{paper: classes.drawerContainer}}
-                                        open={drawer}
-                                        onOpen={() =>
-                                        {setDrawer(true)}}
-                                        onClose={() => setDrawer(false)}>
-                                        <div className={classes.drawerMenu} >
-                                            <Typography variant='h4'>Menu</Typography>
-                                            <IconButton color='inherit' onClick={() => setDrawer(false)}><CloseIcon/></IconButton>
-                                        </div>
-                                        <Divider/>
-                                        <List disablePadding className={classes.drawerItems}>
-                                            {
-                                                ['User', 'Message', 'Images', 'Settings'].map(item => (
-                                                    <ListItem key={item} button><ListItemText>{item}</ListItemText></ListItem>
-                                                ))
-                                            }
-                                        </List>
-                                    </SwipeableDrawer>
-                                    <IconButton onClick={() => setDrawer(!drawer)} color='secondary'><MenuIcon /></IconButton>
-                                    {user && name && avatar && <Chip avatar={<Avatar alt={name} src={avatar}/>} label={name}/>}
+                                    {!matchSM && user && name && avatar && <Chip avatar={<Avatar alt={name} src={avatar}/>} label={name}/>}
                                 </Grid>
                             </Grid>
                             <Grid item>
                                 {matchSM
                                     ? <Fragment>
-                                            <IconButton onClick={() => setMenuDrawer(true)}>
-                                                <MenuIcon color='primary'/>
-                                            </IconButton>
+                                        {matchSM &&
+                                        <Fragment>
+                                            {user && name && avatar && <Chip avatar={<Avatar alt={name} src={avatar}/>} label={name}/>}
+                                            <IconButton onClick={() => setDrawer(!drawer)} color='secondary'><MenuIcon /></IconButton>
+                                        </Fragment>
+                                        }
                                             <SwipeableDrawer
-                                                onClose={() => setMenuDrawer(false)}
-                                                onOpen={() => setMenuDrawer(true)}
-                                                open={menuDrawer}
-                                                anchor='right'>
+                                                onClose={() => setDrawer(false)}
+                                                onOpen={() => setDrawer(true)}
+                                                open={drawer}
+                                                anchor='left'>
                                                     <div className={classes.drawerMenu}>
                                                         <Tooltip title='Close'>
-                                                            <IconButton onClick={() => setMenuDrawer(false)}>
-                                                                <ArrowForwardIosIcon color='primary'/>
+                                                            <IconButton onClick={() => setDrawer(false)}>
+                                                                <ArrowBackIos color='primary'/>
                                                             </IconButton>
                                                         </Tooltip>
                                                         <Divider/>
@@ -235,21 +207,41 @@ const Header = (props) => {
                                                                     key={route}
                                                                     selected={index === menuSelectedIndex}
                                                                     classes={{root: classes.listItemBtn}}
-                                                                    onClick={() => {setMenuDrawer(false); if(route === 'Logout') handleLogout()}}
+                                                                    onClick={() => {setDrawer(false); if(route === 'Logout') handleLogout()}}
                                                                     component={Link}
                                                                     to={route === 'Logout' ? '/' : '/register'}>
                                                                     <Button component='span' variant='contained' color='secondary' className={`${classes.register} ${classes.menuRegister}`}>
                                                                         <ListItemText>{route}</ListItemText>
                                                                     </Button>
                                                                 </ListItem>
-                                                                : <ListItem
-                                                                key={route}
-                                                                selected={index === menuSelectedIndex}
-                                                                classes={{root: classes.listItem}}
-                                                                onClick={() => {setMenuDrawer(false)}}
-                                                                component={Link}
-                                                                to={route === 'Home' ? '/' : `/${route.toLowerCase()}`}>
-                                                                <ListItemText>{route}</ListItemText>
+                                                                : route === 'Manage'
+                                                                    ? <Fragment>
+                                                                        <ListItem
+                                                                            key={route}
+                                                                            selected={index === menuSelectedIndex}
+                                                                            classes={{root: classes.listItem}}
+                                                                            onClick={() => {setMobileManage(!mobileManage)}}
+                                                                            component={Link}
+                                                                            to='/services/my'>
+                                                                            <ListItemText>{route}</ListItemText>
+                                                                            {mobileManage ? <ExpandLess/> : <ExpandMore/>}
+                                                                        </ListItem>
+                                                                    <Collapse in={mobileManage} unmountOnExit>
+                                                                        <List disablePadding>
+                                                                            <ListItem classes={{root: classes.nested}} onClick={() => setDrawer(false)} component={Link} to='/services/new'><ListItemText>Create service</ListItemText></ListItem>
+                                                                            <ListItem classes={{root: classes.nested}} onClick={() => setDrawer(false)} component={Link} to='/services/my'><ListItemText>My services</ListItemText></ListItem>
+                                                                        </List>
+                                                                    </Collapse>
+                                                                </Fragment>
+                                                                    :
+                                                                        <ListItem
+                                                                            key={route}
+                                                                            selected={index === menuSelectedIndex}
+                                                                            classes={{root: classes.listItem}}
+                                                                            onClick={() => {setDrawer(false)}}
+                                                                            component={Link}
+                                                                            to={route === 'Home' ? '/' : `/${route.toLowerCase()}`}>
+                                                                        <ListItemText>{route}</ListItemText>
                                                             </ListItem>
                                                         ))
                                                     }
@@ -259,31 +251,31 @@ const Header = (props) => {
                                     : <Fragment>
                                             <Tabs value={tab}
                                                 style={{borderBottom: 0 }}
-                                                onChange={(event, newValue) => setTab(newValue)}
-                                                TabIndicatorProps={{className: classes.tab}}>
-                                            {
-                                                (user ? signedUserRoutes : routes).map(route => (
-                                                    route === 'Register' || route === 'Logout'
-                                                        ? <Tab
-                                                            key={route}
-                                                            disableRipple
-                                                            onClick={route === 'Logout' ? handleLogout : () => {}}
-                                                            component={Link}
-                                                            classes={{root: classes.btnTab}}
-                                                            to={route === 'Logout' ? '/' : `/${route.toLowerCase()}`}
-                                                            label={<Button className={classes.register} variant='contained' color='secondary' component='span'>{route}</Button>}/>
-                                                        : route === 'Home'
-                                                            ? <Tab key={route} component={Link} to='/' label={route}/>
-                                                            : route === 'Manage'
-                                                                ? <Tab key={route} ref={manageRef} component={Link} to='/services/my'
-                                                                       onMouseEnter={() => setManage(true)}
-                                                                       onMouseLeave={handleDropdownClose}
-                                                                       onClick={() => setTab(1)}
-                                                                       label={<ListItem><ListItemText>{route}</ListItemText><ExpandMore fontSize='small'/></ListItem>}
-                                                                        />
-                                                                : <Tab key={route} component={Link} to={`/${route.toLowerCase()}`} label={route}/>
-                                                ))
-                                            }
+                                                onChange={(event, newValue) => setTab(newValue)}>
+                                                <Tab component={Link} to='/' label='Home'/>
+                                                <Tab component={Link} to='/services' label='Services'/>
+                                                <Tab component={Link} to='/faq' label='FAQ'/>
+                                                {user && <Tab ref={manageRef} component={Link} to='/services/my'
+                                                                   onMouseEnter={() => setManage(true)}
+                                                                   onMouseLeave={handleDropdownClose}
+                                                                   onClick={() => setTab(1)}
+                                                                   label={<ListItem><ListItemText>Manage</ListItemText><ExpandMore/></ListItem>}/>}
+                                                {user && <Tab
+                                                    disableRipple
+                                                    onClick={handleLogout}
+                                                    component={Link}
+                                                    classes={{root: classes.btnTab}}
+                                                    to='/'
+                                                    label={<Button className={classes.register} variant='contained' color='secondary' component='span'>Log Out</Button>}/>}
+                                                }
+                                                {!user && <Tab component={Link} to='/login' label='Sign In'/>}
+                                                {!user && <Tab
+                                                        disableRipple
+                                                        onClick={handleLogout}
+                                                        component={Link}
+                                                        classes={{root: classes.btnTab}}
+                                                        to='/register'
+                                                        label={<Button className={classes.register} variant='contained' color='secondary' component='span'>Sign Up</Button>}/>}
                                         </Tabs>
                                         </Fragment>
                                 }
@@ -298,7 +290,7 @@ const Header = (props) => {
                     <KeyboardArrowUpIcon />
                 </Fab>
             </ScrollTop>
-            <Popper style={{zIndex: 1302}} placement='bottom-end' open={manage} anchorEl={manageRef.current} role={undefined} transition>
+            <Popper style={{zIndex: 1302}} placement='bottom' open={manage} anchorEl={manageRef.current} role={undefined} transition>
                 {({ TransitionProps, placement }) => (
                     <Grow
                         {...TransitionProps}
