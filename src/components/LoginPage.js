@@ -9,9 +9,9 @@ import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import {useDispatch, useSelector} from "react-redux"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import {Redirect} from "react-router-dom"
 import {signInUser} from "../redux/actions"
 import ErrorReport from "./UI/ErrorReport"
+import withoutAuth from "./hoc/withoutAuth"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -37,7 +37,7 @@ const LoginPage = () => {
     const classes = useStyles()
     const dispatch = useDispatch()
     const [snackbar, setSnackBar] = useState(false)
-    const {loading, user, error} = useSelector(state => state.auth)
+    const {loading, error} = useSelector(state => state.auth)
     const [formData, setFormData] = useState({email: '', password: ''})
     const [emailHelperText, setEmailHelperText] = useState('')
     const [passwordHelperText, setPasswordHelperText] = useState('')
@@ -74,10 +74,6 @@ const LoginPage = () => {
             }
         }
     }, [error])
-
-    if(user) {
-        return <Redirect to='/'/>
-    }
 
     return (
         <Container>
@@ -121,4 +117,4 @@ const LoginPage = () => {
     )
 }
 
-export default LoginPage
+export default withoutAuth(LoginPage)

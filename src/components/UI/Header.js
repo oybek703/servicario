@@ -128,6 +128,10 @@ const useStyles = makeStyles(theme => ({
         '&.Mui-selected': {
             backgroundColor: 'transparent'
         }
+    },
+    menu: {
+        // paddingTop: '.5em',
+        // marginTop: '.5em'
     }
 }))
 
@@ -148,13 +152,13 @@ const Header = (props) => {
     const routes = ['Home', 'Services', 'FAQ', 'Login', 'Register']
     const signedUserRoutes = ['Home', 'Services', 'FAQ', 'Manage', 'Logout']
     const handleLogout = () => dispatch(logoutUser())
+    const handleDropdownClose = () => setManage(false)
     useEffect(() => {
             switch (pathname) {
                 case '/': setTab(0); setMenuSelectedIndex(0); break
                 case '/faq': setTab(2); setMenuSelectedIndex(2); break
-                case '/manage': setTab(3); setMenuSelectedIndex(3); break
-                case '/login': setTab(4); setMenuSelectedIndex(4); break
-                case '/register': setTab(5); setMenuSelectedIndex(5); break
+                case '/login': setTab(3); setMenuSelectedIndex(3); break
+                case '/register': setTab(4); setMenuSelectedIndex(4); break
                 default: setTab(1); setMenuSelectedIndex(1)
             }
     }, [pathname, user])
@@ -273,7 +277,7 @@ const Header = (props) => {
                                                             : route === 'Manage'
                                                                 ? <Tab key={route} ref={manageRef} component={Link} to='/services/my'
                                                                        onMouseEnter={() => setManage(true)}
-                                                                       onMouseLeave={() => setManage(false)}
+                                                                       onMouseLeave={handleDropdownClose}
                                                                        onClick={() => setTab(1)}
                                                                        label={<ListItem><ListItemText>{route}</ListItemText><ExpandMore fontSize='small'/></ListItem>}
                                                                         />
@@ -294,17 +298,17 @@ const Header = (props) => {
                     <KeyboardArrowUpIcon />
                 </Fab>
             </ScrollTop>
-            <Popper style={{zIndex: 1302}} placement='bottom-start' open={manage} anchorEl={manageRef.current} role={undefined} transition>
+            <Popper style={{zIndex: 1302}} placement='bottom-end' open={manage} anchorEl={manageRef.current} role={undefined} transition>
                 {({ TransitionProps, placement }) => (
                     <Grow
                         {...TransitionProps}
                         style={{ transformOrigin: 'right top' }}
                     >
-                        <Paper square elevation={0} onMouseLeave={() => setManage(false)}>
-                            <ClickAwayListener onClickAway={() => setManage(false)}>
-                                <MenuList disablePadding onMouseEnter={() => setManage(true)} autoFocusItem={manage} id="menu-list-grow">
-                                    <MenuItem selected={false} component={Link} to='/services/new' onClick={() => setManage(false)}>Create service</MenuItem>
-                                    <MenuItem selected={false} component={Link} to='/services/my' onClick={() => setManage(false)}>My services</MenuItem>
+                        <Paper square elevation={0} onMouseLeave={handleDropdownClose}>
+                            <ClickAwayListener onClickAway={handleDropdownClose}>
+                                <MenuList classes={{root: classes.menu}} disablePadding onMouseEnter={() => setManage(true)} autoFocusItem={manage} id="menu-list-grow">
+                                    <MenuItem selected={false} component={Link} to='/services/new' onClick={handleDropdownClose}>Create service</MenuItem>
+                                    <MenuItem selected={false} component={Link} to='/services/my' onClick={handleDropdownClose}>My services</MenuItem>
                                 </MenuList>
                             </ClickAwayListener>
                         </Paper>

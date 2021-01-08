@@ -10,8 +10,8 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import {useDispatch, useSelector} from "react-redux"
 import {registerNewUser} from "../redux/actions"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import {Redirect} from "react-router-dom"
 import ErrorReport from "./UI/ErrorReport"
+import withoutAuth from "./hoc/withoutAuth"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -40,7 +40,7 @@ const RegisterPage = () => {
     const classes = useStyles()
     const dispatch = useDispatch()
     const [snackbar, setSnackbar] = useState(false)
-    const {user, loading, error} = useSelector(state => state.auth)
+    const {loading, error} = useSelector(state => state.auth)
     const [formData, setFormData] = useState({name: '', email: '', avatar: '', password: '', confirmpassword: '' })
     const [nameHelperText, setNameHelperText] = useState('')
     const [emailHelperText, setEmailHelperText] = useState('')
@@ -80,9 +80,6 @@ const RegisterPage = () => {
         }
     // eslint-disable-next-line
     }, [error])
-    if(user) {
-        return <Redirect to='/'/>
-    }
     return (
         <Container>
             <ErrorReport snackbar={snackbar} setSnackBar={setSnackbar}/>
@@ -148,4 +145,4 @@ const RegisterPage = () => {
     )
 }
 
-export default RegisterPage
+export default withoutAuth(RegisterPage)

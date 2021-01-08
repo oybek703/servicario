@@ -50,7 +50,7 @@ const Home = () => {
             <Container>
                 <Grid container alignItems='center' justify='space-evenly' className={classes.manage}>
                 <Grid item>
-                    <Typography variant='h3' paragraph gutterBottom>Manage, Deploy.</Typography>
+                    <Typography variant='h3' paragraph gutterBottom>Manage, Collaborate.</Typography>
                     <Typography className={classes.dark} gutterBottom paragraph>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</Typography>
                     <Button className={classes.rounded} variant='contained' color='primary'>Get Started</Button>
                 </Grid>

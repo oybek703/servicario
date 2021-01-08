@@ -65,7 +65,7 @@ const theme = createMuiTheme({
                     backgroundColor: 'transparent'
                 },
                 '&$gutters': {
-                    padding: '2px 10px'
+                    padding: '10px'
                 }
             }
         },
@@ -94,7 +94,7 @@ const theme = createMuiTheme({
         },
         MuiMenuItem: {
             root: {
-                minWidth: '12em',
+                minWidth: '9em',
                 '&:hover': {
                     color: lightOrange,
                     backgroundColor: 'transparent'

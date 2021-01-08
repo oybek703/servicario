@@ -1,4 +1,5 @@
 import React from 'react'
+import withAuthorization from "./hoc/withAuth"
 
 const MyServices = () => {
     return (
@@ -8,4 +9,4 @@ const MyServices = () => {
     )
 }
 
-export default MyServices
+export default withAuthorization(MyServices)
