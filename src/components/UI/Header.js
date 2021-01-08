@@ -85,8 +85,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'flex-end',
         alignItems: 'center',
         color: 'white',
-        marginTop: '.4em',
-        marginRight: '.2em'
+        marginTop: '.4em'
     },
     appbar: {
         backgroundColor: '#eeeeee',
@@ -187,11 +186,12 @@ const Header = (props) => {
                                         </Fragment>
                                         }
                                             <SwipeableDrawer
-                                                onClose={() => setDrawer(false)}
+                                                onClose={() => {setDrawer(false); setMobileManage(false)}}
                                                 onOpen={() => setDrawer(true)}
                                                 open={drawer}
                                                 anchor='left'>
                                                     <div className={classes.drawerMenu}>
+                                                        <Typography color='primary' variant='h5'>Servicario </Typography>
                                                         <Tooltip title='Close'>
                                                             <IconButton onClick={() => setDrawer(false)}>
                                                                 <ArrowBackIos color='primary'/>
@@ -221,9 +221,7 @@ const Header = (props) => {
                                                                             key={route}
                                                                             selected={index === menuSelectedIndex}
                                                                             classes={{root: classes.listItem}}
-                                                                            onClick={() => {setMobileManage(!mobileManage)}}
-                                                                            component={Link}
-                                                                            to='/services/my'>
+                                                                            onClick={() => {setMobileManage(!mobileManage)}}>
                                                                             <ListItemText>{route}</ListItemText>
                                                                             {mobileManage ? <ExpandLess/> : <ExpandMore/>}
                                                                         </ListItem>

@@ -73,13 +73,6 @@ const theme = createMuiTheme({
             root: {
                 backgroundColor: '#eeeeee'
             }
-        },
-        MuiListItem: {
-            root: {
-                '&$Mui-focusVisible': {
-                    backgroundColor: 'transparent'
-                }
-            }
         }
     }
 })

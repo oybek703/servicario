@@ -1,5 +1,5 @@
 import React from 'react'
-import {Box, makeStyles} from "@material-ui/core"
+import {makeStyles} from "@material-ui/core"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
@@ -43,8 +43,7 @@ const Alert = (props) => {
     const classes = useStyles(props)
     const {type} = props
     return (
-        <Box className={classes.alert}>
-            <List disablePadding>
+            <List disablePadding classes={{root: classes.alert}}>
                 <ListItem>
                     <ListItemIcon>
                         {type === 'success' && <CheckCircleOutlineOutlinedIcon color={type} />}
@@ -57,7 +56,6 @@ const Alert = (props) => {
                     </ListItemText>
                 </ListItem>
             </List>
-        </Box>
     )
 }
 
