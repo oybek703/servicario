@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react'
+import React, {Fragment, useEffect, useRef, useState} from 'react'
 import AppBar from "@material-ui/core/AppBar"
 import {Button, IconButton, Tabs, Toolbar, Typography, useMediaQuery} from "@material-ui/core"
 import {makeStyles} from "@material-ui/core/styles"
@@ -25,6 +25,13 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import {firestore} from "../../firebase"
 import Avatar from "@material-ui/core/Avatar"
+import ExpandMore from "@material-ui/icons/ExpandMore"
+import Popper from "@material-ui/core/Popper"
+import Paper from "@material-ui/core/Paper"
+import ClickAwayListener from "@material-ui/core/ClickAwayListener"
+import MenuList from "@material-ui/core/MenuList"
+import MenuItem from "@material-ui/core/MenuItem"
+import Grow from "@material-ui/core/Grow"
 
 
 const useScrollStyles = makeStyles(theme => ({
@@ -122,25 +129,25 @@ const useStyles = makeStyles(theme => ({
 const Header = (props) => {
     const {location: {pathname}} = props
     const classes = useStyles()
+    const matchSM = useMediaQuery(theme => theme.breakpoints.down('sm'))
     const dispatch = useDispatch()
     const {user} = useSelector(state => state.auth)
+    const manageRef = useRef(null)
     const [tab, setTab] = useState(0)
     const [drawer, setDrawer] = useState(false)
+    const [manage, setManage] = useState(false)
     const [menuDrawer, setMenuDrawer] = useState(false)
     const [menuSelectedIndex, setMenuSelectedIndex] = useState(0)
     const [name, setName] = useState('')
     const [avatar, setAvatar] = useState('')
-    const matchSM = useMediaQuery(theme => theme.breakpoints.down('sm'))
-    const routes = ['Home', 'Services', 'FAQ', 'Dropdown', 'Login', 'Register']
-    const signedUserRoutes = ['Home', 'Services', 'FAQ', 'Dropdown', 'Logout']
-    const handleLogout = () => {
-        dispatch(logoutUser())
-    }
+    const routes = ['Home', 'Services', 'FAQ', 'Login', 'Register']
+    const signedUserRoutes = ['Home', 'Services', 'FAQ', 'Manage', 'Logout']
+    const handleLogout = () => dispatch(logoutUser())
     useEffect(() => {
             switch (pathname) {
                 case '/': setTab(0); setMenuSelectedIndex(0); break
                 case '/faq': setTab(2); setMenuSelectedIndex(2); break
-                case '/dropdown': setTab(3); setMenuSelectedIndex(3); break
+                case '/manage': setTab(3); setMenuSelectedIndex(3); break
                 case '/login': setTab(4); setMenuSelectedIndex(4); break
                 case '/register': setTab(5); setMenuSelectedIndex(5); break
                 default: setTab(1); setMenuSelectedIndex(1)
@@ -257,7 +264,13 @@ const Header = (props) => {
                                                             label={<Button className={classes.register} variant='contained' color='secondary' component='span'>{route}</Button>}/>
                                                         : route === 'Home'
                                                             ? <Tab key={route} component={Link} to='/' label={route}/>
-                                                            : <Tab key={route} component={Link} to={`/${route.toLowerCase()}`} label={route}/>
+                                                            : route === 'Manage'
+                                                                ? <Tab key={route} ref={manageRef} component={Link} to='/services'
+                                                                       onMouseEnter={() => setManage(true)}
+                                                                       onMouseLeave={() => setManage(false)}
+                                                                       label={<ListItem><ListItemText>{route} &nbsp;</ListItemText><ExpandMore fontSize='small'/></ListItem>}
+                                                                        />
+                                                                : <Tab key={route} component={Link} to={`/${route.toLowerCase()}`} label={route}/>
                                                 ))
                                             }
                                         </Tabs>
@@ -274,6 +287,23 @@ const Header = (props) => {
                     <KeyboardArrowUpIcon />
                 </Fab>
             </ScrollTop>
+            <Popper  style={{zIndex: 1302}} placement='bottom-end' open={manage} anchorEl={manageRef.current || <span>test</span>} role={undefined} transition disablePortal>
+                {({ TransitionProps, placement }) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{ transformOrigin: 'right top' }}
+                    >
+                        <Paper onMouseLeave={() => setManage(false)}>
+                            <ClickAwayListener onClickAway={() => setManage(false)}>
+                                <MenuList onMouseEnter={() => setManage(true)} autoFocusItem={manage} id="menu-list-grow">
+                                    <MenuItem onClick={() => setManage(false)}>Create service</MenuItem>
+                                    <MenuItem onClick={() => setManage(false)}>My services</MenuItem>
+                                </MenuList>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Grow>
+                )}
+            </Popper>
         </Fragment>
     )
 }

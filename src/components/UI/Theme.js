@@ -28,6 +28,7 @@ const theme = createMuiTheme({
     overrides: {
         MuiTab: {
             root: {
+                textTransform: 'none',
                 '@media (min-width: 600px)': {
                     minWidth: 70
                 },

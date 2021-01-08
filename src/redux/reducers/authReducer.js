@@ -18,7 +18,7 @@ const auth = (state = initialState, action) => {
     switch (type) {
         case REGISTER_USER_START:
         case LOGIN_USER_START:
-            return {...state, loading: true, user: null, error: null}
+            return {...state, loading: true, error: null}
         case REGISTER_USER_SUCCESS:
         case LOGIN_USER_SUCCESS:
             return {...state, loading: false, user: payload, error: null}
