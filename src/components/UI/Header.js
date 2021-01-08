@@ -274,6 +274,7 @@ const Header = (props) => {
                                                                 ? <Tab key={route} ref={manageRef} component={Link} to='/services/my'
                                                                        onMouseEnter={() => setManage(true)}
                                                                        onMouseLeave={() => setManage(false)}
+                                                                       onClick={() => setTab(1)}
                                                                        label={<ListItem><ListItemText>{route}</ListItemText><ExpandMore fontSize='small'/></ListItem>}
                                                                         />
                                                                 : <Tab key={route} component={Link} to={`/${route.toLowerCase()}`} label={route}/>
