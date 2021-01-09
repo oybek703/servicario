@@ -25,7 +25,7 @@ const Service = ({service}) => {
         <Card variant='outlined' className={classes.card}>
             <CardHeader title={<Typography align='center'>{service.title}</Typography>}/>
             <Grid container  justify='center'>
-                <img  className={classes.cardImg} src={service.image} alt={service.title}/>
+                <img  className={classes.cardImg} src={service.imageUrl} alt={service.title}/>
             </Grid>
             <CardContent>
                 <Typography align='center' paragraph variant='body2'>{service.description}</Typography>

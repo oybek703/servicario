@@ -28,6 +28,7 @@ const theme = createMuiTheme({
     overrides: {
         MuiTab: {
             root: {
+                padding: '2px 4px',
                 '@media (min-width: 600px)': {
                     minWidth: 110
                 }

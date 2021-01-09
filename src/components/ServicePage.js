@@ -10,9 +10,6 @@ import Alert from "./UI/Alert"
 const useStyles = makeStyles(theme => ({
     page: {
         marginTop: '6em'
-    },
-    learn: {
-        color: 'grey'
     }
 }))
 
@@ -31,14 +28,14 @@ const ServicePage = ({match}) => {
                     loading ? <CircularProgress color='secondary'/> : error ? <Alert/> : <Card elevation={0} raised variant='elevation'>
                         <Grid container alignItems='center'>
                             <Grid item sm>
-                                <CardMedia image={item.image} component='img'/>
+                                <CardMedia image={item.imageUrl} component='img'/>
                             </Grid>
                             <Grid item sm>
                                 <CardContent>
                                     <Typography align='center' variant='h5' gutterBottom>{item.title}</Typography>
                                     <Typography align='center' variant='body2' gutterBottom paragraph>{item.description}</Typography>
                                     <Grid container justify='center'>
-                                        <Button color='primary' classes={{label: classes.learn}} variant='outlined'>Learn More</Button>
+                                        <Button color='primary' variant='contained'>Make Offer</Button>
                                     </Grid>
                                 </CardContent>
                             </Grid>

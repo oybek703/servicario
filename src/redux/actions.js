@@ -2,6 +2,7 @@ import {firestore} from "../firebase"
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import {
+    CREATE_SERVICE_START, CREATE_SERVICE_SUCCESS,
     FETCH_SERVICE_ERROR,
     FETCH_SERVICE_START,
     FETCH_SERVICE_SUCCESS,
@@ -26,7 +27,7 @@ export function fetchServices() {
            if(cache) {
                throw new Error('Network is not available cache rejected!')
            }
-           dispatch({type: FETCH_SERVICES_SUCCESS, payload: snapshot.docs.map(doc => doc.data())})
+           dispatch({type: FETCH_SERVICES_SUCCESS, payload: snapshot.docs.map(doc => ({id: doc.id ,...doc.data()}))})
        } catch (e) {
            dispatch({type: FETCH_SERVICES_ERROR, payload: e.message})
        }
@@ -42,6 +43,14 @@ export function fetchService(serviceId) {
         } catch (e) {
             dispatch({type: FETCH_SERVICE_ERROR, payload: e.message})
         }
+    }
+}
+
+export const createNewService = (newService) => {
+    return async dispatch => {
+            dispatch({type: CREATE_SERVICE_START})
+            const docRef = await firestore.collection('services').add(newService)
+            dispatch({type: CREATE_SERVICE_SUCCESS, payload: docRef.id})
     }
 }
 
