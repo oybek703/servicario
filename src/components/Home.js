@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     },
     worker: {
         minHeight: '25em',
-        minWidth: '25em'
+        minWidth: '24em'
     },
     underline: {
         maxWidth: '6em',

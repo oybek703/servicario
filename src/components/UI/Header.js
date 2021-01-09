@@ -162,73 +162,9 @@ const Header = (props) => {
                             <Grid item>
                                 {matchSM
                                     ? <Fragment>
-                                        {matchSM &&
-                                        <Fragment>
                                             {user && name && <Chip avatar={<Avatar alt={name} src={avatar}/>} label={name}/>}
                                             <IconButton onClick={() => setDrawer(!drawer)} color='secondary'><MenuIcon /></IconButton>
-                                        </Fragment>
-                                        }
-                                            <SwipeableDrawer
-                                                onClose={() => {setDrawer(false); setMobileManage(false)}}
-                                                onOpen={() => setDrawer(true)}
-                                                open={drawer}
-                                                anchor='left'>
-                                                    <div className={classes.drawerMenu}>
-                                                        <Typography color='primary' variant='h5'>Servicario </Typography>
-                                                        <Tooltip title='Close'>
-                                                            <IconButton onClick={() => setDrawer(false)}>
-                                                                <ArrowBackIos color='primary'/>
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                        <Divider/>
-                                                    </div>
-                                                    <Divider/>
-                                                <List disablePadding>
-                                                    {
-                                                        (user ? signedUserRoutes : routes).map((route, index) => (
-                                                            route === 'Register' || route === 'Logout'
-                                                                ? <ListItem
-                                                                    key={route}
-                                                                    selected={index === menuSelectedIndex}
-                                                                    classes={{root: classes.listItemBtn}}
-                                                                    onClick={() => {setDrawer(false); if(route === 'Logout') handleLogout()}}
-                                                                    component={Link}
-                                                                    to={route === 'Logout' ? '/' : '/register'}>
-                                                                    <Button component='span' variant='contained' color='secondary' className={`${classes.register} ${classes.menuRegister}`}>
-                                                                        <ListItemText>{route}</ListItemText>
-                                                                    </Button>
-                                                                </ListItem>
-                                                                : route === 'Manage'
-                                                                    ? <Fragment key={route}>
-                                                                        <ListItem
-                                                                            selected={index === menuSelectedIndex}
-                                                                            classes={{root: classes.listItem}}
-                                                                            onClick={() => {setMobileManage(!mobileManage)}}>
-                                                                            <ListItemText>{route}</ListItemText>
-                                                                            {mobileManage ? <ExpandLess/> : <ExpandMore/>}
-                                                                        </ListItem>
-                                                                    <Collapse in={mobileManage} unmountOnExit>
-                                                                        <List disablePadding>
-                                                                            <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/new'><ListItemText>Create service</ListItemText></ListItem>
-                                                                            <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/my'><ListItemText>My services</ListItemText></ListItem>
-                                                                        </List>
-                                                                    </Collapse>
-                                                                </Fragment>
-                                                                    :
-                                                                        <ListItem
-                                                                            key={route}
-                                                                            selected={index === menuSelectedIndex}
-                                                                            classes={{root: classes.listItem}}
-                                                                            onClick={() => {setDrawer(false)}}
-                                                                            component={Link}
-                                                                            to={route === 'Home' ? '/' : `/${route.toLowerCase()}`}>
-                                                                        <ListItemText>{route}</ListItemText>
-                                                            </ListItem>
-                                                        ))
-                                                    }
-                                                </List>
-                                            </SwipeableDrawer>
-                                        </Fragment>
+                                      </Fragment>
                                     : <Fragment>
                                             <Tabs value={tab}
                                                 style={{borderBottom: 0 }}
@@ -259,7 +195,7 @@ const Header = (props) => {
                                                         classes={{root: classes.btnTab}}
                                                         to='/register'
                                                         label={<Button className={classes.register} variant='contained' color='secondary' component='span'>Sign Up</Button>}/>}
-                                        </Tabs>
+                                            </Tabs>
                                         </Fragment>
                                 }
                             </Grid>
@@ -273,6 +209,66 @@ const Header = (props) => {
                     <KeyboardArrowUpIcon />
                 </Fab>
             </ScrollTop>
+            <SwipeableDrawer
+                onClose={() => {setDrawer(false); setMobileManage(false)}}
+                onOpen={() => setDrawer(true)}
+                open={drawer}
+                anchor='left'>
+                <div className={classes.drawerMenu}>
+                    <Typography color='primary' variant='h5'>Servicario </Typography>
+                    <Tooltip title='Close'>
+                        <IconButton onClick={() => setDrawer(false)}>
+                            <ArrowBackIos color='primary'/>
+                        </IconButton>
+                    </Tooltip>
+                    <Divider/>
+                </div>
+                <Divider/>
+                <List disablePadding>
+                    {
+                        (user ? signedUserRoutes : routes).map((route, index) => (
+                            route === 'Register' || route === 'Logout'
+                                ? <ListItem
+                                    key={route}
+                                    selected={index === menuSelectedIndex}
+                                    classes={{root: classes.listItemBtn}}
+                                    onClick={() => {setDrawer(false); if(route === 'Logout') handleLogout()}}
+                                    component={Link}
+                                    to={route === 'Logout' ? '/' : '/register'}>
+                                    <Button component='span' variant='contained' color='secondary' className={`${classes.register} ${classes.menuRegister}`}>
+                                        <ListItemText>{route}</ListItemText>
+                                    </Button>
+                                </ListItem>
+                                : route === 'Manage'
+                                ? <Fragment key={route}>
+                                    <ListItem
+                                        selected={index === menuSelectedIndex}
+                                        classes={{root: classes.listItem}}
+                                        onClick={() => {setMobileManage(!mobileManage)}}>
+                                        <ListItemText>{route}</ListItemText>
+                                        {mobileManage ? <ExpandLess/> : <ExpandMore/>}
+                                    </ListItem>
+                                    <Collapse in={mobileManage} unmountOnExit>
+                                        <List disablePadding>
+                                            <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/new'><ListItemText>Create service</ListItemText></ListItem>
+                                            <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/my'><ListItemText>My services</ListItemText></ListItem>
+                                        </List>
+                                    </Collapse>
+                                </Fragment>
+                                :
+                                <ListItem
+                                    key={route}
+                                    selected={index === menuSelectedIndex}
+                                    classes={{root: classes.listItem}}
+                                    onClick={() => {setDrawer(false)}}
+                                    component={Link}
+                                    to={route === 'Home' ? '/' : `/${route.toLowerCase()}`}>
+                                    <ListItemText>{route}</ListItemText>
+                                </ListItem>
+                        ))
+                    }
+                </List>
+            </SwipeableDrawer>
             <Popper style={{zIndex: 1302}} placement='bottom' open={manage} anchorEl={manageRef.current} role={undefined} transition>
                 {({ TransitionProps }) => (
                     <Grow
