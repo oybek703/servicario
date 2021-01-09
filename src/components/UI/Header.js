@@ -119,9 +119,6 @@ const useStyles = makeStyles(theme => ({
         '&.Mui-selected': {
             backgroundColor: 'transparent'
         }
-    },
-    nested: {
-        marginLeft: '4.2em'
     }
 }))
 
@@ -155,6 +152,7 @@ const Header = (props) => {
     useEffect(() => {
         const unsubscribeUser = firebase.auth().onAuthStateChanged(user => {
             if(user) {
+                // user.getIdTokenResult().then(res => console.log(new Date(res.expirationTime).getTime()))
                 const {uid} = user
                 firestore.collection('profiles').doc(uid).get().then(snapshot => {
                     setName(snapshot.data().name)
@@ -216,9 +214,8 @@ const Header = (props) => {
                                                                     </Button>
                                                                 </ListItem>
                                                                 : route === 'Manage'
-                                                                    ? <Fragment>
+                                                                    ? <Fragment key={route}>
                                                                         <ListItem
-                                                                            key={route}
                                                                             selected={index === menuSelectedIndex}
                                                                             classes={{root: classes.listItem}}
                                                                             onClick={() => {setMobileManage(!mobileManage)}}>
@@ -227,8 +224,8 @@ const Header = (props) => {
                                                                         </ListItem>
                                                                     <Collapse in={mobileManage} unmountOnExit>
                                                                         <List disablePadding>
-                                                                            <ListItem classes={{root: classes.nested}} onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/new'><ListItemText>Create service</ListItemText></ListItem>
-                                                                            <ListItem classes={{root: classes.nested}} onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/my'><ListItemText>My services</ListItemText></ListItem>
+                                                                            <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/new'><ListItemText>Create service</ListItemText></ListItem>
+                                                                            <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/my'><ListItemText>My services</ListItemText></ListItem>
                                                                         </List>
                                                                     </Collapse>
                                                                 </Fragment>
@@ -292,7 +289,7 @@ const Header = (props) => {
                 </Fab>
             </ScrollTop>
             <Popper style={{zIndex: 1302}} placement='bottom' open={manage} anchorEl={manageRef.current} role={undefined} transition>
-                {({ TransitionProps, placement }) => (
+                {({ TransitionProps }) => (
                     <Grow
                         {...TransitionProps}
                         style={{ transformOrigin: 'right top' }}

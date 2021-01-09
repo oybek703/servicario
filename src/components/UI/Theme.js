@@ -65,6 +65,9 @@ const theme = createMuiTheme({
             }
         },
         MuiListItemText: {
+            root: {
+                textAlign: 'center'
+            },
             primary: {
                 fontSize: '1em'
             }

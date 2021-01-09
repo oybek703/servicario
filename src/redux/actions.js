@@ -66,6 +66,10 @@ export const signInUser = ({email, password}) => {
         try {
             dispatch({type: LOGIN_USER_START})
             const {user} = await firebase.auth().signInWithEmailAndPassword(email, password)
+            const {expirationTime, token} = await user.getIdTokenResult()
+            const {name, avatar} = (await firestore.collection('profiles').doc(user.uid).get()).data()
+            const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar}
+            console.log(userSession)
             dispatch({type: LOGIN_USER_SUCCESS, payload: user})
         } catch (e) {
             dispatch({type: LOGIN_USER_ERROR, payload: {message: e.message, code: e.code}})
