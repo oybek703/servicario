@@ -12,6 +12,7 @@ import CreateService from "./CreateService"
 import MyServices from "./MyServices"
 import {autoLogin} from "../redux/actions"
 import {useDispatch} from "react-redux"
+import Services from "./Services"
 
 function App() {
     const dispatch = useDispatch()
@@ -26,6 +27,7 @@ function App() {
               <Header/>
               <Switch>
                 <Route path='/' exact component={Home}/>
+                <Route path='/services' exact component={Services}/>
                 <Route path='/services/new' component={CreateService}/>
                 <Route path='/services/my' component={MyServices}/>
                 <Route path='/services/:id' component={ServicePage}/>

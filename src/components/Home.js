@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from "react-redux"
 import {fetchServices} from "../redux/actions"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import Alert from "./UI/Alert"
+import {Link} from "react-router-dom"
 
 
 const useStyles = makeStyles(theme => ({
@@ -72,7 +73,12 @@ const Home = () => {
                                 ? <CircularProgress color='secondary'/>
                                 : error ? <Alert/> : <Fragment>
                                     {
-                                        items.map((service, index) => <Grid key={index} item><Service service={service}/></Grid>)
+                                        !items.length
+                                            ? <Grid>
+                                                <Typography gutterBottom align='center'>No services created yet...</Typography>
+                                                <Button variant='contained' color='secondary' component={Link} to='/services/new'>Create New Service</Button>
+                                            </Grid>
+                                            : items.map((service, index) => <Grid key={index} item><Service service={service}/></Grid>)
                                     }
                                 </Fragment>
                         }

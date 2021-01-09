@@ -41,7 +41,6 @@ const theme = createMuiTheme({
         },
         MuiButton: {
             label: {
-                // textTransform: 'none',
                 color: 'white',
                 fontSize: '1em'
             }
@@ -75,6 +74,13 @@ const theme = createMuiTheme({
         MuiList: {
             root: {
                 backgroundColor: '#eeeeee'
+            }
+        },
+        MuiListItem: {
+            root: {
+                '&$focusVisible': {
+                    backgroundColor: 'transparent'
+                }
             }
         }
     }

@@ -156,7 +156,7 @@ const Header = (props) => {
                             <Grid item>
                                 <Grid container alignItems='center'>
                                     <Typography className={classes.logo} variant='h5' component={Link} to='/'>Servicario &nbsp;</Typography>
-                                    {!matchSM && user && name && avatar && <Chip avatar={<Avatar alt={name} src={avatar}/>} label={name}/>}
+                                    {!matchSM && user && name  && <Chip avatar={<Avatar alt={name} src={avatar}/>} label={name}/>}
                                 </Grid>
                             </Grid>
                             <Grid item>
@@ -164,7 +164,7 @@ const Header = (props) => {
                                     ? <Fragment>
                                         {matchSM &&
                                         <Fragment>
-                                            {user && name && avatar && <Chip avatar={<Avatar alt={name} src={avatar}/>} label={name}/>}
+                                            {user && name && <Chip avatar={<Avatar alt={name} src={avatar}/>} label={name}/>}
                                             <IconButton onClick={() => setDrawer(!drawer)} color='secondary'><MenuIcon /></IconButton>
                                         </Fragment>
                                         }

@@ -6,7 +6,7 @@ const WithAuth = Component => {
     const Wrapped = props => {
         const {user} = useSelector(state => state.auth)
         if(!user) {
-            return <Redirect to='/'/>
+            return <Redirect to='/login'/>
         }
         return <Component {...props} />
     }
