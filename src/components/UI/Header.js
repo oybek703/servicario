@@ -19,9 +19,6 @@ import Tooltip from "@material-ui/core/Tooltip"
 import {useDispatch, useSelector} from "react-redux"
 import {logoutUser} from "../../redux/actions"
 import Chip from "@material-ui/core/Chip"
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import {firestore} from "../../firebase"
 import Avatar from "@material-ui/core/Avatar"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import Popper from "@material-ui/core/Popper"
@@ -141,6 +138,7 @@ const Header = (props) => {
     const handleLogout = () => dispatch(logoutUser())
     const handleDropdownClose = () => setManage(false)
     useEffect(() => {
+            if(user) {setName(user.name); setAvatar(user.avatar)}
             switch (pathname) {
                 case '/': setTab(0); setMenuSelectedIndex(0); break
                 case '/faq': setTab(2); setMenuSelectedIndex(2); break
@@ -149,19 +147,6 @@ const Header = (props) => {
                 default: setTab(1); setMenuSelectedIndex(1)
             }
     }, [pathname, user])
-    useEffect(() => {
-        const unsubscribeUser = firebase.auth().onAuthStateChanged(user => {
-            if(user) {
-                // user.getIdTokenResult().then(res => console.log(new Date(res.expirationTime).getTime()))
-                const {uid} = user
-                firestore.collection('profiles').doc(uid).get().then(snapshot => {
-                    setName(snapshot.data().name)
-                    setAvatar(snapshot.data().avatar)
-                })
-            }
-        })
-        return unsubscribeUser
-    }, [])
     return (
         <Fragment>
             <ElevationScroll >

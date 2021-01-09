@@ -1,4 +1,4 @@
-import React from "react"
+import React, {useEffect} from "react"
 import {ThemeProvider} from '@material-ui/core/styles'
 import theme from "./UI/Theme"
 import {BrowserRouter, Switch, Route} from "react-router-dom"
@@ -10,8 +10,15 @@ import RegisterPage from "./RegisterPage"
 import LoginPage from "./LoginPage"
 import CreateService from "./CreateService"
 import MyServices from "./MyServices"
+import {autoLogin} from "../redux/actions"
+import {useDispatch} from "react-redux"
 
 function App() {
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(autoLogin())
+        // eslint-disable-next-line
+    }, [])
   return (
       <ThemeProvider theme={theme}>
           <CssBaseline/>

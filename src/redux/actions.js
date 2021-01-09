@@ -54,7 +54,12 @@ export const registerNewUser = ({name, email, password, avatar}) => {
             const {user} = await firebase.auth().createUserWithEmailAndPassword(email, password)
             const userProfile = {uid: user.uid, name, avatar, email, services: [], description: ''}
             await firestore.collection('profiles').doc(user.uid).set(userProfile)
-            dispatch({type: REGISTER_USER_SUCCESS, payload: user})
+            const {expirationTime, token} = await user.getIdTokenResult()
+            const {name, avatar} = (await firestore.collection('profiles').doc(user.uid).get()).data()
+            const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar}
+            localStorage.setItem('session', JSON.stringify(userSession))
+            dispatch({type: REGISTER_USER_SUCCESS, payload: userSession})
+            dispatch(autoLogout((new Date(expirationTime).getTime() - new Date().getTime()) / 1000))
         } catch (e) {
             dispatch({type: REGISTER_USER_ERROR, payload: {message: e.message, code: e.code}})
         }
@@ -69,8 +74,9 @@ export const signInUser = ({email, password}) => {
             const {expirationTime, token} = await user.getIdTokenResult()
             const {name, avatar} = (await firestore.collection('profiles').doc(user.uid).get()).data()
             const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar}
-            console.log(userSession)
-            dispatch({type: LOGIN_USER_SUCCESS, payload: user})
+            localStorage.setItem('session', JSON.stringify(userSession))
+            dispatch({type: LOGIN_USER_SUCCESS, payload: userSession})
+            dispatch(autoLogout((new Date(expirationTime).getTime() - new Date().getTime()) / 1000))
         } catch (e) {
             dispatch({type: LOGIN_USER_ERROR, payload: {message: e.message, code: e.code}})
         }
@@ -79,7 +85,33 @@ export const signInUser = ({email, password}) => {
 
 export const logoutUser = () => {
     return async dispatch => {
+        localStorage.removeItem('session')
         await firebase.auth().signOut()
         dispatch({type: LOGOUT_USER})
+    }
+}
+
+export const autoLogin = () => {
+    return async dispatch => {
+        const session = JSON.parse(localStorage.getItem('session'))
+        if(session) {
+            const {expirationTime} = session
+            if(new Date(expirationTime).getTime() < new Date().getTime()) {
+                dispatch(logoutUser())
+            } else {
+                dispatch({type: LOGIN_USER_SUCCESS, payload: session})
+                dispatch(autoLogout((new Date(expirationTime).getTime() - new Date().getTime()) / 1000))
+            }
+        } else {
+            dispatch(logoutUser())
+        }
+    }
+}
+
+const autoLogout = (time) => {
+    return async dispatch => {
+        setTimeout(() => {
+            dispatch(logoutUser())
+        }, time * 1000)
     }
 }

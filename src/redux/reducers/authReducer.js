@@ -1,4 +1,5 @@
 import {
+    AUTO_LOGIN,
     LOGIN_USER_ERROR,
     LOGIN_USER_START,
     LOGIN_USER_SUCCESS, LOGOUT_USER,
@@ -21,6 +22,7 @@ const auth = (state = initialState, action) => {
             return {...state, loading: true, error: null}
         case REGISTER_USER_SUCCESS:
         case LOGIN_USER_SUCCESS:
+        case AUTO_LOGIN:
             return {...state, loading: false, user: payload, error: null}
         case REGISTER_USER_ERROR:
         case LOGIN_USER_ERROR:
