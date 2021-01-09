@@ -44,6 +44,13 @@ const theme = createMuiTheme({
             label: {
                 color: 'white',
                 fontSize: '1em'
+            },
+            contained: {
+                '&:hover': {
+                    backgroundColor: '#222',
+                    fontWeight: 700,
+                    fontSize: '1.01em'
+                }
             }
         },
         MuiLink: {

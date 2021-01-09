@@ -2,15 +2,21 @@ import {firestore} from "../firebase"
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import {
-    CREATE_SERVICE_START, CREATE_SERVICE_SUCCESS,
+    CREATE_SERVICE_START,
+    CREATE_SERVICE_SUCCESS,
     FETCH_SERVICE_ERROR,
     FETCH_SERVICE_START,
     FETCH_SERVICE_SUCCESS,
     FETCH_SERVICES_ERROR,
     FETCH_SERVICES_START,
-    FETCH_SERVICES_SUCCESS, LOGIN_USER_ERROR,
+    FETCH_SERVICES_SUCCESS,
+    FETCH_USER_SERVICES_ERROR,
+    FETCH_USER_SERVICES_START,
+    FETCH_USER_SERVICES_SUCCESS,
+    LOGIN_USER_ERROR,
     LOGIN_USER_START,
-    LOGIN_USER_SUCCESS, LOGOUT_USER,
+    LOGIN_USER_SUCCESS,
+    LOGOUT_USER,
     REGISTER_USER_ERROR,
     REGISTER_USER_START,
     REGISTER_USER_SUCCESS
@@ -23,10 +29,7 @@ export function fetchServices() {
        try {
            dispatch({type: FETCH_SERVICES_START})
            const snapshot = await firestore.collection('services').get()
-           const cache = snapshot.metadata.fromCache
-           if(cache) {
-               throw new Error('Network is not available cache rejected!')
-           }
+           rejectCache(snapshot)
            dispatch({type: FETCH_SERVICES_SUCCESS, payload: snapshot.docs.map(doc => ({id: doc.id ,...doc.data()}))})
        } catch (e) {
            dispatch({type: FETCH_SERVICES_ERROR, payload: e.message})
@@ -51,6 +54,27 @@ export const createNewService = (newService) => {
             dispatch({type: CREATE_SERVICE_START})
             const docRef = await firestore.collection('services').add(newService)
             dispatch({type: CREATE_SERVICE_SUCCESS, payload: docRef.id})
+    }
+}
+
+export const fetchUserServices = uid => {
+    return async dispatch => {
+        try {
+            dispatch({type: FETCH_USER_SERVICES_START})
+            const userServices = await firestore.collection('services').where('user', '==', uid).get()
+            rejectCache(userServices)
+            const items = userServices.docs.map(doc => ({id: doc.id, ...doc.data()}))
+            dispatch({type: FETCH_USER_SERVICES_SUCCESS, payload: items})
+        } catch (e) {
+            dispatch({type: FETCH_USER_SERVICES_ERROR, payload: {code: e.code, message: e.message}})
+        }
+    }
+}
+
+const rejectCache = snapshot => {
+    const cache = snapshot.metadata.fromCache
+    if(cache) {
+        throw new Error('Network is not available cache rejected!')
     }
 }
 

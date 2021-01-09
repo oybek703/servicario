@@ -12,11 +12,12 @@ const services = (state = initialState, action) => {
         case FETCH_SERVICES_START:
             return {...state, loading: true, error: null}
         case FETCH_SERVICES_SUCCESS:
-            return {...state, items: payload,loading: false, error: null}
+            return {...state, items: payload, loading: false, error: null}
         case FETCH_SERVICES_ERROR:
             return {...state, loading: false, error: payload}
         default:
             return state
     }
 }
+
 export default services

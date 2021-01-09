@@ -83,7 +83,7 @@ const CreateService = ({history}) => {
                             <TextField required inputProps={{min: 0}} type='number' InputProps={{startAdornment: <Icon fontSize='small'>$</Icon>}} name='price' size='small' fullWidth variant='outlined' value={formData.price} onChange={handleChange} placeholder='Service price per hour'/>
                         </Grid>
                         <Grid item className={classes.fields}>
-                            <Button endIcon={loading && <CircularProgress size='20px'/>} disabled={loading} type='submit' variant='contained' color='primary'>Create</Button>
+                            <Button endIcon={loading && <CircularProgress size='20px'/>} disabled={loading || !!urlHelperText} type='submit' variant='contained' color='primary'>Create</Button>
                         </Grid>
                     </Grid>
                 </form>

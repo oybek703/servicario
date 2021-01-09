@@ -133,7 +133,7 @@ const Header = (props) => {
     const [menuSelectedIndex, setMenuSelectedIndex] = useState(0)
     const [name, setName] = useState('')
     const [avatar, setAvatar] = useState('')
-    const routes = ['Home', 'Services', 'FAQ', 'Login', 'Register']
+    const routes = ['Home', 'Services', 'FAQ', 'Login', 'Sign Up']
     const signedUserRoutes = ['Home', 'Services', 'FAQ', 'Manage', 'Logout']
     const handleLogout = () => dispatch(logoutUser())
     const handleDropdownClose = () => setManage(false)
@@ -227,7 +227,7 @@ const Header = (props) => {
                 <List disablePadding>
                     {
                         (user ? signedUserRoutes : routes).map((route, index) => (
-                            route === 'Register' || route === 'Logout'
+                            route === 'Sign Up' || route === 'Logout'
                                 ? <ListItem
                                     key={route}
                                     selected={index === menuSelectedIndex}

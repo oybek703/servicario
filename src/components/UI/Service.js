@@ -3,6 +3,9 @@ import Card from '@material-ui/core/Card'
 import {Button, CardContent, CardHeader, makeStyles, Typography} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import {Link} from "react-router-dom"
+import List from "@material-ui/core/List"
+import ListItem from "@material-ui/core/ListItem"
+import ListItemText from "@material-ui/core/ListItemText"
 
 const usesStyles = makeStyles(theme => ({
     card: {
@@ -14,8 +17,7 @@ const usesStyles = makeStyles(theme => ({
         maxHeight: '15em'
     },
     learnBtn: {
-        backgroundColor: '#00bc1e',
-        color: 'white'
+        backgroundColor: '#00bc1e'
     }
 }))
 
@@ -28,7 +30,7 @@ const Service = ({service}) => {
                 <img  className={classes.cardImg} src={service.imageUrl} alt={service.title}/>
             </Grid>
             <CardContent>
-                <Typography align='center' paragraph variant='body2'>{service.description}</Typography>
+                <Typography align='center' paragraph variant='body2' gutterBottom>{service.description}</Typography>
                 <Grid container justify='center'>
                     <Button component={Link} to={`/services/${service.id}`} classes={{root: classes.learnBtn}} variant='contained'>Learn More</Button>
                 </Grid>
