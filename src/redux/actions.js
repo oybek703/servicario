@@ -54,10 +54,7 @@ export const registerNewUser = ({name, email, password, avatar}) => {
             const {user} = await firebase.auth().createUserWithEmailAndPassword(email, password)
             const userProfile = {uid: user.uid, name, avatar, email, services: [], description: ''}
             await firestore.collection('profiles').doc(user.uid).set(userProfile)
-            const {expirationTime, token} = await user.getIdTokenResult()
-            const {name, avatar} = (await firestore.collection('profiles').doc(user.uid).get()).data()
-            const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar}
-            localStorage.setItem('session', JSON.stringify(userSession))
+            const {userSession, expirationTime} = await saveSession(user)
             dispatch({type: REGISTER_USER_SUCCESS, payload: userSession})
             dispatch(autoLogout((new Date(expirationTime).getTime() - new Date().getTime()) / 1000))
         } catch (e) {
@@ -71,10 +68,7 @@ export const signInUser = ({email, password}) => {
         try {
             dispatch({type: LOGIN_USER_START})
             const {user} = await firebase.auth().signInWithEmailAndPassword(email, password)
-            const {expirationTime, token} = await user.getIdTokenResult()
-            const {name, avatar} = (await firestore.collection('profiles').doc(user.uid).get()).data()
-            const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar}
-            localStorage.setItem('session', JSON.stringify(userSession))
+            const {userSession, expirationTime} = await saveSession(user)
             dispatch({type: LOGIN_USER_SUCCESS, payload: userSession})
             dispatch(autoLogout((new Date(expirationTime).getTime() - new Date().getTime()) / 1000))
         } catch (e) {
@@ -106,6 +100,14 @@ export const autoLogin = () => {
             dispatch(logoutUser())
         }
     }
+}
+
+const saveSession = async (user) => {
+    const {expirationTime, token} = await user.getIdTokenResult()
+    const {name, avatar} = (await firestore.collection('profiles').doc(user.uid).get()).data()
+    const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar}
+    localStorage.setItem('session', JSON.stringify(userSession))
+    return {userSession, expirationTime}
 }
 
 const autoLogout = (time) => {
