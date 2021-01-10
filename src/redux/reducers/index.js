@@ -7,6 +7,7 @@ import userServices from "./userServices"
 import createOffer from "./createOffer"
 import sentOffers from "./sentOffers"
 import receivedOffers from "./receivedOffers"
+import updateOffer from "./updateOffer"
 
 const rootReducer = combineReducers(
     {
@@ -17,7 +18,8 @@ const rootReducer = combineReducers(
         userServices,
         createOffer,
         sentOffers,
-        receivedOffers
+        receivedOffers,
+        updateOffer
     }
 )
 

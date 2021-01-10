@@ -273,7 +273,7 @@ const Header = (props) => {
                     }
                 </List>
             </SwipeableDrawer>
-            <Popper style={{zIndex: 1302}} open={manage} anchorEl={manageRef.current || <span>test</span>} role={undefined} transition>
+            {user && <Popper style={{zIndex: 1302}} open={manage} anchorEl={manageRef.current} role={undefined} transition>
                 {({ TransitionProps }) => (
                     <Grow
                         {...TransitionProps}
@@ -281,15 +281,15 @@ const Header = (props) => {
                     >
                         <Paper square elevation={0}>
                             <MenuList classes={{root: classes.menu}} disablePadding onMouseLeave={handleDropdownClose} onMouseEnter={() => setManage(true)} autoFocusItem={manage} id="menu-list-grow">
-                                <MenuItem component={Link} to='/services/new' onClick={handleDropdownClose}>Create service</MenuItem>
-                                <MenuItem component={Link} to='/services/my' onClick={handleDropdownClose}>My services</MenuItem>
-                                <MenuItem component={Link} to='/offers/sent' onClick={handleDropdownClose}>Sent Offers</MenuItem>
-                                <MenuItem component={Link} to='/offers/received' onClick={handleDropdownClose}>Received Offers</MenuItem>
+                                <MenuItem selected={pathname === '/services/new'} component={Link} to='/services/new' onClick={handleDropdownClose}>Create service</MenuItem>
+                                <MenuItem selected={pathname === '/services/my'} component={Link} to='/services/my' onClick={handleDropdownClose}>My services</MenuItem>
+                                <MenuItem selected={pathname === '/offers/sent'} component={Link} to='/offers/sent' onClick={handleDropdownClose}>Sent Offers</MenuItem>
+                                <MenuItem selected={pathname === '/offers/received'} component={Link} to='/offers/received' onClick={handleDropdownClose}>Received Offers</MenuItem>
                             </MenuList>
                         </Paper>
                     </Grow>
                 )}
-            </Popper>
+            </Popper>}
         </Fragment>
     )
 }

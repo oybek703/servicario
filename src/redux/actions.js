@@ -26,7 +26,7 @@ import {
     LOGOUT_USER,
     REGISTER_USER_ERROR,
     REGISTER_USER_START,
-    REGISTER_USER_SUCCESS
+    REGISTER_USER_SUCCESS, UPDATE_OFFER_START, UPDATE_OFFER_SUCCESS
 } from "./types"
 
 //SERVICES
@@ -190,11 +190,19 @@ export const fetchUserReceivedOffers = uid => {
     return async dispatch => {
         try {
             dispatch({type: FETCH_RECEIVED_OFFERS_START})
-            const snapshot = await firestore.collection('offers').where('toUser', '==', `/profiles/${uid}`).get()
+            const snapshot = await firestore.collection('offers').where('toUser.ref', '==', `/profiles/${uid}`).get()
             rejectCache(snapshot)
             dispatch({type: FETCH_RECEIVED_OFFERS_SUCCESS, payload: snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))})
         } catch (e) {
             dispatch({type: FETCH_RECEIVED_OFFERS_ERROR, payload: {code: e.code, message: e.message}})
         }
+    }
+}
+
+export const updateOffer = (offerId, status) => {
+    return async dispatch => {
+        dispatch({type: UPDATE_OFFER_START})
+        await firestore.collection('offers').doc(offerId).update({status})
+        dispatch({type: UPDATE_OFFER_SUCCESS, payload: `update: ${status}`})
     }
 }

@@ -11,10 +11,11 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import List from "@material-ui/core/List"
 import Reloader from "./UI/Reloader"
+import CardActions from "@material-ui/core/CardActions"
 
 const useStyles = makeStyles(theme => ({
     main: {
-        marginTop: '3em'
+        marginTop: '1em'
     },
     card: {
         marginTop: '2em',
@@ -28,6 +29,18 @@ const useStyles = makeStyles(theme => ({
     offerInfo: {
         marginTop: '1em',
         backgroundColor: 'gray',
+        color: 'white'
+    },
+    pending: {
+        backgroundColor: theme.palette.warning.light,
+        color: 'white'
+    },
+    accepted: {
+        backgroundColor: theme.palette.success.light,
+        color: 'white'
+    },
+    declined: {
+        backgroundColor: theme.palette.error.light,
         color: 'white'
     }
 }))
@@ -44,7 +57,8 @@ const SentOffers = () => {
     }, [])
     return (
         <Container>
-            <Grid container justify='space-evenly' className={classes.main}>
+            <Typography variant='h4' color='primary' className={classes.main} align='center'>Sent Offers</Typography>
+            <Grid container justify='space-evenly'>
                 {
                     loading
                         ? <CircularProgress color='secondary'/>
@@ -66,19 +80,26 @@ const SentOffers = () => {
                                                 <Typography align='center' paragraph variant='body2' gutterBottom>{offer.note}</Typography>
                                                 <Grid container justify='center'>
                                                     <List disablePadding>
-                                                    <ListItem>
-                                                        <ListItemText disableTypography>{offer.status}</ListItemText>
-                                                    </ListItem>
+                                                        {
+                                                            offer.status === 'pending'
+                                                                ? <ListItem classes={{root: classes.pending}}><ListItemText disableTypography>{offer.status}</ListItemText></ListItem>
+                                                                : offer.status === 'accepted'
+                                                                    ? <ListItem classes={{root: classes.accepted}}><ListItemText disableTypography>{offer.status}</ListItemText></ListItem>
+                                                                    : <ListItem classes={{root: classes.declined}}><ListItemText disableTypography>{offer.status}</ListItemText></ListItem>
+                                                        }
                                                     </List>
                                                 </Grid>
                                                 <Grid container>
                                                     <List className={classes.offerInfo}>
-                                                        <ListItem>From: {offer.fromUser.name}</ListItem>
+                                                        <ListItem>To: {offer.toUser.name}</ListItem>
                                                         <ListItem>Note: {offer.note}</ListItem>
                                                         <ListItem>Price: {offer.price}$</ListItem>
-                                                        <ListItem>Time: {offer.time}</ListItem>
+                                                        <ListItem>Time: {offer.time} hours</ListItem>
                                                     </List>
                                                 </Grid>
+                                                <CardActions>
+                                                    {offer.status === 'accepted' && <Button className={classes.accepted} variant='contained' color='primary'>Collaborate</Button>}
+                                                </CardActions>
                                             </CardContent>
                                         </Card>
                                     </Grid>)

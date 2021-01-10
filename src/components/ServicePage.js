@@ -56,7 +56,7 @@ const ServicePage = ({match}) => {
             service: `/services/${id}`,
             status: 'pending',
             time: formData.hour,
-            toUser: `/profiles/${item.user.uid}`,
+            toUser: {ref: `/profiles/${item.user.uid}`, name: item.user.name},
             serviceImage: `${item.imageUrl}`
         }
         dispatch(createNewOffer(newOffer))
