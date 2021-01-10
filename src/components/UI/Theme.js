@@ -90,6 +90,11 @@ const theme = createMuiTheme({
                     backgroundColor: 'transparent'
                 }
             }
+        },
+        MuiFormHelperText: {
+            root: {
+                marginBottom: '1em'
+            }
         }
     }
 })

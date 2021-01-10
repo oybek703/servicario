@@ -42,7 +42,9 @@ export function fetchService(serviceId) {
         try {
             dispatch({type: FETCH_SERVICE_START})
             const snapshot = await firestore.collection('services').doc(serviceId).get()
-            dispatch({type: FETCH_SERVICE_SUCCESS, payload: {...snapshot.data()}})
+            const {user: uid} = snapshot.data()
+            const {name} = (await getUserById(uid)).data()
+            dispatch({type: FETCH_SERVICE_SUCCESS, payload: {...snapshot.data(), user: {uid, name}}})
         } catch (e) {
             dispatch({type: FETCH_SERVICE_ERROR, payload: e.message})
         }
@@ -150,3 +152,5 @@ const autoLogout = (time) => {
         }, time * 1000)
     }
 }
+
+const getUserById = async uid => firestore.doc(`profiles/${uid}`).get()
