@@ -2,6 +2,8 @@ import {firestore} from "../firebase"
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import {
+    CREATE_OFFER_CLEAR,
+    CREATE_OFFER_START, CREATE_OFFER_SUCCESS,
     CREATE_SERVICE_START,
     CREATE_SERVICE_SUCCESS,
     FETCH_SERVICE_ERROR,
@@ -54,8 +56,8 @@ export function fetchService(serviceId) {
 export const createNewService = (newService) => {
     return async dispatch => {
             dispatch({type: CREATE_SERVICE_START})
-            const docRef = await firestore.collection('services').add(newService)
-            dispatch({type: CREATE_SERVICE_SUCCESS, payload: docRef.id})
+            const {id} = await firestore.collection('services').add(newService)
+            dispatch({type: CREATE_SERVICE_SUCCESS, payload: id})
     }
 }
 
@@ -154,3 +156,14 @@ const autoLogout = (time) => {
 }
 
 const getUserById = async uid => firestore.doc(`profiles/${uid}`).get()
+
+//OFFERS
+
+export const createNewOffer = newOffer => {
+    return async dispatch => {
+        dispatch({type: CREATE_OFFER_START})
+        const {id} = await firestore.collection('offers').add(newOffer)
+        dispatch({type: CREATE_OFFER_SUCCESS, payload: id})
+        dispatch({type: CREATE_OFFER_CLEAR})
+    }
+}

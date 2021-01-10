@@ -4,7 +4,8 @@ import service from "./serviceReducer"
 import auth from "./authReducer"
 import createService from "./createService"
 import userServices from "./userServices"
+import createOffer from "./createOffer"
 
-const rootReducer = combineReducers({services, service, auth, createService, userServices})
+const rootReducer = combineReducers({services, service, auth, createService, userServices, createOffer})
 
 export default rootReducer

@@ -4,7 +4,7 @@ import Card from "@material-ui/core/Card"
 import Grid from "@material-ui/core/Grid"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import {useDispatch, useSelector} from "react-redux"
-import {fetchService} from "../redux/actions"
+import {createNewOffer, fetchService} from "../redux/actions"
 import Alert from "./UI/Alert"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
@@ -14,6 +14,7 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogContent from "@material-ui/core/DialogContent"
 import TextField from "@material-ui/core/TextField"
 import DialogActions from "@material-ui/core/DialogActions"
+import Report from "./UI/Report"
 
 const useStyles = makeStyles(theme => ({
     page: {
@@ -25,8 +26,10 @@ const ServicePage = ({match}) => {
     const {id} = match.params
     const classes = useStyles()
     const dispatch = useDispatch()
+    const [snackbar, setSnackbar] =  useState(false)
     const {item, loading, error} = useSelector(state => state.service)
     const {user} = useSelector(state => state.auth)
+    const {offerId, loading: offerLoading} = useSelector(state => state.createOffer)
     const [dialog, setDialog] = useState(false)
     const [formData, setFormData] = useState({note: '', hour: ''})
     const [estimatedPrice, setEstimatedPrice] = useState(0)
@@ -42,17 +45,34 @@ const ServicePage = ({match}) => {
     const handleClose = () => {
         setDialog(false)
         setFormData(formData => Object.keys(formData).reduce((acc, key) => {acc[key] = ''; return acc}, {}))
+        setEstimatedPrice(0)
     }
     const handleSubmit = e => {
         e.preventDefault()
-        handleClose()
-        console.log(formData)
+        const newOffer = {
+            fromUser: `/profiles/${user.uid}`,
+            note: formData.note,
+            price: estimatedPrice,
+            service: `/services/${item.id}`,
+            status: 'pending',
+            time: formData.hour,
+            toUser: `/profiles/${item.user.uid}`
+        }
+        dispatch(createNewOffer(newOffer))
     }
     useEffect(() => {
         dispatch(fetchService(id))
     }, [id, dispatch])
+    useEffect(() => {
+        if(offerId) {
+            handleClose()
+            setSnackbar(true)
+        }
+    //    eslint-disable-next-line
+    }, [offerLoading])
     return (
         <Container>
+            <Report snackbar={snackbar} setSnackBar={setSnackbar} message='Offer created successfully!' success/>
             <Grid className={classes.page} container justify='center' alignItems='center'>
                 {
                     loading
@@ -94,7 +114,7 @@ const ServicePage = ({match}) => {
                     </Card>
                 }
             </Grid>
-            <Dialog maxWidth='md' open={dialog} onClose={() => setDialog(false)}>
+            <Dialog maxWidth='md' open={dialog || offerLoading} onClose={() => setDialog(false)}>
                 <DialogTitle>Make a deal</DialogTitle>
                 <DialogContent>
                     <form autoComplete='off' onSubmit={handleSubmit}>
@@ -109,8 +129,8 @@ const ServicePage = ({match}) => {
                             </ListItem>
                         </List>
                         <DialogActions>
-                            <Button type='submit' variant='contained' color='primary'>Send Message</Button>
-                            <Button onClick={handleClose} variant='contained'  color='secondary'>Cancel</Button>
+                            <Button disabled={offerLoading} endIcon={offerLoading && <CircularProgress size='20px'/>} type='submit' variant='contained' color='primary'>Send Message</Button>
+                            <Button disabled={offerLoading} onClick={handleClose} variant='contained'  color='secondary'>Cancel</Button>
                         </DialogActions>
                     </form>
                 </DialogContent>
