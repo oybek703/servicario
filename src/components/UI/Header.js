@@ -168,6 +168,7 @@ const Header = (props) => {
                                       </Fragment>
                                     : <Fragment>
                                             <Tabs value={tab}
+                                                TabIndicatorProps={{style: {display: 'none'}}}
                                                 style={{borderBottom: 0 }}
                                                 onChange={(event, newValue) => setTab(newValue)}>
                                                 <Tab component={Link} to='/' label='Home'/>
@@ -272,7 +273,7 @@ const Header = (props) => {
                     }
                 </List>
             </SwipeableDrawer>
-            <Popper style={{zIndex: 1302}} open={manage} anchorEl={manageRef.current} role={undefined} transition>
+            <Popper style={{zIndex: 1302}} open={manage} anchorEl={manageRef.current || <span>test</span>} role={undefined} transition>
                 {({ TransitionProps }) => (
                     <Grow
                         {...TransitionProps}

@@ -3,9 +3,14 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import {
     CREATE_OFFER_CLEAR,
-    CREATE_OFFER_START, CREATE_OFFER_SUCCESS,
+    CREATE_OFFER_START,
+    CREATE_OFFER_SUCCESS,
     CREATE_SERVICE_START,
-    CREATE_SERVICE_SUCCESS, FETCH_SENT_OFFERS_ERROR, FETCH_SENT_OFFERS_START, FETCH_SENT_OFFERS_SUCCESS,
+    CREATE_SERVICE_SUCCESS, FETCH_RECEIVED_OFFERS_ERROR,
+    FETCH_RECEIVED_OFFERS_START, FETCH_RECEIVED_OFFERS_SUCCESS,
+    FETCH_SENT_OFFERS_ERROR,
+    FETCH_SENT_OFFERS_START,
+    FETCH_SENT_OFFERS_SUCCESS,
     FETCH_SERVICE_ERROR,
     FETCH_SERVICE_START,
     FETCH_SERVICE_SUCCESS,
@@ -177,6 +182,19 @@ export const fetchUserSentOffers = uid => {
             dispatch({type: FETCH_SENT_OFFERS_SUCCESS, payload: snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))})
         } catch (e) {
             dispatch({type: FETCH_SENT_OFFERS_ERROR, payload: {code: e.code, message: e.message}})
+        }
+    }
+}
+
+export const fetchUserReceivedOffers = uid => {
+    return async dispatch => {
+        try {
+            dispatch({type: FETCH_RECEIVED_OFFERS_START})
+            const snapshot = await firestore.collection('offers').where('toUser', '==', `/profiles/${uid}`).get()
+            rejectCache(snapshot)
+            dispatch({type: FETCH_RECEIVED_OFFERS_SUCCESS, payload: snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))})
+        } catch (e) {
+            dispatch({type: FETCH_RECEIVED_OFFERS_ERROR, payload: {code: e.code, message: e.message}})
         }
     }
 }

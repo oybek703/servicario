@@ -11,7 +11,6 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import List from "@material-ui/core/List"
 import Reloader from "./UI/Reloader"
-import CardActions from "@material-ui/core/CardActions"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -80,17 +79,12 @@ const SentOffers = () => {
                                                         <ListItem>Time: {offer.time}</ListItem>
                                                     </List>
                                                 </Grid>
-                                                <CardActions>
-                                                    <Button size='small' color='primary' variant='contained'>Accept</Button>
-                                                    <Button size='small' color='secondary' variant='contained'>Decline</Button>
-                                                </CardActions>
                                             </CardContent>
                                         </Card>
                                     </Grid>)
                             }
                         </Fragment>
                 }
-
             </Grid>
         </Container>
     )
