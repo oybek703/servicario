@@ -23,7 +23,6 @@ import Avatar from "@material-ui/core/Avatar"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import Popper from "@material-ui/core/Popper"
 import Paper from "@material-ui/core/Paper"
-import ClickAwayListener from "@material-ui/core/ClickAwayListener"
 import MenuList from "@material-ui/core/MenuList"
 import MenuItem from "@material-ui/core/MenuItem"
 import Grow from "@material-ui/core/Grow"
@@ -143,6 +142,8 @@ const Header = (props) => {
                 case '/': setTab(0); setMenuSelectedIndex(0); break
                 case '/faq': setTab(2); setMenuSelectedIndex(2); break
                 case '/login': setTab(3); setMenuSelectedIndex(3); break
+                case '/offers/sent':
+                case '/offers/received': setTab(3); setMenuSelectedIndex(3); break
                 case '/register': setTab(4); setMenuSelectedIndex(4); break
                 default: setTab(1); setMenuSelectedIndex(1)
             }
@@ -252,6 +253,8 @@ const Header = (props) => {
                                         <List disablePadding>
                                             <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/new'><ListItemText>Create service</ListItemText></ListItem>
                                             <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/my'><ListItemText>My services</ListItemText></ListItem>
+                                            <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/offers/sent'><ListItemText>Sent Offers</ListItemText></ListItem>
+                                            <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/offers/received'><ListItemText>Received Offers</ListItemText></ListItem>
                                         </List>
                                     </Collapse>
                                 </Fragment>
@@ -269,19 +272,19 @@ const Header = (props) => {
                     }
                 </List>
             </SwipeableDrawer>
-            <Popper style={{zIndex: 1302}} placement='bottom' open={manage} anchorEl={manageRef.current} role={undefined} transition>
+            <Popper style={{zIndex: 1302}} open={manage} anchorEl={manageRef.current} role={undefined} transition>
                 {({ TransitionProps }) => (
                     <Grow
                         {...TransitionProps}
                         style={{ transformOrigin: 'right top' }}
                     >
-                        <Paper square elevation={0} onMouseLeave={handleDropdownClose}>
-                            <ClickAwayListener onClickAway={handleDropdownClose}>
-                                <MenuList classes={{root: classes.menu}} disablePadding onMouseEnter={() => setManage(true)} autoFocusItem={manage} id="menu-list-grow">
-                                    <MenuItem component={Link} to='/services/new' onClick={handleDropdownClose}>Create service</MenuItem>
-                                    <MenuItem component={Link} to='/services/my' onClick={handleDropdownClose}>My services</MenuItem>
-                                </MenuList>
-                            </ClickAwayListener>
+                        <Paper square elevation={0}>
+                            <MenuList classes={{root: classes.menu}} disablePadding onMouseLeave={handleDropdownClose} onMouseEnter={() => setManage(true)} autoFocusItem={manage} id="menu-list-grow">
+                                <MenuItem component={Link} to='/services/new' onClick={handleDropdownClose}>Create service</MenuItem>
+                                <MenuItem component={Link} to='/services/my' onClick={handleDropdownClose}>My services</MenuItem>
+                                <MenuItem component={Link} to='/offers/sent' onClick={handleDropdownClose}>Sent Offers</MenuItem>
+                                <MenuItem component={Link} to='/offers/received' onClick={handleDropdownClose}>Received Offers</MenuItem>
+                            </MenuList>
                         </Paper>
                     </Grow>
                 )}

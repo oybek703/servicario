@@ -2,12 +2,12 @@ import React, {Fragment, useEffect} from 'react'
 import withAuthorization from "./hoc/withAuth"
 import Grid from "@material-ui/core/Grid"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import Alert from "./UI/Alert"
 import {Button, Container, makeStyles, Typography} from "@material-ui/core"
 import {Link} from "react-router-dom"
 import Service from "./UI/Service"
 import {useDispatch, useSelector} from "react-redux"
 import {fetchUserServices} from "../redux/actions"
+import Reloader from "./UI/Reloader"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -32,14 +32,7 @@ const MyServices = () => {
                     loading
                         ? <CircularProgress color='secondary'/>
                         : error
-                        ?  <Grid container alignItems='center' direction='column'>
-                                <Grid item>
-                                    <Alert/>
-                                </Grid>
-                                <Grid item>
-                                    <Button variant='contained' color='primary' onClick={handleReload} disabled={loading}>Reload</Button>
-                                </Grid>
-                            </Grid>
+                        ?  <Reloader handleReload={handleReload}/>
                          : <Fragment>
                             {
                                 !items.length

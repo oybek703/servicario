@@ -43,7 +43,6 @@ const Home = () => {
     const classes = useStyles()
     const dispatch = useDispatch()
     const {items, loading, error} = useSelector(theme => theme.services)
-    const handleReload = () => dispatch(fetchServices())
     useEffect(() => {
         dispatch(fetchServices())
     }, [dispatch])
@@ -72,14 +71,7 @@ const Home = () => {
                         {
                             loading
                                 ? <CircularProgress color='secondary'/>
-                                : error ? <Grid container alignItems='center' direction='column'>
-                                    <Grid item>
-                                        <Alert/>
-                                    </Grid>
-                                    <Grid item>
-                                        <Button variant='contained' color='primary' onClick={handleReload} disabled={loading}>Reload</Button>
-                                    </Grid>
-                                </Grid> : <Fragment>
+                                : error ? <Alert/> : <Fragment>
                                     {
                                         !items.length
                                             ? <Grid>

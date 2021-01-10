@@ -5,7 +5,6 @@ import Grid from "@material-ui/core/Grid"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import {useDispatch, useSelector} from "react-redux"
 import {createNewOffer, fetchService} from "../redux/actions"
-import Alert from "./UI/Alert"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
@@ -15,6 +14,7 @@ import DialogContent from "@material-ui/core/DialogContent"
 import TextField from "@material-ui/core/TextField"
 import DialogActions from "@material-ui/core/DialogActions"
 import Report from "./UI/Report"
+import Reloader from "./UI/Reloader"
 
 const useStyles = makeStyles(theme => ({
     page: {
@@ -50,13 +50,14 @@ const ServicePage = ({match}) => {
     const handleSubmit = e => {
         e.preventDefault()
         const newOffer = {
-            fromUser: `/profiles/${user.uid}`,
+            fromUser: {ref: `/profiles/${user.uid}`, name: user.name},
             note: formData.note,
             price: estimatedPrice,
-            service: `/services/${item.id}`,
+            service: `/services/${id}`,
             status: 'pending',
             time: formData.hour,
-            toUser: `/profiles/${item.user.uid}`
+            toUser: `/profiles/${item.user.uid}`,
+            serviceImage: `${item.imageUrl}`
         }
         dispatch(createNewOffer(newOffer))
     }
@@ -78,14 +79,7 @@ const ServicePage = ({match}) => {
                     loading
                         ? <CircularProgress color='secondary'/>
                         : error
-                            ? <Grid container alignItems='center' direction='column'>
-                                <Grid item>
-                                    <Alert/>
-                                </Grid>
-                                <Grid item>
-                                    <Button variant='contained' color='primary' onClick={handleReload} disabled={loading}>Reload</Button>
-                                </Grid>
-                              </Grid>
+                            ? <Reloader handleReload={handleReload}/>
                             : <Card elevation={0} raised variant='elevation'>
                             <Grid container alignItems='center'>
                                 <Grid item sm>

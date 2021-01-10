@@ -13,6 +13,8 @@ import MyServices from "./MyServices"
 import {autoLogin} from "../redux/actions"
 import {useDispatch} from "react-redux"
 import Services from "./Services"
+import SentOffers from "./SentOffers"
+import ReceivedOffers from "./ReceivedOffers"
 
 function App() {
     const dispatch = useDispatch()
@@ -31,6 +33,8 @@ function App() {
                 <Route path='/services/new' component={CreateService}/>
                 <Route path='/services/my' component={MyServices}/>
                 <Route path='/services/:id' component={ServicePage}/>
+                <Route path='/offers/sent' component={SentOffers}/>
+                <Route path='/offers/received' component={ReceivedOffers}/>
                 <Route path='/register' component={RegisterPage}/>
                 <Route path='/login' component={LoginPage}/>
             </Switch>
