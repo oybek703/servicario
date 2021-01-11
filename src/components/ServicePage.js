@@ -50,14 +50,13 @@ const ServicePage = ({match}) => {
     const handleSubmit = e => {
         e.preventDefault()
         const newOffer = {
-            fromUser: {ref: `/profiles/${user.uid}`, name: user.name},
+            fromUser: {uid: user.uid, name: user.name},
             note: formData.note,
             price: estimatedPrice,
-            service: `/services/${id}`,
+            service: {id, image: item.imageUrl, title: item.title},
             status: 'pending',
             time: formData.hour,
-            toUser: {ref: `/profiles/${item.user.uid}`, name: item.user.name},
-            serviceImage: `${item.imageUrl}`
+            toUser: {uid: item.user.uid, name: item.user.name}
         }
         dispatch(createNewOffer(newOffer))
     }

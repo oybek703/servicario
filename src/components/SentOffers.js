@@ -1,8 +1,8 @@
-import React, {Fragment, useEffect} from 'react'
+import React, {Fragment, useEffect, useState} from 'react'
 import {Button, CardContent, Container, makeStyles, Typography} from "@material-ui/core"
 import withAuth from "./hoc/withAuth"
 import {useDispatch, useSelector} from "react-redux"
-import {fetchUserSentOffers} from "../redux/actions"
+import {createNewCollaboration, fetchUserSentOffers} from "../redux/actions"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import Grid from "@material-ui/core/Grid"
 import {Link} from "react-router-dom"
@@ -12,6 +12,8 @@ import ListItemText from "@material-ui/core/ListItemText"
 import List from "@material-ui/core/List"
 import Reloader from "./UI/Reloader"
 import CardActions from "@material-ui/core/CardActions"
+import {firestore, Timestamp} from "../firebase"
+import Report from "./UI/Report"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -48,15 +50,50 @@ const useStyles = makeStyles(theme => ({
 const SentOffers = () => {
     const classes = useStyles()
     const dispatch = useDispatch()
+    const [snackbar, setSnackbar] = useState(false)
     const {items, loading, error} = useSelector(state => state.sentOffers)
+    const {collaborationId ,loading: collaborationLoading} = useSelector(state => state.createCollaboration)
     const {user: {uid}} = useSelector(state => state.auth)
     const handleReload = () => dispatch(fetchUserSentOffers(uid))
+    const handleCollaborate = offer => {
+        const newCollaboration = {
+            service: {...offer.service},
+            time: offer.time * 3600,
+            allowedPeople: [offer.fromUser.uid, offer.toUser.uid],
+            joinedPeople: [],
+            toUser: offer.toUser.name,
+            fromUser: offer.fromUser.name,
+            fromOffer: offer.id,
+            createdAt: Timestamp.fromDate(new Date())
+        }
+        const newMessage = {
+            isRead: false,
+            type: 'invitation',
+            text: `Hello ${offer.toUser.name}, please join collaboration as soon as possible`,
+            cta: '',
+            fromUser: offer.fromUser.name,
+            serviceTitle: offer.service.title,
+            toUser: offer.toUser.uid,
+            createdAt: Timestamp.fromDate(new Date())
+        }
+        dispatch(createNewCollaboration(newCollaboration, newMessage))
+    }
     useEffect(() => {
         dispatch(fetchUserSentOffers(uid))
     //    eslint-disable-next-line
     }, [])
+    useEffect(() => {
+        const unsubscribeFromUpdate = firestore.collection('offers').onSnapshot(() => dispatch(fetchUserSentOffers(uid)))
+        return unsubscribeFromUpdate
+    //    eslint-disable-next-line
+    }, [])
+    useEffect(() => {
+        collaborationId && setSnackbar(true)
+    //    eslint-disable-next-line
+    }, [collaborationLoading])
     return (
         <Container>
+            <Report snackbar={snackbar} setSnackBar={setSnackbar} success message='Collaboration successfully created!'/>
             <Typography variant='h4' color='primary' className={classes.main} align='center'>Sent Offers</Typography>
             <Grid container justify='space-evenly'>
                 {
@@ -75,9 +112,9 @@ const SentOffers = () => {
                                         <Card variant='outlined' className={classes.card}>
                                             <CardContent>
                                                 <Grid container  justify='center'>
-                                                    <img  className={classes.cardImg} src={offer.serviceImage} alt='Service icon'/>
+                                                    <img  className={classes.cardImg} src={offer.service.image} alt='Service icon'/>
                                                 </Grid>
-                                                <Typography align='center' paragraph variant='body2' gutterBottom>{offer.note}</Typography>
+                                                <Typography align='center' paragraph variant='body2' gutterBottom>{offer.service.title}</Typography>
                                                 <Grid container justify='center'>
                                                     <List disablePadding>
                                                         {
@@ -98,7 +135,11 @@ const SentOffers = () => {
                                                     </List>
                                                 </Grid>
                                                 <CardActions>
-                                                    {offer.status === 'accepted' && <Button className={classes.accepted} variant='contained' color='primary'>Collaborate</Button>}
+                                                    {
+                                                        offer.status === 'accepted' && !offer.collaborationCreated &&
+                                                        <Button disabled={collaborationLoading} endIcon={collaborationLoading && <CircularProgress size='20px'/>}
+                                                            onClick={() => handleCollaborate(offer)} variant='contained' color='primary'>Collaborate</Button>
+                                                    }
                                                 </CardActions>
                                             </CardContent>
                                         </Card>

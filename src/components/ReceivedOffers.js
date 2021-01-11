@@ -79,9 +79,9 @@ const ReceivedOffers = () => {
                                         <Card variant='outlined' className={classes.card}>
                                             <CardContent>
                                                 <Grid container  justify='center'>
-                                                    <img  className={classes.cardImg} src={offer.serviceImage} alt='Service icon'/>
+                                                    <img  className={classes.cardImg} src={offer.service.image} alt='Service icon'/>
                                                 </Grid>
-                                                <Typography align='center' paragraph variant='body2' gutterBottom>{offer.note}</Typography>
+                                                <Typography align='center' paragraph variant='body2' gutterBottom>{offer.service.title}</Typography>
                                                 <Grid container justify='center'>
                                                     <List disablePadding>
                                                         {

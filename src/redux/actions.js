@@ -2,6 +2,8 @@ import {firestore} from "../firebase"
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import {
+    CREATE_COLLABORATION_CLEAR,
+    CREATE_COLLABORATION_START, CREATE_COLLABORATION_SUCCESS,
     CREATE_OFFER_CLEAR,
     CREATE_OFFER_START,
     CREATE_OFFER_SUCCESS,
@@ -177,7 +179,7 @@ export const fetchUserSentOffers = uid => {
     return async dispatch => {
         try {
             dispatch({type: FETCH_SENT_OFFERS_START})
-            const snapshot = await firestore.collection('offers').where('fromUser.ref', '==', `/profiles/${uid}`).get()
+            const snapshot = await firestore.collection('offers').where('fromUser.uid', '==', uid).get()
             rejectCache(snapshot)
             dispatch({type: FETCH_SENT_OFFERS_SUCCESS, payload: snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))})
         } catch (e) {
@@ -190,7 +192,7 @@ export const fetchUserReceivedOffers = uid => {
     return async dispatch => {
         try {
             dispatch({type: FETCH_RECEIVED_OFFERS_START})
-            const snapshot = await firestore.collection('offers').where('toUser.ref', '==', `/profiles/${uid}`).get()
+            const snapshot = await firestore.collection('offers').where('toUser.uid', '==', uid).get()
             rejectCache(snapshot)
             dispatch({type: FETCH_RECEIVED_OFFERS_SUCCESS, payload: snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))})
         } catch (e) {
@@ -204,5 +206,18 @@ export const updateOffer = (offerId, status) => {
         dispatch({type: UPDATE_OFFER_START})
         await firestore.collection('offers').doc(offerId).update({status})
         dispatch({type: UPDATE_OFFER_SUCCESS, payload: `update: ${status}`})
+    }
+}
+
+//COLLABORATIONS
+
+export const createNewCollaboration = (newCollaboration, newMessage) => {
+    return async dispatch => {
+        dispatch({type: CREATE_COLLABORATION_START})
+        await firestore.collection('collaborations').add(newCollaboration)
+        await firestore.collection('profiles').doc(newMessage.toUser).collection('messages').add(newMessage)
+        await  firestore.collection('offers').doc(newCollaboration.fromOffer).update({collaborationCreated: true})
+        dispatch({type: CREATE_COLLABORATION_SUCCESS, payload: 'collaboration created'})
+        dispatch({type: CREATE_COLLABORATION_CLEAR})
     }
 }
