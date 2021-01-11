@@ -17,7 +17,7 @@ import {Link, withRouter} from "react-router-dom"
 import Divider from "@material-ui/core/Divider"
 import Tooltip from "@material-ui/core/Tooltip"
 import {useDispatch, useSelector} from "react-redux"
-import {logoutUser} from "../../redux/actions"
+import {listenForMessageUpdates, logoutUser} from "../../redux/actions"
 import Chip from "@material-ui/core/Chip"
 import Avatar from "@material-ui/core/Avatar"
 import ExpandMore from "@material-ui/icons/ExpandMore"
@@ -29,6 +29,12 @@ import Grow from "@material-ui/core/Grow"
 import {ArrowBackIos} from "@material-ui/icons"
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import Collapse from "@material-ui/core/Collapse"
+import Badge from "@material-ui/core/Badge"
+import MailIcon from '@material-ui/icons/Mail'
+import Card from "@material-ui/core/Card"
+import CardActions from "@material-ui/core/CardActions"
+import CardContent from "@material-ui/core/CardContent"
+import ClickAwayListener from "@material-ui/core/ClickAwayListener"
 
 const useScrollStyles = makeStyles(theme => ({
     root: {
@@ -115,6 +121,16 @@ const useStyles = makeStyles(theme => ({
         '&.Mui-selected': {
             backgroundColor: 'transparent'
         }
+    },
+    messages: {
+        maxWidth: '5em',
+        marginLeft: '-2em'
+    },
+    messagesContainer: {
+        maxWidth: '12em',
+        maxHeight: '12em',
+        overflowX: 'hidden',
+        overflowY: 'scroll'
     }
 }))
 
@@ -125,9 +141,11 @@ const Header = (props) => {
     const dispatch = useDispatch()
     const {user} = useSelector(state => state.auth)
     const manageRef = useRef(null)
+    const messagesRef = useRef(null)
     const [tab, setTab] = useState(0)
     const [drawer, setDrawer] = useState(false)
     const [manage, setManage] = useState(false)
+    const [message, setMessage] = useState(false)
     const [mobileManage, setMobileManage] = useState(false)
     const [menuSelectedIndex, setMenuSelectedIndex] = useState(0)
     const [name, setName] = useState('')
@@ -135,7 +153,10 @@ const Header = (props) => {
     const routes = ['Home', 'Services', 'FAQ', 'Login', 'Sign Up']
     const signedUserRoutes = ['Home', 'Services', 'FAQ', 'Manage', 'Logout']
     const handleLogout = () => dispatch(logoutUser())
-    const handleDropdownClose = () => setManage(false)
+    const handleDropdownClose = () => {
+        setManage(false)
+        setMessage(false)
+    }
     useEffect(() => {
             if(user) {setName(user.name); setAvatar(user.avatar)}
             switch (pathname) {
@@ -157,6 +178,11 @@ const Header = (props) => {
                             <Grid item>
                                 <Grid container alignItems='center'>
                                     <Typography className={classes.logo} variant='h5' component={Link} to='/'>Servicario &nbsp;</Typography>
+                                    {matchSM && user && user.messages.length !== 0 &&
+                                    <ClickAwayListener onClickAway={handleDropdownClose}>
+                                        <Badge title='Click to read new messages' ref={matchSM && messagesRef} onClick={() => setMessage(!message)} badgeContent={user.messages.length} color="primary"><MailIcon /></Badge>
+                                    </ClickAwayListener>
+                                    }
                                     {!matchSM && user && name  && <Chip avatar={<Avatar alt={name} src={avatar}/>} label={name}/>}
                                 </Grid>
                             </Grid>
@@ -170,7 +196,7 @@ const Header = (props) => {
                                             <Tabs value={tab}
                                                 TabIndicatorProps={{style: {display: 'none'}}}
                                                 style={{borderBottom: 0 }}
-                                                onChange={(event, newValue) => setTab(newValue)}>
+                                                onChange={(event, newValue) => setTab(newValue === 5 ? 4 : newValue)}>
                                                 <Tab component={Link} to='/' label='Home'/>
                                                 <Tab component={Link} to='/services' label='Services'/>
                                                 <Tab component={Link} to='/faq' label='FAQ'/>
@@ -181,6 +207,14 @@ const Header = (props) => {
                                                                    label={<ListItem><ListItemText>Manage</ListItemText>
                                                                        {manage ? <ExpandLess/> : <ExpandMore/>}
                                                                    </ListItem>}/>}
+                                                {user &&
+                                                <Tab classes={{wrapper: classes.messages}}
+                                                     ref={messagesRef}
+                                                     onMouseEnter={() => setMessage(true)}
+                                                     onMouseLeave={handleDropdownClose}
+                                                    label={<Badge badgeContent={user.messages.length} color="primary"><MailIcon /></Badge>}
+                                                />
+                                                }
                                                 {user && <Tab
                                                     disableRipple
                                                     onClick={handleLogout}
@@ -197,7 +231,7 @@ const Header = (props) => {
                                                         classes={{root: classes.btnTab}}
                                                         to='/register'
                                                         label={<Button className={classes.register} variant='contained' color='secondary' component='span'>Sign Up</Button>}/>}
-                                            </Tabs>
+                                                </Tabs>
                                         </Fragment>
                                 }
                             </Grid>
@@ -286,6 +320,41 @@ const Header = (props) => {
                                 <MenuItem selected={pathname === '/offers/sent'} component={Link} to='/offers/sent' onClick={handleDropdownClose}>Sent Offers</MenuItem>
                                 <MenuItem selected={pathname === '/offers/received'} component={Link} to='/offers/received' onClick={handleDropdownClose}>Received Offers</MenuItem>
                             </MenuList>
+                        </Paper>
+                    </Grow>
+                )}
+            </Popper>}
+            {user && <Popper style={{zIndex: 1302}} open={message} placement='bottom-start' anchorEl={messagesRef.current} role={undefined} transition>
+                {({ TransitionProps }) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{ transformOrigin: 'right top' }}
+                    >
+                        <Paper square elevation={0} onMouseEnter={() => setMessage(true)}>
+                            <ClickAwayListener onClickAway={handleDropdownClose}>
+                                {
+                                    !user.messages.length
+                                        ? <Typography onMouseLeave={() => setMessage(false)}>No unread messages yet :)</Typography>
+                                        : <Grid container className={classes.messagesContainer}>
+                                            {user.messages.map((message, index) => (<Grid item key={index}>
+                                                <Card>
+                                                    <List disablePadding>
+                                                        <ListItem>
+                                                            <ListItemText>From: &nbsp; {message.fromUser}</ListItemText>
+                                                        </ListItem>
+                                                    </List>
+                                                    <CardContent>
+                                                        <Typography variant='subtitle2' paragraph gutterBottom>{message.text}</Typography>
+                                                    </CardContent>
+                                                    <CardActions>
+                                                        <Button onClick={() => setMessage(false)} variant='contained' size='small' color='primary'>Join</Button>
+                                                        <Button onClick={() => setMessage(false)} variant='contained' size='small' color='secondary'>Later</Button>
+                                                    </CardActions>
+                                                </Card>
+                                            </Grid>))}
+                                        </Grid>
+                                }
+                            </ClickAwayListener>
                         </Paper>
                     </Grow>
                 )}

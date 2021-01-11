@@ -96,7 +96,7 @@ export const registerNewUser = ({name, email, password, avatar}) => {
         try {
             dispatch({type: REGISTER_USER_START})
             const {user} = await firebase.auth().createUserWithEmailAndPassword(email, password)
-            const userProfile = {uid: user.uid, name, avatar, email, services: [], description: ''}
+            const userProfile = {uid: user.uid, name, avatar, email}
             await firestore.collection('profiles').doc(user.uid).set(userProfile)
             const {userSession, expirationTime} = await saveSession(user)
             dispatch({type: REGISTER_USER_SUCCESS, payload: userSession})
@@ -149,7 +149,8 @@ export const autoLogin = () => {
 const saveSession = async (user) => {
     const {expirationTime, token} = await user.getIdTokenResult()
     const {name, avatar} = (await firestore.collection('profiles').doc(user.uid).get()).data()
-    const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar}
+    const messages = (await firestore.collection(`profiles/${user.uid}/messages`).get()).docs.map(doc => doc.data())
+    const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar, messages}
     localStorage.setItem('session', JSON.stringify(userSession))
     return {userSession, expirationTime}
 }
@@ -220,4 +221,9 @@ export const createNewCollaboration = (newCollaboration, newMessage) => {
         dispatch({type: CREATE_COLLABORATION_SUCCESS, payload: 'collaboration created'})
         dispatch({type: CREATE_COLLABORATION_CLEAR})
     }
+}
+
+export const listenForMessageUpdates = uid => {
+    return new Promise(resolve => firestore.collection('profiles').doc(uid).collection('messages')
+        .onSnapshot(snapshot => resolve(snapshot.docs.map(doc => doc.data()))))
 }

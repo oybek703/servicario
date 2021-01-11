@@ -30,7 +30,7 @@ const theme = createMuiTheme({
             root: {
                 padding: '2px 4px',
                 '@media (min-width: 600px)': {
-                    minWidth: 110
+                    minWidth: 70
                 }
             }
         },
@@ -94,6 +94,11 @@ const theme = createMuiTheme({
         MuiFormHelperText: {
             root: {
                 marginBottom: '1em'
+            }
+        },
+        MuiBadge: {
+            root: {
+                cursor: 'pointer'
             }
         }
     }
