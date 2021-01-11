@@ -25,7 +25,7 @@ import {
     LOGIN_USER_ERROR,
     LOGIN_USER_START,
     LOGIN_USER_SUCCESS,
-    LOGOUT_USER,
+    LOGOUT_USER, MARK_AS_READ_START, MARK_AS_READ_SUCCESS,
     REGISTER_USER_ERROR,
     REGISTER_USER_START,
     REGISTER_USER_SUCCESS, UPDATE_OFFER_START, UPDATE_OFFER_SUCCESS, USER_MESSAGES_RECEIVED
@@ -151,7 +151,7 @@ export const autoLogin = () => {
 const saveSession = async (user) => {
     const {expirationTime, token} = await user.getIdTokenResult()
     const {name, avatar} = (await firestore.collection('profiles').doc(user.uid).get()).data()
-    const messages = (await firestore.collection(`profiles/${user.uid}/messages`).get()).docs.map(doc => doc.data())
+    const messages = (await firestore.collection(`profiles/${user.uid}/messages`).get()).docs.map(doc => ({id: doc.id , ...doc.data()}))
     const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar}
     localStorage.setItem('session', JSON.stringify(userSession))
     return {userSession, expirationTime, messages}
@@ -228,9 +228,17 @@ export const createNewCollaboration = (newCollaboration, newMessage) => {
 export const listenForMessageUpdates = uid => {
     return dispatch => {
         firestore.collection('profiles').doc(uid).collection('messages').onSnapshot(snapshot => {
-            const newMessages = snapshot.docs.map(doc => doc.data())
+            const newMessages = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()})).filter(m => !m.isRead)
             dispatch({type: USER_MESSAGES_RECEIVED, payload: newMessages})
         })
     }
 
+}
+
+export const markMessageAsRead = (uid ,messageId) => {
+    return async dispatch => {
+        dispatch({type: MARK_AS_READ_START})
+        await firestore.doc(`profiles/${uid}/messages/${messageId}`).update({isRead: true})
+        dispatch({type: MARK_AS_READ_SUCCESS, payload: `message ${messageId} marked as read`})
+    }
 }

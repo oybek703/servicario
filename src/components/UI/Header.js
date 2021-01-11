@@ -17,7 +17,7 @@ import {Link, withRouter} from "react-router-dom"
 import Divider from "@material-ui/core/Divider"
 import Tooltip from "@material-ui/core/Tooltip"
 import {useDispatch, useSelector} from "react-redux"
-import {listenForMessageUpdates, logoutUser} from "../../redux/actions"
+import {listenForMessageUpdates, logoutUser, markMessageAsRead} from "../../redux/actions"
 import Chip from "@material-ui/core/Chip"
 import Avatar from "@material-ui/core/Avatar"
 import ExpandMore from "@material-ui/icons/ExpandMore"
@@ -35,6 +35,7 @@ import Card from "@material-ui/core/Card"
 import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
 import ClickAwayListener from "@material-ui/core/ClickAwayListener"
+import CircularProgress from "@material-ui/core/CircularProgress"
 
 const useScrollStyles = makeStyles(theme => ({
     root: {
@@ -141,6 +142,7 @@ const Header = (props) => {
     const dispatch = useDispatch()
     const {user} = useSelector(state => state.auth)
     const {messages} = useSelector(state => state.userMessages)
+    const {loading: markAsReadLoading} = useSelector(state => state.markAsRead)
     const manageRef = useRef(null)
     const messagesRef = useRef(null)
     const [tab, setTab] = useState(0)
@@ -157,6 +159,10 @@ const Header = (props) => {
     const handleDropdownClose = () => {
         setManage(false)
         setMessage(false)
+    }
+    const handleMarkAsRead = messageId => {
+        setMessage(false)
+        dispatch(markMessageAsRead(user.uid, messageId))
     }
     useEffect(() => {
             if(user) {setName(user.name); setAvatar(user.avatar)}
@@ -329,7 +335,7 @@ const Header = (props) => {
                     </Grow>
                 )}
             </Popper>}
-            {user && <Popper style={{zIndex: 1302}} open={message} placement='bottom-start' anchorEl={messagesRef.current} role={undefined} transition>
+            {user && <Popper style={{zIndex: 1302}} open={message || markAsReadLoading} placement='bottom-start' anchorEl={messagesRef.current} role={undefined} transition>
                 {({ TransitionProps }) => (
                     <Grow
                         {...TransitionProps}
@@ -341,7 +347,7 @@ const Header = (props) => {
                                     !messages.length
                                         ? <Typography onMouseLeave={() => setMessage(false)}>No unread messages yet :)</Typography>
                                         : <Grid container className={classes.messagesContainer}>
-                                            {messages.map((message, index) => (<Grid item key={index}>
+                                            {messages.filter(m => !m.isRead).map((message, index) => (<Grid item key={index}>
                                                 <Card>
                                                     <List disablePadding>
                                                         <ListItem>
@@ -353,7 +359,8 @@ const Header = (props) => {
                                                     </CardContent>
                                                     <CardActions>
                                                         <Button onClick={() => setMessage(false)} variant='contained' size='small' color='primary'>Join</Button>
-                                                        <Button onClick={() => setMessage(false)} variant='contained' size='small' color='secondary'>Later</Button>
+                                                        <Button disabled={markAsReadLoading} endIcon={markAsReadLoading && <CircularProgress size='15px'/>}
+                                                                onClick={() => handleMarkAsRead(message.id)} variant='contained' size='small' color='secondary'>Later</Button>
                                                     </CardActions>
                                                 </Card>
                                             </Grid>))}
