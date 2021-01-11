@@ -8,7 +8,7 @@ import createOffer from "./createOffer"
 import sentOffers from "./sentOffers"
 import receivedOffers from "./receivedOffers"
 import updateOffer from "./updateOffer"
-import createCollaboration from "./createCollaboration"
+import createCollaboration, {userMessages} from "./createCollaboration"
 
 const rootReducer = combineReducers(
     {
@@ -21,7 +21,8 @@ const rootReducer = combineReducers(
         sentOffers,
         receivedOffers,
         updateOffer,
-        createCollaboration
+        createCollaboration,
+        userMessages
     }
 )
 

@@ -140,6 +140,7 @@ const Header = (props) => {
     const matchSM = useMediaQuery(theme => theme.breakpoints.down('sm'))
     const dispatch = useDispatch()
     const {user} = useSelector(state => state.auth)
+    const {messages} = useSelector(state => state.userMessages)
     const manageRef = useRef(null)
     const messagesRef = useRef(null)
     const [tab, setTab] = useState(0)
@@ -169,6 +170,10 @@ const Header = (props) => {
                 default: setTab(1); setMenuSelectedIndex(1)
             }
     }, [pathname, user])
+    useEffect(() => {
+        user && dispatch(listenForMessageUpdates(user.uid))
+    //    eslint-disable-next-line
+    }, [user])
     return (
         <Fragment>
             <ElevationScroll >
@@ -178,9 +183,9 @@ const Header = (props) => {
                             <Grid item>
                                 <Grid container alignItems='center'>
                                     <Typography className={classes.logo} variant='h5' component={Link} to='/'>Servicario &nbsp;</Typography>
-                                    {matchSM && user && user.messages.length !== 0 &&
+                                    {matchSM && user && messages.length !== 0 &&
                                     <ClickAwayListener onClickAway={handleDropdownClose}>
-                                        <Badge title='Click to read new messages' ref={matchSM && messagesRef} onClick={() => setMessage(!message)} badgeContent={user.messages.length} color="primary"><MailIcon /></Badge>
+                                        <Badge title='Click to read new messages' ref={matchSM && messagesRef} onClick={() => setMessage(!message)} badgeContent={messages.length} color="primary"><MailIcon /></Badge>
                                     </ClickAwayListener>
                                     }
                                     {!matchSM && user && name  && <Chip avatar={<Avatar alt={name} src={avatar}/>} label={name}/>}
@@ -212,7 +217,7 @@ const Header = (props) => {
                                                      ref={messagesRef}
                                                      onMouseEnter={() => setMessage(true)}
                                                      onMouseLeave={handleDropdownClose}
-                                                    label={<Badge badgeContent={user.messages.length} color="primary"><MailIcon /></Badge>}
+                                                    label={<Badge badgeContent={messages.length} color="primary"><MailIcon /></Badge>}
                                                 />
                                                 }
                                                 {user && <Tab
@@ -333,10 +338,10 @@ const Header = (props) => {
                         <Paper square elevation={0} onMouseEnter={() => setMessage(true)}>
                             <ClickAwayListener onClickAway={handleDropdownClose}>
                                 {
-                                    !user.messages.length
+                                    !messages.length
                                         ? <Typography onMouseLeave={() => setMessage(false)}>No unread messages yet :)</Typography>
                                         : <Grid container className={classes.messagesContainer}>
-                                            {user.messages.map((message, index) => (<Grid item key={index}>
+                                            {messages.map((message, index) => (<Grid item key={index}>
                                                 <Card>
                                                     <List disablePadding>
                                                         <ListItem>

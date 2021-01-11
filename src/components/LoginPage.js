@@ -74,7 +74,6 @@ const LoginPage = () => {
             }
         }
     }, [error])
-
     return (
         <Container>
             <Report snackbar={snackbar} setSnackBar={setSnackBar}/>

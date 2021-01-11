@@ -28,7 +28,7 @@ import {
     LOGOUT_USER,
     REGISTER_USER_ERROR,
     REGISTER_USER_START,
-    REGISTER_USER_SUCCESS, UPDATE_OFFER_START, UPDATE_OFFER_SUCCESS
+    REGISTER_USER_SUCCESS, UPDATE_OFFER_START, UPDATE_OFFER_SUCCESS, USER_MESSAGES_RECEIVED
 } from "./types"
 
 //SERVICES
@@ -98,8 +98,9 @@ export const registerNewUser = ({name, email, password, avatar}) => {
             const {user} = await firebase.auth().createUserWithEmailAndPassword(email, password)
             const userProfile = {uid: user.uid, name, avatar, email}
             await firestore.collection('profiles').doc(user.uid).set(userProfile)
-            const {userSession, expirationTime} = await saveSession(user)
+            const {userSession, expirationTime, messages} = await saveSession(user)
             dispatch({type: REGISTER_USER_SUCCESS, payload: userSession})
+            dispatch({type: USER_MESSAGES_RECEIVED, payload: messages})
             dispatch(autoLogout((new Date(expirationTime).getTime() - new Date().getTime()) / 1000))
         } catch (e) {
             dispatch({type: REGISTER_USER_ERROR, payload: {message: e.message, code: e.code}})
@@ -112,8 +113,9 @@ export const signInUser = ({email, password}) => {
         try {
             dispatch({type: LOGIN_USER_START})
             const {user} = await firebase.auth().signInWithEmailAndPassword(email, password)
-            const {userSession, expirationTime} = await saveSession(user)
+            const {userSession, expirationTime, messages} = await saveSession(user)
             dispatch({type: LOGIN_USER_SUCCESS, payload: userSession})
+            dispatch({type: USER_MESSAGES_RECEIVED, payload: messages})
             dispatch(autoLogout((new Date(expirationTime).getTime() - new Date().getTime()) / 1000))
         } catch (e) {
             dispatch({type: LOGIN_USER_ERROR, payload: {message: e.message, code: e.code}})
@@ -150,9 +152,9 @@ const saveSession = async (user) => {
     const {expirationTime, token} = await user.getIdTokenResult()
     const {name, avatar} = (await firestore.collection('profiles').doc(user.uid).get()).data()
     const messages = (await firestore.collection(`profiles/${user.uid}/messages`).get()).docs.map(doc => doc.data())
-    const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar, messages}
+    const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar}
     localStorage.setItem('session', JSON.stringify(userSession))
-    return {userSession, expirationTime}
+    return {userSession, expirationTime, messages}
 }
 
 const autoLogout = (time) => {
@@ -224,6 +226,11 @@ export const createNewCollaboration = (newCollaboration, newMessage) => {
 }
 
 export const listenForMessageUpdates = uid => {
-    return new Promise(resolve => firestore.collection('profiles').doc(uid).collection('messages')
-        .onSnapshot(snapshot => resolve(snapshot.docs.map(doc => doc.data()))))
+    return dispatch => {
+        firestore.collection('profiles').doc(uid).collection('messages').onSnapshot(snapshot => {
+            const newMessages = snapshot.docs.map(doc => doc.data())
+            dispatch({type: USER_MESSAGES_RECEIVED, payload: newMessages})
+        })
+    }
+
 }
