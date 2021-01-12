@@ -16,6 +16,7 @@ import Services from "./Services"
 import SentOffers from "./SentOffers"
 import ReceivedOffers from "./ReceivedOffers"
 import Collaborations from "./Collaborations"
+import CollaborationPage from "./CollaborationPage"
 
 function App() {
     const dispatch = useDispatch()
@@ -37,6 +38,7 @@ function App() {
                 <Route path='/offers/sent' component={SentOffers}/>
                 <Route path='/offers/received' component={ReceivedOffers}/>
                 <Route path='/collaborations' exact component={Collaborations}/>
+                <Route path='/collaborations/:id' component={CollaborationPage}/>
                 <Route path='/register' component={RegisterPage}/>
                 <Route path='/login' component={LoginPage}/>
             </Switch>

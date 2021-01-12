@@ -14,6 +14,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar"
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 import IconButton from "@material-ui/core/IconButton"
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
+import Reloader from "./UI/Reloader"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -32,7 +33,8 @@ const Collaborations = () => {
     const classes = useStyles()
     const {user} = useSelector(state => state.auth)
     const {collaborations, loading, error} = useSelector(theme => theme.userCollaborations)
-    const matchSM = useMediaQuery(theme => theme.breakpoints.down('sm'))
+    const matchXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
+    const handleReload = () => dispatch(fetchUserCollaborations(user.uid))
     useEffect(() => {
         dispatch(fetchUserCollaborations(user.uid))
     //    eslint-disable-next-line
@@ -44,7 +46,7 @@ const Collaborations = () => {
                 {
                     loading
                         ? <CircularProgress color='secondary'/>
-                        : error ? <Alert/> : <Fragment>
+                        : error ? <Reloader handleReload={handleReload}/> : <Fragment>
                             {
                                 !collaborations.length
                                     ? <>
@@ -72,7 +74,7 @@ const Collaborations = () => {
                                                     />
                                                     <ListItemSecondaryAction>
                                                         {
-                                                            matchSM
+                                                            matchXS
                                                                 ? <IconButton title='Enter collaboration' size='small' component={Link} to={`/collaborations/${c.id}`}><ArrowForwardIcon/></IconButton>
                                                                 : <Button component={Link} to={`/collaborations/${c.id}`} size='small' variant='contained' color='primary'>Enter</Button>
                                                         }
