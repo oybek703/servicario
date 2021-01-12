@@ -4,13 +4,19 @@ import 'firebase/auth'
 import {
     CLEAR_AUTH_ERROR,
     CREATE_COLLABORATION_CLEAR,
-    CREATE_COLLABORATION_START, CREATE_COLLABORATION_SUCCESS,
+    CREATE_COLLABORATION_START,
+    CREATE_COLLABORATION_SUCCESS,
     CREATE_OFFER_CLEAR,
     CREATE_OFFER_START,
     CREATE_OFFER_SUCCESS,
     CREATE_SERVICE_START,
-    CREATE_SERVICE_SUCCESS, FETCH_RECEIVED_OFFERS_ERROR,
-    FETCH_RECEIVED_OFFERS_START, FETCH_RECEIVED_OFFERS_SUCCESS,
+    CREATE_SERVICE_SUCCESS,
+    FETCH_COLLABORATIONS_ERROR,
+    FETCH_COLLABORATIONS_START,
+    FETCH_COLLABORATIONS_SUCCESS,
+    FETCH_RECEIVED_OFFERS_ERROR,
+    FETCH_RECEIVED_OFFERS_START,
+    FETCH_RECEIVED_OFFERS_SUCCESS,
     FETCH_SENT_OFFERS_ERROR,
     FETCH_SENT_OFFERS_START,
     FETCH_SENT_OFFERS_SUCCESS,
@@ -26,10 +32,15 @@ import {
     LOGIN_USER_ERROR,
     LOGIN_USER_START,
     LOGIN_USER_SUCCESS,
-    LOGOUT_USER, MARK_AS_READ_START, MARK_AS_READ_SUCCESS,
+    LOGOUT_USER,
+    MARK_AS_READ_START,
+    MARK_AS_READ_SUCCESS,
     REGISTER_USER_ERROR,
     REGISTER_USER_START,
-    REGISTER_USER_SUCCESS, UPDATE_OFFER_START, UPDATE_OFFER_SUCCESS, USER_MESSAGES_RECEIVED
+    REGISTER_USER_SUCCESS,
+    UPDATE_OFFER_START,
+    UPDATE_OFFER_SUCCESS,
+    USER_MESSAGES_RECEIVED
 } from "./types"
 
 //SERVICES
@@ -243,5 +254,18 @@ export const markMessageAsRead = (uid ,messageId) => {
         dispatch({type: MARK_AS_READ_START})
         await firestore.doc(`profiles/${uid}/messages/${messageId}`).update({isRead: true})
         dispatch({type: MARK_AS_READ_SUCCESS, payload: `message ${messageId} marked as read`})
+    }
+}
+
+export const fetchUserCollaborations = uid => {
+    return async dispatch => {
+        try {
+            dispatch({type: FETCH_COLLABORATIONS_START})
+            const snapshot = await firestore.collection('collaborations').where('allowedPeople', 'array-contains', uid).get()
+            const collaborations = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
+            dispatch({type: FETCH_COLLABORATIONS_SUCCESS, payload: collaborations})
+        } catch (e) {
+            dispatch({type: FETCH_COLLABORATIONS_ERROR, payload: {code: e.code, message: e.message}})
+        }
     }
 }

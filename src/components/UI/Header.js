@@ -172,6 +172,7 @@ const Header = (props) => {
                 case '/faq': setTab(2); setMenuSelectedIndex(2); break
                 case '/login': setTab(3); setMenuSelectedIndex(3); break
                 case '/offers/sent':
+                case '/collaborations':
                 case '/offers/received': setTab(3); setMenuSelectedIndex(3); break
                 case '/register': setTab(4); setMenuSelectedIndex(4); break
                 default: setTab(1); setMenuSelectedIndex(1)
@@ -302,6 +303,7 @@ const Header = (props) => {
                                             <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/services/my'><ListItemText>My services</ListItemText></ListItem>
                                             <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/offers/sent'><ListItemText>Sent Offers</ListItemText></ListItem>
                                             <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/offers/received'><ListItemText>Received Offers</ListItemText></ListItem>
+                                            <ListItem onClick={() => {setDrawer(false); setMobileManage(false)}} component={Link} to='/collaborations'><ListItemText>My Collaborations</ListItemText></ListItem>
                                         </List>
                                     </Collapse>
                                 </Fragment>
@@ -331,6 +333,7 @@ const Header = (props) => {
                                 <MenuItem selected={pathname === '/services/my'} component={Link} to='/services/my' onClick={handleDropdownClose}>My services</MenuItem>
                                 <MenuItem selected={pathname === '/offers/sent'} component={Link} to='/offers/sent' onClick={handleDropdownClose}>Sent Offers</MenuItem>
                                 <MenuItem selected={pathname === '/offers/received'} component={Link} to='/offers/received' onClick={handleDropdownClose}>Received Offers</MenuItem>
+                                <MenuItem selected={pathname === '/collaborations'} component={Link} to='/collaborations' onClick={handleDropdownClose}>My Collaborations</MenuItem>
                             </MenuList>
                         </Paper>
                     </Grow>

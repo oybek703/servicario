@@ -107,10 +107,10 @@ const SentOffers = () => {
                                 !items.length
                                     ? <>
                                         <Grid container>
-                                            <Alert type='info' message='No services offered yet...' />
+                                            <Alert type='info' message='You have not sent any offers yet..' />
                                         </Grid>
                                         <Grid item>
-                                            <Button variant='contained' color='secondary' component={Link} to='/services'>Offer Service</Button>
+                                            <Button variant='contained' color='secondary' component={Link} to='/services'>Sent Offer</Button>
                                         </Grid>
                                     </>
                                     : items.map((offer, index) => <Grid key={index} item>

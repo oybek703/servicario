@@ -15,6 +15,7 @@ import {useDispatch} from "react-redux"
 import Services from "./Services"
 import SentOffers from "./SentOffers"
 import ReceivedOffers from "./ReceivedOffers"
+import Collaborations from "./Collaborations"
 
 function App() {
     const dispatch = useDispatch()
@@ -35,6 +36,7 @@ function App() {
                 <Route path='/services/:id' component={ServicePage}/>
                 <Route path='/offers/sent' component={SentOffers}/>
                 <Route path='/offers/received' component={ReceivedOffers}/>
+                <Route path='/collaborations' exact component={Collaborations}/>
                 <Route path='/register' component={RegisterPage}/>
                 <Route path='/login' component={LoginPage}/>
             </Switch>
