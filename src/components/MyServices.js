@@ -8,10 +8,11 @@ import Service from "./UI/Service"
 import {useDispatch, useSelector} from "react-redux"
 import {fetchUserServices} from "../redux/actions"
 import Reloader from "./UI/Reloader"
+import Alert from "./UI/Alert"
 
 const useStyles = makeStyles(theme => ({
     main: {
-        marginTop: '3em'
+        marginTop: '1em'
     }
 }))
 
@@ -27,7 +28,8 @@ const MyServices = () => {
     }, [])
     return (
         <Container>
-            <Grid container justify='space-evenly' className={classes.main}>
+            <Typography variant='h4' color='primary' gutterBottom paragraph className={classes.main} align='center'>My Services</Typography>
+            <Grid container justify='space-evenly'>
                 {
                     loading
                         ? <CircularProgress color='secondary'/>
@@ -36,10 +38,14 @@ const MyServices = () => {
                          : <Fragment>
                             {
                                 !items.length
-                                    ? <Grid>
-                                        <Typography paragraph gutterBottom align='center'>You have not created any services yet...</Typography>
-                                        <Button variant='contained' color='secondary' component={Link} to='/services/new'>Create New Service</Button>
-                                    </Grid>
+                                    ? <>
+                                        <Grid container>
+                                            <Alert type='info' message='You have not created any services yet...' />
+                                        </Grid>
+                                        <Grid item>
+                                            <Button variant='contained' color='secondary' component={Link} to='/services/new'>Create New Service</Button>
+                                        </Grid>
+                                    </>
                                     : items.map((service, index) => <Grid key={index} item><Service service={service}/></Grid>)
                             }
                         </Fragment>

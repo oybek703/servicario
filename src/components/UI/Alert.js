@@ -46,13 +46,13 @@ const Alert = (props) => {
             <List disablePadding classes={{root: classes.alert}}>
                 <ListItem>
                     <ListItemIcon>
-                        {type === 'success' && <CheckCircleOutlineOutlinedIcon color={type} />}
-                        {type === 'warning' && <ReportProblemOutlinedIcon color={type} />}
-                        {type === 'info' && <HelpOutlineOutlinedIcon color={type} />}
-                        {!type && <ErrorOutlineOutlinedIcon color='error' />}
+                        {type === 'success' && <CheckCircleOutlineOutlinedIcon />}
+                        {type === 'warning' && <ReportProblemOutlinedIcon />}
+                        {type === 'info' && <HelpOutlineOutlinedIcon />}
+                        {!type && <ErrorOutlineOutlinedIcon />}
                     </ListItemIcon>
                     <ListItemText>
-                        {props.text || 'Something went wrong, please check network connection.'}
+                        {props.message || 'Something went wrong, please check network connection.'}
                     </ListItemText>
                 </ListItem>
             </List>

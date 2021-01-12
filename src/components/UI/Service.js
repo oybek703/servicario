@@ -3,9 +3,6 @@ import Card from '@material-ui/core/Card'
 import {Button, CardContent, CardHeader, makeStyles, Typography} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import {Link} from "react-router-dom"
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemText from "@material-ui/core/ListItemText"
 
 const usesStyles = makeStyles(theme => ({
     card: {

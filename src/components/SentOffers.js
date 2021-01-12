@@ -14,6 +14,7 @@ import Reloader from "./UI/Reloader"
 import CardActions from "@material-ui/core/CardActions"
 import {firestore, Timestamp} from "../firebase"
 import Report from "./UI/Report"
+import Alert from "./UI/Alert"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -104,10 +105,14 @@ const SentOffers = () => {
                             : <Fragment>
                             {
                                 !items.length
-                                    ? <Grid>
-                                        <Typography paragraph gutterBottom align='center'>No services offered yet...</Typography>
-                                        <Button variant='contained' color='secondary' component={Link} to='/services'>Offer Service</Button>
-                                    </Grid>
+                                    ? <>
+                                        <Grid container>
+                                            <Alert type='info' message='No services offered yet...' />
+                                        </Grid>
+                                        <Grid item>
+                                            <Button variant='contained' color='secondary' component={Link} to='/services'>Offer Service</Button>
+                                        </Grid>
+                                    </>
                                     : items.map((offer, index) => <Grid key={index} item>
                                         <Card variant='outlined' className={classes.card}>
                                             <CardContent>

@@ -36,6 +36,7 @@ import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
 import ClickAwayListener from "@material-ui/core/ClickAwayListener"
 import CircularProgress from "@material-ui/core/CircularProgress"
+import Alert from "./Alert"
 
 const useScrollStyles = makeStyles(theme => ({
     root: {
@@ -345,7 +346,9 @@ const Header = (props) => {
                             <ClickAwayListener onClickAway={handleDropdownClose}>
                                 {
                                     !messages.length
-                                        ? <Typography onMouseLeave={() => setMessage(false)}>No unread messages yet :)</Typography>
+                                        ? <Grid onMouseLeave={() => setMessage(false)}>
+                                            <Alert type='success' message='No unread messages yet (:'/>
+                                        </Grid>
                                         : <Grid container className={classes.messagesContainer}>
                                             {messages.filter(m => !m.isRead).map((message, index) => (<Grid item key={index}>
                                                 <Card>

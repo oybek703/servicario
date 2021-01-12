@@ -12,6 +12,8 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import CardActions from "@material-ui/core/CardActions"
 import {firestore} from "../firebase"
+import Alert from "./UI/Alert"
+import {Link} from "react-router-dom"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -72,9 +74,11 @@ const ReceivedOffers = () => {
                         : <Fragment>
                             {
                                 !items.length
-                                    ? <Grid>
-                                        <Typography paragraph gutterBottom align='center'>No offers received yet...</Typography>
-                                    </Grid>
+                                    ? <>
+                                        <Grid container>
+                                            <Alert type='info' message='No offers received yet...' />
+                                        </Grid>
+                                    </>
                                     : items.map((offer, index) => <Grid key={index} item>
                                         <Card variant='outlined' className={classes.card}>
                                             <CardContent>

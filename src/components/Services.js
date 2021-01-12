@@ -30,10 +30,14 @@ const Services = () => {
                         : error ? <Alert/> : <Fragment>
                             {
                                 !items.length
-                                    ? <Grid>
-                                        <Typography paragraph gutterBottom align='center'>No services created yet...</Typography>
-                                        <Button variant='contained' color='secondary' component={Link} to='/services/new'>Create New Service</Button>
-                                    </Grid>
+                                    ? <>
+                                        <Grid container>
+                                            <Alert type='info' message='No services created yet...' />
+                                        </Grid>
+                                        <Grid item>
+                                            <Button variant='contained' color='secondary' component={Link} to='/services/new'>Create New Service</Button>
+                                        </Grid>
+                                    </>
                                     : items.map((service, index) => <Grid key={index} item><Service service={service}/></Grid>)
                             }
                         </Fragment>
