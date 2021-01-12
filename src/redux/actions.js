@@ -2,6 +2,7 @@ import {firestore} from "../firebase"
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import {
+    CLEAR_AUTH_ERROR,
     CREATE_COLLABORATION_CLEAR,
     CREATE_COLLABORATION_START, CREATE_COLLABORATION_SUCCESS,
     CREATE_OFFER_CLEAR,
@@ -104,6 +105,7 @@ export const registerNewUser = ({name, email, password, avatar}) => {
             dispatch(autoLogout((new Date(expirationTime).getTime() - new Date().getTime()) / 1000))
         } catch (e) {
             dispatch({type: REGISTER_USER_ERROR, payload: {message: e.message, code: e.code}})
+            setTimeout(() => dispatch({type: CLEAR_AUTH_ERROR}), 300)
         }
     }
 }
@@ -119,6 +121,7 @@ export const signInUser = ({email, password}) => {
             dispatch(autoLogout((new Date(expirationTime).getTime() - new Date().getTime()) / 1000))
         } catch (e) {
             dispatch({type: LOGIN_USER_ERROR, payload: {message: e.message, code: e.code}})
+            setTimeout(() => dispatch({type: CLEAR_AUTH_ERROR}), 300)
         }
     }
 }

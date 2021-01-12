@@ -13,7 +13,6 @@ import ListItemText from "@material-ui/core/ListItemText"
 import CardActions from "@material-ui/core/CardActions"
 import {firestore} from "../firebase"
 import Alert from "./UI/Alert"
-import {Link} from "react-router-dom"
 
 const useStyles = makeStyles(theme => ({
     main: {

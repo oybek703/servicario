@@ -43,7 +43,6 @@ const LoginPage = () => {
     const [passwordHelperText, setPasswordHelperText] = useState('')
     const [btnDisabled, setBtnDisabled] = useState(true)
     const [showPassword, setShowPassword] = useState(false)
-
     const handleChange = e => {
         const {name, value} = e.target
         setFormData({...formData, [name]: value})
@@ -53,18 +52,15 @@ const LoginPage = () => {
             default: return
         }
     }
-
     const handleSubmit = e => {
         e.preventDefault()
         dispatch(signInUser(formData))
     }
-
     useEffect(() => {
         const btnStatus = !!formData.email && !!formData.password && !emailHelperText && !passwordHelperText && !loading
         setBtnDisabled(!btnStatus)
     //    eslint-disable-next-line
     }, [formData, loading])
-
     useEffect(() => {
         if(error) {
             switch (error.code) {

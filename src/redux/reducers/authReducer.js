@@ -1,5 +1,5 @@
 import {
-    AUTO_LOGIN,
+    AUTO_LOGIN, CLEAR_AUTH_ERROR,
     LOGIN_USER_ERROR,
     LOGIN_USER_START,
     LOGIN_USER_SUCCESS, LOGOUT_USER,
@@ -29,6 +29,8 @@ const auth = (state = initialState, action) => {
             return {...state, loading: false, error: payload}
         case LOGOUT_USER:
             return {...state, loading: false, error: null, user: null}
+        case CLEAR_AUTH_ERROR:
+            return {...state, error: null}
         default:
             return state
     }
