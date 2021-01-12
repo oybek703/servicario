@@ -25,6 +25,9 @@ const useStyles = makeStyles(theme => ({
     },
     collaboration: {
         padding: '.2em 1em'
+    },
+    cStatus: {
+        textAlign: 'left'
     }
 }))
 
@@ -51,10 +54,10 @@ const Collaborations = () => {
                                 !collaborations.length
                                     ? <>
                                         <Grid container>
-                                            <Alert type='info' message='No services created yet...' />
+                                            <Alert type='info' message='No collaborations created yet...' />
                                         </Grid>
                                         <Grid item>
-                                            <Button variant='contained' color='secondary' component={Link} to='/services/new'>Create New Service</Button>
+                                            <Button variant='contained' color='secondary' component={Link} to='/services'>Create New Collaboration</Button>
                                         </Grid>
                                     </>
                                     : <List className={classes.cList} component={Grid} container direction='column'>
@@ -65,7 +68,7 @@ const Collaborations = () => {
                                                     <ListItemAvatar>
                                                         <Avatar src={c.service.image} alt='service icon'/>
                                                     </ListItemAvatar>
-                                                    <ListItemText primary={
+                                                    <ListItemText classes={{root: classes.cStatus}} primary={
                                                         <Typography variant='subtitle2' color='secondary' component='span'>
                                                             pending
                                                         </Typography>}

@@ -26,6 +26,9 @@ import {
     FETCH_SERVICES_ERROR,
     FETCH_SERVICES_START,
     FETCH_SERVICES_SUCCESS,
+    FETCH_SINGLE_COLLABORATION_ERROR,
+    FETCH_SINGLE_COLLABORATION_START,
+    FETCH_SINGLE_COLLABORATION_SUCCESS,
     FETCH_USER_SERVICES_ERROR,
     FETCH_USER_SERVICES_START,
     FETCH_USER_SERVICES_SUCCESS,
@@ -262,10 +265,24 @@ export const fetchUserCollaborations = uid => {
         try {
             dispatch({type: FETCH_COLLABORATIONS_START})
             const snapshot = await firestore.collection('collaborations').where('allowedPeople', 'array-contains', uid).get()
+            rejectCache(snapshot)
             const collaborations = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
             dispatch({type: FETCH_COLLABORATIONS_SUCCESS, payload: collaborations})
         } catch (e) {
             dispatch({type: FETCH_COLLABORATIONS_ERROR, payload: {code: e.code, message: e.message}})
+        }
+    }
+}
+
+export const fetchCollaborationById = collaborationId => {
+    return async dispatch => {
+        try {
+            dispatch({type: FETCH_SINGLE_COLLABORATION_START})
+            const doc = await firestore.collection('collaborations').doc(collaborationId).get()
+            rejectCache(doc)
+            dispatch({type: FETCH_SINGLE_COLLABORATION_SUCCESS, payload: {id: doc.id, ...doc.data()}})
+        } catch (e) {
+            dispatch({type: FETCH_SINGLE_COLLABORATION_ERROR, payload: {code: e.code, message: e.message}})
         }
     }
 }
