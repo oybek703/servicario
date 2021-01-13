@@ -17,6 +17,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar"
 import TextField from "@material-ui/core/TextField"
 import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
+import Message from "./UI/Message"
 
 const StyledBadge = withStyles((theme) => ({
     root: {
@@ -83,7 +84,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
     const matchXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
     const {collaboration, loading, error} = useSelector(state => state.collaboration)
     const handleReload = () => dispatch(fetchCollaborationById(id))
-    console.log(collaboration)
+    // console.log(collaboration)
     useEffect(() => {
         dispatch(fetchCollaborationById(id))
     }, [dispatch, id])
@@ -126,13 +127,13 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                 </Grid>
                                 <Grid  component={List} disablePadding item xs={9}  className={classes.chat}>
                                     <Grid container direction='column' className={classes.chatArea}>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
+                                        {
+                                            ['Hello everyone!', 'Hello Admin', 'How are you?', 'I am fine thanks.'].map((m, index) => (
+                                                <Grid item container justify={index % 2 !== 0 && 'flex-end'}>
+                                                    <Message msg={m} left={index % 2 === 0}/>
+                                                </Grid>
+                                            ))
+                                        }
                                     </Grid>
                                 </Grid>
                             </Grid>
