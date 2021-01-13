@@ -100,6 +100,12 @@ const theme = createMuiTheme({
             root: {
                 cursor: 'pointer'
             }
+        },
+        MuiAvatar: {
+            root: {
+                width: '30px',
+                height: '30px'
+            }
         }
     }
 })

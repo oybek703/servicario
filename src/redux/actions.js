@@ -280,7 +280,10 @@ export const fetchCollaborationById = collaborationId => {
             dispatch({type: FETCH_SINGLE_COLLABORATION_START})
             const doc = await firestore.collection('collaborations').doc(collaborationId).get()
             rejectCache(doc)
-            dispatch({type: FETCH_SINGLE_COLLABORATION_SUCCESS, payload: {id: doc.id, ...doc.data()}})
+            const collaboration = {id: collaborationId, ...doc.data()}
+            const snapshot = await Promise.all(collaboration.allowedPeople.map(async m => await firestore.doc(`profiles/${m}`).get()))
+            const members = snapshot.map(doc => doc.data())
+            dispatch({type: FETCH_SINGLE_COLLABORATION_SUCCESS, payload: {id: doc.id, ...doc.data(), allowedPeople: members}})
         } catch (e) {
             dispatch({type: FETCH_SINGLE_COLLABORATION_ERROR, payload: {code: e.code, message: e.message}})
         }
