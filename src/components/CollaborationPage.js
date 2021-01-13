@@ -10,12 +10,13 @@ import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import Avatar from "@material-ui/core/Avatar"
 import ListItemText from "@material-ui/core/ListItemText"
-import Divider from "@material-ui/core/Divider"
 import Badge from "@material-ui/core/Badge"
 import withStyles from "@material-ui/core/styles/withStyles"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemAvatar from "@material-ui/core/ListItemAvatar"
 import TextField from "@material-ui/core/TextField"
+import CardActions from "@material-ui/core/CardActions"
+import CardContent from "@material-ui/core/CardContent"
 
 const StyledBadge = withStyles((theme) => ({
     root: {
@@ -28,36 +29,37 @@ const StyledBadge = withStyles((theme) => ({
 
 const useStyles = makeStyles(theme => ({
     page: {
-        marginTop: '3em'
+        marginTop: '1em'
     },
     membersArea: {
-        maxHeight: '39em',
+        maxHeight: '25em',
         overflowY: 'scroll',
         [theme.breakpoints.down('sm')]: {
-            maxHeight: '35em'
+            maxHeight: '18em'
         }
     },
     membersList: {
         minHeight: '50em'
     },
     chat: {
-        maxHeight: '31em',
+        maxHeight: '25em',
         overflowY: 'scroll',
         [theme.breakpoints.down('sm')]: {
-            maxHeight: '20em'
+            maxHeight: '18em'
         }
     },
     chatArea: {
         minHeight: '40em',
-        backgroundColor: 'grey',
-        color: 'white'
+        backgroundColor: 'gray',
+        color: 'white',
+        padding: '1em'
     },
     form: {
         width: '100%',
         padding: '.5em 0'
     },
     textField: {
-        maxWidth: '15em',
+        minWidth: '15em',
         [theme.breakpoints.down('sm')]: {
             marginBottom: '.5em'
         }
@@ -66,6 +68,12 @@ const useStyles = makeStyles(theme => ({
         [theme.breakpoints.down('sm')]: {
             marginBottom: '.5em'
         }
+    },
+    title: {
+        margin: '1em auto'
+    },
+    cardContent: {
+        padding: '0'
     }
 }))
 
@@ -88,6 +96,17 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                         : error
                         ? <Reloader handleReload={handleReload}/>
                         : <Container>
+                            <Grid className={classes.title} component={Card} container justify='space-evenly' alignItems='center'>
+                                <CardContent classes={{root: classes.cardContent}}>
+                                    <ListItem component='span' disableGutters>
+                                        {!matchXS && <ListItemIcon><Avatar src={collaboration.service.image}/></ListItemIcon>}
+                                        <ListItemText>{collaboration.service.title}</ListItemText>
+                                    </ListItem>
+                                </CardContent>
+                                <CardActions classes={{root: classes.cardContent}}>
+                                    <Button variant='contained' size='small' color='primary'>Start</Button>
+                                </CardActions>
+                            </Grid>
                             <Grid container>
                                 <Grid component={Card} elevation={0} item xs={3}  className={classes.membersArea}>
                                     <List className={classes.membersList}>
@@ -95,7 +114,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                             <ListItem key={index}>
                                                 <ListItemAvatar>
                                                     <Badge overlap="circle" anchorOrigin={{vertical: 'bottom', horizontal: 'right',}}
-                                                           badgeContent={<StyledBadge variant='dot' status='offline'/>}>
+                                                           badgeContent={<StyledBadge variant='dot' status='online'/>}>
                                                         <Avatar variant='circular' src={m.avatar}/>
                                                     </Badge>
                                                     {matchXS && <ListItemText primary={m.name}/>}
@@ -105,49 +124,31 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                         ))}
                                     </List>
                                 </Grid>
-                                <Grid  component={List} disablePadding item xs={9}>
-                                    <Grid container direction='column'>
-                                        <Grid item container justify='space-evenly' alignItems='center'>
-                                            <Grid item component={List}>
-                                                <ListItem component='span' disableGutters>
-                                                    <ListItemIcon><Avatar src={collaboration.service.image}/></ListItemIcon>
-                                                    <ListItemText>{collaboration.service.title}</ListItemText>
-                                                </ListItem>
-                                            </Grid>
-                                            <Grid item className={classes.startCollaboration}>
-                                                <Button variant='contained' size='small' color='primary'>Start Collaboration</Button>
-                                            </Grid>
-                                        </Grid>
-                                        <Divider/>
-                                        <Grid container direction='column'>
-                                            <Grid item className={classes.chat}>
-                                                <Grid container  className={classes.chatArea}>
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
-                                                </Grid>
-                                            </Grid>
-                                            <Grid item className={classes.form}>
-                                                <form>
-                                                    <Container>
-                                                        <Grid container alignItems='flex-start' justify='space-between'>
-                                                            <Grid item>
-                                                                <TextField variant='outlined' className={classes.textField} size='small' fullWidth placeholder='Enter message'/>
-                                                            </Grid>
-                                                            <Grid item>
-                                                            <Button variant='contained' color='secondary'>Send</Button>
-                                                        </Grid>
-                                                        </Grid>
-                                                    </Container>
-                                                </form>
-                                            </Grid>
-                                        </Grid>
+                                <Grid  component={List} disablePadding item xs={9}  className={classes.chat}>
+                                    <Grid container direction='column' className={classes.chatArea}>
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis earum laboriosam quaerat totam. Ab deserunt hic in nihil voluptates! Atque cupiditate, facilis libero nobis repellat similique ut. A alias hic optio recusandae tempora vel voluptatem. Accusamus aspernatur autem beatae blanditiis commodi eum eveniet ex explicabo, id in minima modi mollitia nam nobis, nulla pariatur perspiciatis quaerat quam quas rem repellendus similique sit temporibus unde vero. A ad aliquam cum cumque delectus dolor doloremque doloribus earum excepturi fugit, harum hic illum iusto modi molestias nam natus necessitatibus non obcaecati odio perspiciatis, quaerat quisquam rerum? Aliquid cupiditate illo iure nisi quisquam voluptatem!
                                     </Grid>
                                 </Grid>
+                            </Grid>
+                            <Grid component={Card} square elevation={0} item className={classes.form}>
+                                <form>
+                                    <Container>
+                                        <Grid container alignItems='flex-start' justify='space-between'>
+                                            <Grid item sm={8}>
+                                                <TextField variant='outlined' className={classes.textField} size='small' fullWidth placeholder='Enter message'/>
+                                            </Grid>
+                                            <Grid item sm={4} container justify={matchXS ? 'flex-start' : 'center'}>
+                                                <Button variant='contained' color='secondary'>Send</Button>
+                                            </Grid>
+                                        </Grid>
+                                    </Container>
+                                </form>
                             </Grid>
                         </Container>
                 }
