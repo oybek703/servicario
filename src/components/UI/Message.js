@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
         textTransform: 'none',
         padding: '.2em .5em',
         cursor: 'text',
+        fontSize: '.9em',
         marginLeft: ({left}) => left ? '.5em' : 0,
         marginRight: ({left}) => left ? 0 : '.5em',
         '&:hover': {
@@ -34,11 +35,11 @@ const Message = ({msg, left}) => {
     const classes = useStyles({left})
     return (
         <Button classes={{root: classes.msgMainBox}} variant='text' component='span' disableRipple disableFocusRipple>
-            {left && <Avatar>U</Avatar>}
+            {left && <Avatar>A</Avatar>}
             <Button disableRipple disableFocusRipple component={Typography} classes={{root: classes.msgBox}} startIcon={left && <ArrowLeftIcon/>} endIcon={!left && <ArrowRightIcon/>}>
                 {msg}
             </Button>
-            {!left && <Avatar>U</Avatar>}
+            {!left && <Avatar>B</Avatar>}
         </Button>
     )
 }

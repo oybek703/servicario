@@ -10,8 +10,8 @@ import RegisterPage from "./RegisterPage"
 import LoginPage from "./LoginPage"
 import CreateService from "./CreateService"
 import MyServices from "./MyServices"
-import {autoLogin} from "../redux/actions"
-import {useDispatch} from "react-redux"
+import {autoLogin, checkUserStatus} from "../redux/actions"
+import {useDispatch, useSelector} from "react-redux"
 import Services from "./Services"
 import SentOffers from "./SentOffers"
 import ReceivedOffers from "./ReceivedOffers"
@@ -20,10 +20,16 @@ import CollaborationPage from "./CollaborationPage"
 
 function App() {
     const dispatch = useDispatch()
+    const {user} = useSelector(state => state.auth)
     useEffect(() => {
         dispatch(autoLogin())
         // eslint-disable-next-line
     }, [])
+    useEffect(() => {
+        if(user) {
+            checkUserStatus(user.uid)
+        }
+    }, [user])
   return (
       <ThemeProvider theme={theme}>
           <CssBaseline/>

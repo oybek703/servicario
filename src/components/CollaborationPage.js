@@ -128,8 +128,8 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                 <Grid  component={List} disablePadding item xs={9}  className={classes.chat}>
                                     <Grid container direction='column' className={classes.chatArea}>
                                         {
-                                            ['Hello everyone!', 'Hello Admin', 'How are you?', 'I am fine thanks.'].map((m, index) => (
-                                                <Grid item container justify={index % 2 !== 0 && 'flex-end'}>
+                                            ['Hello firebase!', 'Hello User', 'How are you?', 'I am fine thanks.', 'Can you teach me React?', 'Yes, of course.'].map((m, index) => (
+                                                <Grid key={index} item container justify={index % 2 !== 0 && 'flex-end'}>
                                                     <Message msg={m} left={index % 2 === 0}/>
                                                 </Grid>
                                             ))

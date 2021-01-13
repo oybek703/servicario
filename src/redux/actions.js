@@ -1,5 +1,5 @@
 import {firestore} from "../firebase"
-import firebase from 'firebase/app'
+import firebase from '../firebase'
 import 'firebase/auth'
 import {
     CLEAR_AUTH_ERROR,
@@ -146,6 +146,18 @@ export const logoutUser = () => {
         await firebase.auth().signOut()
         dispatch({type: LOGOUT_USER})
     }
+}
+
+export const checkUserStatus = uid => {
+    const userRealtimeDatabaseRef = firebase.database().ref(`/status/${uid}`)
+    const isOfflineForDatabase = {state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP}
+    const isOnlineForDatabase = {state: 'online', last_changed: firebase.database.ServerValue.TIMESTAMP}
+    firebase.database().ref('.info/connected').on('value', snapshot => {
+        console.log(snapshot.val())
+        if(!snapshot.val()) {return}
+        userRealtimeDatabaseRef.onDisconnect().set(isOfflineForDatabase)
+            .then(() => userRealtimeDatabaseRef.set(isOnlineForDatabase))
+    })
 }
 
 export const autoLogin = () => {
