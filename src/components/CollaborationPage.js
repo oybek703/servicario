@@ -32,14 +32,20 @@ const useStyles = makeStyles(theme => ({
     },
     membersArea: {
         maxHeight: '39em',
-        overflowY: 'scroll'
+        overflowY: 'scroll',
+        [theme.breakpoints.down('sm')]: {
+            maxHeight: '35em'
+        }
     },
     membersList: {
         minHeight: '50em'
     },
     chat: {
         maxHeight: '31em',
-        overflowY: 'scroll'
+        overflowY: 'scroll',
+        [theme.breakpoints.down('sm')]: {
+            maxHeight: '20em'
+        }
     },
     chatArea: {
         minHeight: '40em',
@@ -51,9 +57,13 @@ const useStyles = makeStyles(theme => ({
         padding: '.5em 0'
     },
     textField: {
-        minWidth: '40em',
-        [theme.breakpoints.down('md')]: {
-            maxWidth: '15em',
+        maxWidth: '15em',
+        [theme.breakpoints.down('sm')]: {
+            marginBottom: '.5em'
+        }
+    },
+    startCollaboration: {
+        [theme.breakpoints.down('sm')]: {
             marginBottom: '.5em'
         }
     }
@@ -98,13 +108,13 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                 <Grid  component={List} disablePadding item xs={9}>
                                     <Grid container direction='column'>
                                         <Grid item container justify='space-evenly' alignItems='center'>
-                                            <Grid item>
-                                                <ListItem component='span'>
+                                            <Grid item component={List}>
+                                                <ListItem component='span' disableGutters>
                                                     <ListItemIcon><Avatar src={collaboration.service.image}/></ListItemIcon>
                                                     <ListItemText>{collaboration.service.title}</ListItemText>
                                                 </ListItem>
                                             </Grid>
-                                            <Grid item>
+                                            <Grid item className={classes.startCollaboration}>
                                                 <Button variant='contained' size='small' color='primary'>Start Collaboration</Button>
                                             </Grid>
                                         </Grid>
