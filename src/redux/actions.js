@@ -48,6 +48,13 @@ import {
 
 //SERVICES
 
+const rejectCache = snapshot => {
+    const cache = snapshot.metadata.fromCache
+    if(cache) {
+        throw new Error('Network is not available cache rejected!')
+    }
+}
+
 export function fetchServices() {
    return async dispatch => {
        try {
@@ -97,14 +104,42 @@ export const fetchUserServices = uid => {
     }
 }
 
-const rejectCache = snapshot => {
-    const cache = snapshot.metadata.fromCache
-    if(cache) {
-        throw new Error('Network is not available cache rejected!')
+//PROFILES
+
+export const logoutUser = uid => {
+    return async dispatch => {
+        localStorage.removeItem('session')
+        const isOfflineForDatabase = {state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP}
+        await firebase.auth().signOut()
+        await firebase.database().ref(`/status/${uid}`).set(isOfflineForDatabase)
+        dispatch({type: LOGOUT_USER})
     }
 }
 
-//PROFILES
+const autoLogout = (time) => {
+    return async dispatch => {
+        setTimeout(() => {
+            dispatch(logoutUser())
+        }, time * 1000)
+    }
+}
+
+export const autoLogin = () => {
+    return async dispatch => {
+        const session = JSON.parse(localStorage.getItem('session'))
+        if(session) {
+            const {expirationTime} = session
+            if(new Date(expirationTime).getTime() < new Date().getTime()) {
+                dispatch(logoutUser())
+            } else {
+                dispatch({type: LOGIN_USER_SUCCESS, payload: session})
+                dispatch(autoLogout((new Date(expirationTime).getTime() - new Date().getTime()) / 1000))
+            }
+        } else {
+            dispatch(logoutUser())
+        }
+    }
+}
 
 export const registerNewUser = ({name, email, password, avatar}) => {
     return async dispatch => {
@@ -140,41 +175,16 @@ export const signInUser = ({email, password}) => {
     }
 }
 
-export const logoutUser = () => {
-    return async dispatch => {
-        localStorage.removeItem('session')
-        await firebase.auth().signOut()
-        dispatch({type: LOGOUT_USER})
-    }
-}
-
 export const checkUserStatus = uid => {
     const userRealtimeDatabaseRef = firebase.database().ref(`/status/${uid}`)
     const isOfflineForDatabase = {state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP}
     const isOnlineForDatabase = {state: 'online', last_changed: firebase.database.ServerValue.TIMESTAMP}
     firebase.database().ref('.info/connected').on('value', snapshot => {
-        console.log(snapshot.val())
+        console.log((snapshot.val() ? 'User Online' : 'User Offline'))
         if(!snapshot.val()) {return}
         userRealtimeDatabaseRef.onDisconnect().set(isOfflineForDatabase)
             .then(() => userRealtimeDatabaseRef.set(isOnlineForDatabase))
     })
-}
-
-export const autoLogin = () => {
-    return async dispatch => {
-        const session = JSON.parse(localStorage.getItem('session'))
-        if(session) {
-            const {expirationTime} = session
-            if(new Date(expirationTime).getTime() < new Date().getTime()) {
-                dispatch(logoutUser())
-            } else {
-                dispatch({type: LOGIN_USER_SUCCESS, payload: session})
-                dispatch(autoLogout((new Date(expirationTime).getTime() - new Date().getTime()) / 1000))
-            }
-        } else {
-            dispatch(logoutUser())
-        }
-    }
 }
 
 const saveSession = async (user) => {
@@ -184,14 +194,6 @@ const saveSession = async (user) => {
     const userSession = {expirationTime: new Date(expirationTime).getTime(), token, uid: user.uid, name, avatar}
     localStorage.setItem('session', JSON.stringify(userSession))
     return {userSession, expirationTime, messages}
-}
-
-const autoLogout = (time) => {
-    return async dispatch => {
-        setTimeout(() => {
-            dispatch(logoutUser())
-        }, time * 1000)
-    }
 }
 
 const getUserById = async uid => firestore.doc(`profiles/${uid}`).get()

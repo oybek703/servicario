@@ -84,7 +84,6 @@ const CollaborationPage = ({match: {params: {id}}}) => {
     const matchXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
     const {collaboration, loading, error} = useSelector(state => state.collaboration)
     const handleReload = () => dispatch(fetchCollaborationById(id))
-    // console.log(collaboration)
     useEffect(() => {
         dispatch(fetchCollaborationById(id))
     }, [dispatch, id])
@@ -115,7 +114,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                             <ListItem key={index}>
                                                 <ListItemAvatar>
                                                     <Badge overlap="circle" anchorOrigin={{vertical: 'bottom', horizontal: 'right',}}
-                                                           badgeContent={<StyledBadge variant='dot' status='online'/>}>
+                                                           badgeContent={<StyledBadge variant='dot' status={m.state === 'online' ? 'online' : 'offline'}/>}>
                                                         <Avatar variant='circular' src={m.avatar}/>
                                                     </Badge>
                                                     {matchXS && <ListItemText primary={m.name}/>}
