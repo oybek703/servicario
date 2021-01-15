@@ -2,7 +2,7 @@ import {
     FETCH_COLLABORATIONS_ERROR,
     FETCH_COLLABORATIONS_START,
     FETCH_COLLABORATIONS_SUCCESS, FETCH_SINGLE_COLLABORATION_ERROR,
-    FETCH_SINGLE_COLLABORATION_START, FETCH_SINGLE_COLLABORATION_SUCCESS
+    FETCH_SINGLE_COLLABORATION_START, FETCH_SINGLE_COLLABORATION_SUCCESS, MEMBERS_STATUS_UPDATED
 } from "../types"
 
 const initialState = {
@@ -37,6 +37,7 @@ export const collaboration = (state = collaborationInitialState, action) => {
         case FETCH_SINGLE_COLLABORATION_START:
             return {...state, loading: true, error: null}
         case FETCH_SINGLE_COLLABORATION_SUCCESS:
+        case MEMBERS_STATUS_UPDATED:
             return {...state, loading: false, error: null, collaboration: payload}
         case FETCH_SINGLE_COLLABORATION_ERROR:
             return {...state, loading: false, error: payload}

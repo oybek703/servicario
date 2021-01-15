@@ -3,7 +3,7 @@ import {Button, Card, Container, makeStyles, useMediaQuery} from "@material-ui/c
 import Grid from "@material-ui/core/Grid"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import {useDispatch, useSelector} from "react-redux"
-import {fetchCollaborationById} from "../redux/actions"
+import {fetchCollaborationById, listenForMembersStatus} from "../redux/actions"
 import Reloader from "./UI/Reloader"
 import withAuth from "./hoc/withAuth"
 import List from "@material-ui/core/List"
@@ -86,7 +86,9 @@ const CollaborationPage = ({match: {params: {id}}}) => {
     const handleReload = () => dispatch(fetchCollaborationById(id))
     useEffect(() => {
         dispatch(fetchCollaborationById(id))
-    }, [dispatch, id])
+        dispatch(listenForMembersStatus())
+    //    eslint-disable-next-line
+    }, [])
     return (
         <Container>
             <Grid className={classes.page} container justify='center' alignItems='center'>
@@ -110,14 +112,14 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                             <Grid container>
                                 <Grid component={Card} elevation={0} item xs={3}  className={classes.membersArea}>
                                     <List className={classes.membersList}>
-                                        {collaboration.allowedPeople.map((m, index) => (
+                                        {collaboration.joinedPeople.map((m, index) => (
                                             <ListItem key={index}>
                                                 <ListItemAvatar>
                                                     <Badge overlap="circle" anchorOrigin={{vertical: 'bottom', horizontal: 'right',}}
                                                            badgeContent={<StyledBadge variant='dot' status={m.state === 'online' ? 'online' : 'offline'}/>}>
                                                         <Avatar variant='circular' src={m.avatar}/>
                                                     </Badge>
-                                                    {matchXS && <ListItemText primary={m.name}/>}
+                                                    {/*{matchXS && <ListItemText primary={m.name}/>}*/}
                                                 </ListItemAvatar>
                                                 {!matchXS && <ListItemText primary={m.name}/>}
                                             </ListItem>
@@ -128,7 +130,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                     <Grid container direction='column' className={classes.chatArea}>
                                         {
                                             ['Hello firebase!', 'Hello User', 'How are you?', 'I am fine thanks.', 'Can you teach me React?', 'Yes, of course.'].map((m, index) => (
-                                                <Grid key={index} item container justify={index % 2 !== 0 && 'flex-end'}>
+                                                <Grid key={index} item container justify={index % 2 !== 0 ? 'flex-end' : 'flex-start'}>
                                                     <Message msg={m} left={index % 2 === 0}/>
                                                 </Grid>
                                             ))
