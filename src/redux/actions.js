@@ -1,8 +1,8 @@
-import {firestore} from "../firebase"
+import {firestore, Timestamp} from "../firebase"
 import firebase from '../firebase'
 import 'firebase/auth'
 import {
-    CLEAR_AUTH_ERROR,
+    CLEAR_AUTH_ERROR, CLEAR_SEND_MESSAGE_STATUS,
     CREATE_COLLABORATION_CLEAR,
     CREATE_COLLABORATION_START,
     CREATE_COLLABORATION_SUCCESS,
@@ -40,7 +40,7 @@ import {
     MARK_AS_READ_SUCCESS, MEMBERS_STATUS_UPDATED,
     REGISTER_USER_ERROR,
     REGISTER_USER_START,
-    REGISTER_USER_SUCCESS,
+    REGISTER_USER_SUCCESS, SEND_MESSAGE_START, SEND_MESSAGE_SUCCESS,
     UPDATE_OFFER_START,
     UPDATE_OFFER_SUCCESS,
     USER_MESSAGES_RECEIVED
@@ -292,15 +292,20 @@ export const fetchUserCollaborations = uid => {
 }
 
 export const fetchCollaborationById = collaborationId => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         try {
+            let currentUserId;
+            const {user} = getState().auth
+            if(user) {
+                currentUserId = user.uid
+            }
             dispatch({type: FETCH_SINGLE_COLLABORATION_START})
             const doc = await firestore.collection('collaborations').doc(collaborationId).get()
             rejectCache(doc)
             const collaboration = {id: collaborationId, ...doc.data()}
             const snapshot = await Promise.all(collaboration.allowedPeople.map(async m => await firestore.doc(`profiles/${m}`).get()))
             const allowedPeople = snapshot.map(doc => doc.data())
-            const members = allowedPeople.map(m => m.state === 'online' && m).filter(m => m)
+            const members = allowedPeople.map(m => m.state === 'online' || m.uid === currentUserId ? m : null).filter(m => m)
             dispatch({type: FETCH_SINGLE_COLLABORATION_SUCCESS, payload: {id: doc.id, ...doc.data(), allowedPeople, joinedPeople: members}})
         } catch (e) {
             dispatch({type: FETCH_SINGLE_COLLABORATION_ERROR, payload: {code: e.code, message: e.message}})
@@ -311,10 +316,34 @@ export const fetchCollaborationById = collaborationId => {
 export const listenForMembersStatus = () => {
      return async (dispatch, getState) => {
          const {collaboration} = getState().collaboration
+         if(collaboration.allowedPeople) {
              const userIds = collaboration.allowedPeople.map(p => p.uid)
              firestore.collection('profiles').where('uid' , 'in', userIds).onSnapshot(snapshot => {
                  const members = snapshot.docs.map(doc => doc.data())
                  dispatch({type: MEMBERS_STATUS_UPDATED, payload: {...collaboration, joinedPeople: members}})
              })
+         }
      }
+}
+
+//CHAT MESSAGING
+
+export const sendUserMessage = (collaborationId, message) => {
+    return async (dispatch, getState) => {
+        const {user: {uid, avatar}} = getState().auth
+        const fullMessage = {message, user: {uid, avatar}, createdAt: Timestamp.fromDate(new Date())}
+        dispatch({type: SEND_MESSAGE_START})
+        await firestore.collection(`/collaborations/${collaborationId}/messages`).add(fullMessage)
+        dispatch({type: SEND_MESSAGE_SUCCESS, payload: 'message sent'})
+        setTimeout(() => dispatch({type: CLEAR_SEND_MESSAGE_STATUS}), 200)
+    }
+}
+
+export const listenForChatMessagesUpdate = collaborationId => {
+    return async dispatch => {
+        firestore.collection(`/collaborations/${collaborationId}/messages`).onSnapshot(snapshot => {
+            const messages = snapshot.docs.map(doc => doc.data())
+            console.log(messages)
+        })
+    }
 }

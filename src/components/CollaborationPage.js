@@ -1,9 +1,14 @@
-import React, {useEffect} from 'react'
+import React, {Fragment, useEffect, useState} from 'react'
 import {Button, Card, Container, makeStyles, useMediaQuery} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import {useDispatch, useSelector} from "react-redux"
-import {fetchCollaborationById, listenForMembersStatus} from "../redux/actions"
+import {
+    fetchCollaborationById,
+    listenForChatMessagesUpdate,
+    listenForMembersStatus,
+    sendUserMessage
+} from "../redux/actions"
 import Reloader from "./UI/Reloader"
 import withAuth from "./hoc/withAuth"
 import List from "@material-ui/core/List"
@@ -18,6 +23,7 @@ import TextField from "@material-ui/core/TextField"
 import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
 import Message from "./UI/Message"
+import SendIcon from '@material-ui/icons/Send'
 
 const StyledBadge = withStyles((theme) => ({
     root: {
@@ -83,12 +89,25 @@ const CollaborationPage = ({match: {params: {id}}}) => {
     const dispatch = useDispatch()
     const matchXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
     const {collaboration, loading, error} = useSelector(state => state.collaboration)
+    const {messageId, loading:messageLoading} = useSelector(state => state.sendMessage)
+    const [message, setMessage] = useState('')
     const handleReload = () => dispatch(fetchCollaborationById(id))
+    const handleSubmit = e => {
+        e.preventDefault()
+        dispatch(sendUserMessage(collaboration.id, message))
+    }
+    console.log(collaboration)
     useEffect(() => {
         dispatch(fetchCollaborationById(id))
         dispatch(listenForMembersStatus())
+        dispatch(listenForChatMessagesUpdate(id))
     //    eslint-disable-next-line
     }, [])
+    useEffect(() => {
+        if(messageId) {
+            setMessage('')
+        }
+    }, [messageId])
     return (
         <Container>
             <Grid className={classes.page} container justify='center' alignItems='center'>
@@ -115,11 +134,13 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                         {collaboration.joinedPeople.map((m, index) => (
                                             <ListItem key={index}>
                                                 <ListItemAvatar>
+                                                    <Fragment>
                                                     <Badge overlap="circle" anchorOrigin={{vertical: 'bottom', horizontal: 'right',}}
                                                            badgeContent={<StyledBadge variant='dot' status={m.state === 'online' ? 'online' : 'offline'}/>}>
                                                         <Avatar variant='circular' src={m.avatar}/>
                                                     </Badge>
-                                                    {/*{matchXS && <ListItemText primary={m.name}/>}*/}
+                                                    {matchXS && <ListItemText primary={m.name}/>}
+                                                    </Fragment>
                                                 </ListItemAvatar>
                                                 {!matchXS && <ListItemText primary={m.name}/>}
                                             </ListItem>
@@ -139,14 +160,14 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                 </Grid>
                             </Grid>
                             <Grid component={Card} square elevation={0} item className={classes.form}>
-                                <form>
+                                <form onSubmit={handleSubmit}>
                                     <Container>
                                         <Grid container alignItems='flex-start' justify='space-between'>
                                             <Grid item sm={8}>
-                                                <TextField variant='outlined' className={classes.textField} size='small' fullWidth placeholder='Enter message'/>
+                                                <TextField value={message} onChange={({target: {value}}) => setMessage(value)} variant='outlined' className={classes.textField} size='small' fullWidth placeholder='Enter message'/>
                                             </Grid>
                                             <Grid item sm={4} container justify={matchXS ? 'flex-start' : 'center'}>
-                                                <Button variant='contained' color='secondary'>Send</Button>
+                                                <Button type='submit' variant='contained' color='primary' disabled={messageLoading} endIcon={messageLoading && <CircularProgress color='secondary' size='15px'/>}><SendIcon/></Button>
                                             </Grid>
                                         </Grid>
                                     </Container>

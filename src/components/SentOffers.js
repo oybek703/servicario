@@ -71,7 +71,7 @@ const SentOffers = () => {
             isRead: false,
             type: 'invitation',
             text: `Hello ${offer.toUser.name}, please join collaboration as soon as possible`,
-            cta: '',
+            cta: `/collaborations/${collaborationId}`,
             fromUser: offer.fromUser.name,
             serviceTitle: offer.service.title,
             toUser: offer.toUser.uid,

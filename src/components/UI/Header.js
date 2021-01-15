@@ -137,7 +137,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Header = (props) => {
-    const {location: {pathname}} = props
+    const {location: {pathname}, history} = props
     const classes = useStyles()
     const matchSM = useMediaQuery(theme => theme.breakpoints.down('sm'))
     const dispatch = useDispatch()
@@ -161,9 +161,12 @@ const Header = (props) => {
         setManage(false)
         setMessage(false)
     }
-    const handleMarkAsRead = messageId => {
+    const handleMarkAsRead = (messageId, cta = null) => {
         setMessage(false)
         dispatch(markMessageAsRead(user.uid, messageId))
+        if(cta) {
+            history.push(cta)
+        }
     }
     useEffect(() => {
             if(user) {setName(user.name); setAvatar(user.avatar)}
@@ -350,7 +353,7 @@ const Header = (props) => {
                                 {
                                     !messages.length
                                         ? <Grid onMouseLeave={() => setMessage(false)}>
-                                            <Alert type='success' message='No unread messages yet (:'/>
+                                            {markAsReadLoading ? <Alert type='info' message='Loading...'/> : <Alert type='success' message='No unread messages yet (:'/>}
                                         </Grid>
                                         : <Grid container className={classes.messagesContainer}>
                                             {messages.filter(m => !m.isRead).map((message, index) => (<Grid item key={index}>
@@ -364,7 +367,7 @@ const Header = (props) => {
                                                         <Typography variant='subtitle2' paragraph gutterBottom>{message.text}</Typography>
                                                     </CardContent>
                                                     <CardActions>
-                                                        <Button onClick={() => setMessage(false)} variant='contained' size='small' color='primary'>Join</Button>
+                                                        <Button onClick={() => handleMarkAsRead(message.id, message.cta)} variant='contained' size='small' color='primary'>Join</Button>
                                                         <Button disabled={markAsReadLoading} endIcon={markAsReadLoading && <CircularProgress size='15px'/>}
                                                                 onClick={() => handleMarkAsRead(message.id)} variant='contained' size='small' color='secondary'>Later</Button>
                                                     </CardActions>

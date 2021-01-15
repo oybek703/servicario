@@ -11,6 +11,7 @@ import updateOffer from "./updateOffer"
 import createCollaboration, {userMessages} from "./createCollaboration"
 import markAsRead from "./markMessageRead"
 import userCollaborations, {collaboration} from "./userCollaborations"
+import sendMessage from "./sendMessage"
 
 const rootReducer = combineReducers(
     {
@@ -27,7 +28,8 @@ const rootReducer = combineReducers(
         userMessages,
         markAsRead,
         userCollaborations,
-        collaboration
+        collaboration,
+        sendMessage
     }
 )
 
