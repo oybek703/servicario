@@ -1,5 +1,5 @@
-import React, {Fragment, useEffect, useRef, useState} from 'react'
-import {Button, Card, Container, makeStyles, useMediaQuery} from "@material-ui/core"
+import React, {Fragment, useEffect, useState} from 'react'
+import {Button, Card, Container, Fab, makeStyles, useMediaQuery} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import {useDispatch, useSelector} from "react-redux"
@@ -26,6 +26,10 @@ import Message from "./UI/Message"
 import SendIcon from '@material-ui/icons/Send'
 import Typography from "@material-ui/core/Typography"
 import Alert from "./UI/Alert"
+import IconButton from "@material-ui/core/IconButton"
+import RefreshIcon from '@material-ui/icons/Refresh'
+import {firestore} from "../firebase"
+import {CHAT_MESSAGES_RECEIVED, MEMBERS_STATUS_UPDATED} from "../redux/types"
 
 const StyledBadge = withStyles((theme) => ({
     root: {
@@ -50,9 +54,22 @@ const useStyles = makeStyles(theme => ({
     membersList: {
         minHeight: '50em'
     },
+    memberUpdater: {
+        position: 'sticky',
+        bottom: '4%',
+        left: '90%',
+        width: 0,
+        height: 0,
+        backgroundColor: '#eeeeee',
+        [theme.breakpoints.down('sm')]: {
+            bottom: '5%',
+            left: '85%'
+        }
+    },
     chat: {
         maxHeight: '25em',
         overflowY: 'scroll',
+        backgroundColor: 'gray',
         [theme.breakpoints.down('sm')]: {
             maxHeight: '18em'
         }
@@ -62,6 +79,17 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: 'gray',
         color: 'white',
         padding: '1em'
+    },
+    chatUpdater: {
+        position: 'sticky',
+        bottom: '3%',
+        left: '98%',
+        width: 0,
+        height: 0,
+        [theme.breakpoints.down('sm')]: {
+            bottom: '5%',
+            left: '92%'
+        }
     },
     form: {
         width: '100%',
@@ -97,8 +125,18 @@ const CollaborationPage = ({match: {params: {id}}}) => {
     const {user} = useSelector(state => state.auth)
     const {messageId, loading:messageLoading, chatMessages} = useSelector(state => state.sendMessage)
     const [message, setMessage] = useState('')
-    const inputRef = useRef(null)
     const handleReload = () => dispatch(fetchCollaborationById(id))
+    const handleMembersUpdate = async () => {
+        const userIds = collaboration.allowedPeople.map(p => p.uid)
+        const snapshot = await firestore.collection('profiles').where('uid' , 'in', userIds).get()
+        const members = snapshot.docs.map(doc => doc.data())
+        dispatch({type: MEMBERS_STATUS_UPDATED, payload: {...collaboration, joinedPeople: members}})
+    }
+    const handleMessageUpdate = async () => {
+        const snapshot = await firestore.collection(`/collaborations/${collaboration.id}/messages`).get()
+        const messages = snapshot.docs.map(doc => doc.data())
+        dispatch({type: CHAT_MESSAGES_RECEIVED, payload: messages})
+    }
     const handleSubmit = e => {
         e.preventDefault()
         dispatch(sendUserMessage(collaboration.id, message))
@@ -112,7 +150,6 @@ const CollaborationPage = ({match: {params: {id}}}) => {
     useEffect(() => {
         if(messageId) {
             setMessage('')
-            inputRef.current && inputRef.current.focus()
         }
     }, [messageId])
     return (
@@ -156,6 +193,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                             </Fragment>
                                         ))}
                                     </List>
+                                    <IconButton title='Update member status' size='small' className={classes.memberUpdater} onClick={handleMembersUpdate}><Fab size='small'><RefreshIcon/></Fab></IconButton>
                                 </Grid>
                                 <Grid  component={List} disablePadding item xs={9}  className={classes.chat}>
                                     <Grid container direction='column' className={classes.chatArea}>
@@ -168,6 +206,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                             ))
                                         }
                                     </Grid>
+                                    <IconButton title='Update chat status' size='small' className={classes.chatUpdater} onClick={handleMessageUpdate}><Fab size='small'><RefreshIcon/></Fab></IconButton>
                                 </Grid>
                             </Grid>
                             <Grid component={Card} square elevation={0} item className={classes.form}>
@@ -175,7 +214,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                     <Container>
                                         <Grid container alignItems='flex-start' justify='space-between'>
                                             <Grid item sm={8}>
-                                                <TextField ref={inputRef} disabled={messageLoading} value={message} onChange={({target: {value}}) => setMessage(value)} variant='outlined' className={classes.textField} size='small' fullWidth placeholder='Enter message'/>
+                                                <TextField disabled={messageLoading} value={message} onChange={({target: {value}}) => setMessage(value)} variant='outlined' className={classes.textField} size='small' fullWidth placeholder='Enter message'/>
                                             </Grid>
                                             <Grid item sm={4} container justify={matchXS ? 'flex-start' : 'center'}>
                                                 <Button type='submit' variant='contained' color='primary' disabled={messageLoading} endIcon={messageLoading && <CircularProgress color='secondary' size='15px'/>}><SendIcon/></Button>
