@@ -2,6 +2,7 @@ import {firestore, Timestamp} from "../firebase"
 import firebase from '../firebase'
 import 'firebase/auth'
 import {
+    CHAT_MESSAGES_RECEIVED,
     CLEAR_AUTH_ERROR, CLEAR_SEND_MESSAGE_STATUS,
     CREATE_COLLABORATION_CLEAR,
     CREATE_COLLABORATION_START,
@@ -343,7 +344,7 @@ export const listenForChatMessagesUpdate = collaborationId => {
     return async dispatch => {
         firestore.collection(`/collaborations/${collaborationId}/messages`).onSnapshot(snapshot => {
             const messages = snapshot.docs.map(doc => doc.data())
-            console.log(messages)
+            dispatch({type: CHAT_MESSAGES_RECEIVED, payload: messages})
         })
     }
 }

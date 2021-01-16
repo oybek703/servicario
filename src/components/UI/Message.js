@@ -1,9 +1,8 @@
 import React from 'react'
 import {makeStyles, Typography} from "@material-ui/core"
-import ArrowRightIcon from '@material-ui/icons/ArrowRight'
-import ArrowLeftIcon from '@material-ui/icons/ArrowLeft'
 import Button from "@material-ui/core/Button"
 import Avatar from "@material-ui/core/Avatar"
+import Grid from "@material-ui/core/Grid"
 
 const useStyles = makeStyles(theme => ({
     msgMainBox: {
@@ -28,19 +27,30 @@ const useStyles = makeStyles(theme => ({
         '&:hover': {
             backgroundColor: ({left}) => left ? '#222' : '#444'
         }
+    },
+    time: {
+        fontSize: '.8em',
+        fontStyle: 'italic'
     }
 }))
 
-const Message = ({msg, left}) => {
+const Message = ({msg, left, user, createdAt}) => {
     const classes = useStyles({left})
     return (
-        <Button classes={{root: classes.msgMainBox}} variant='text' component='span' disableRipple disableFocusRipple>
-            {left && <Avatar>A</Avatar>}
-            <Button disableRipple disableFocusRipple component={Typography} classes={{root: classes.msgBox}} startIcon={left && <ArrowLeftIcon/>} endIcon={!left && <ArrowRightIcon/>}>
-                {msg}
-            </Button>
-            {!left && <Avatar>B</Avatar>}
-        </Button>
+        <Grid item>
+            <Grid item>
+                <Button classes={{root: classes.msgMainBox}} variant='text' component='span' disableRipple disableFocusRipple>
+                    {left && <Avatar src={user.avatar}/>}
+                    <Button disableRipple disableFocusRipple component={Typography} classes={{root: classes.msgBox}}>
+                        {msg}
+                    </Button>
+                    {!left && <Avatar src={user.avatar}/>}
+                </Button>
+            </Grid>
+            <Grid item>
+                <Typography align={left ? 'left' : 'right'} variant='subtitle2' className={classes.time}>{`${new Date(createdAt.seconds * 1000).toLocaleTimeString()}`}</Typography>
+            </Grid>
+        </Grid>
     )
 }
 
