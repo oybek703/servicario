@@ -83,12 +83,12 @@ const useStyles = makeStyles(theme => ({
     chatUpdater: {
         position: 'sticky',
         bottom: '3%',
-        left: '98%',
+        left: '97%',
         width: 0,
         height: 0,
         [theme.breakpoints.down('sm')]: {
             bottom: '5%',
-            left: '92%'
+            left: '90%'
         }
     },
     form: {
@@ -152,6 +152,11 @@ const CollaborationPage = ({match: {params: {id}}}) => {
             setMessage('')
         }
     }, [messageId])
+    useEffect(() => {
+        const chatArea = document.getElementById('chat-area')
+        const chatScrollHeight = chatArea.scrollHeight
+        chatArea.scrollBy(0, chatScrollHeight)
+    }, [chatMessages])
     return (
         <Container>
             <Grid className={classes.page} container justify='center' alignItems='center'>
@@ -174,28 +179,30 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                             </Grid>
                             <Grid container>
                                 <Grid component={Card} elevation={0} item xs={3}  className={classes.membersArea}>
-                                    <List className={classes.membersList}>
-                                        {collaboration.joinedPeople.map((m, index) => (
-                                            <Fragment key={index}>
-                                            <ListItem >
-                                                <ListItemAvatar>
-                                                    <Fragment>
-                                                    <Badge overlap="circle" anchorOrigin={{vertical: 'bottom', horizontal: 'right',}}
-                                                           badgeContent={<StyledBadge variant='dot' status={m.state === 'online' ? 'online' : 'offline'}/>}>
-                                                        <Avatar variant='circular' src={m.avatar}/>
-                                                    </Badge>
-                                                    {matchXS && <ListItemText primary={m.name} />}
-                                                    </Fragment>
-                                                </ListItemAvatar>
-                                                {!matchXS && <ListItemText primary={m.name} />}
-                                            </ListItem>
-                                                {m.state === 'offline' && <Typography className={classes.lastOnline} component='p' variant='body2' align='center'>{`last online at ${new Date(m.last_changed.seconds * 1000).toLocaleTimeString()}`}</Typography>}
-                                            </Fragment>
-                                        ))}
+                                    <List component='div'>
+                                        <List className={classes.membersList}>
+                                            {collaboration.joinedPeople.map((m, index) => (
+                                                <Fragment key={index}>
+                                                <ListItem >
+                                                    <ListItemAvatar>
+                                                        <Fragment>
+                                                        <Badge overlap="circle" anchorOrigin={{vertical: 'bottom', horizontal: 'right',}}
+                                                               badgeContent={<StyledBadge variant='dot' status={m.state === 'online' ? 'online' : 'offline'}/>}>
+                                                            <Avatar variant='circular' src={m.avatar}/>
+                                                        </Badge>
+                                                        {matchXS && <ListItemText primary={m.name} />}
+                                                        </Fragment>
+                                                    </ListItemAvatar>
+                                                    {!matchXS && <ListItemText primary={m.name} />}
+                                                </ListItem>
+                                                    {m.state === 'offline' && <Typography className={classes.lastOnline} component='p' variant='body2' align='center'>{`last online at ${new Date(m.last_changed.seconds * 1000).toLocaleTimeString()}`}</Typography>}
+                                                </Fragment>
+                                            ))}
+                                        </List>
+                                        <IconButton title='Update member status' size='small' className={classes.memberUpdater} onClick={handleMembersUpdate}><Fab component='span' size='small'><RefreshIcon/></Fab></IconButton>
                                     </List>
-                                    <IconButton title='Update member status' size='small' className={classes.memberUpdater} onClick={handleMembersUpdate}><Fab size='small'><RefreshIcon/></Fab></IconButton>
                                 </Grid>
-                                <Grid  component={List} disablePadding item xs={9}  className={classes.chat}>
+                                <Grid  component={List} disablePadding item xs={9}  className={classes.chat} id='chat-area'>
                                     <Grid container direction='column' className={classes.chatArea}>
                                         {
                                             !chatMessages.length ? <Alert type='info' message='No any messages yet...'/> :
@@ -206,7 +213,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                             ))
                                         }
                                     </Grid>
-                                    <IconButton title='Update chat status' size='small' className={classes.chatUpdater} onClick={handleMessageUpdate}><Fab size='small'><RefreshIcon/></Fab></IconButton>
+                                    <IconButton title='Update chat status' size='small' className={classes.chatUpdater} onClick={handleMessageUpdate}><Fab component='span' size='small'><RefreshIcon/></Fab></IconButton>
                                 </Grid>
                             </Grid>
                             <Grid component={Card} square elevation={0} item className={classes.form}>
