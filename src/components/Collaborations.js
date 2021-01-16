@@ -69,8 +69,14 @@ const Collaborations = () => {
                                                         <Avatar src={c.service.image} alt='service icon'/>
                                                     </ListItemAvatar>
                                                     <ListItemText classes={{root: classes.cStatus}} primary={
-                                                        <Typography variant='subtitle2' color='secondary' component='span'>
-                                                            pending
+                                                        <Typography variant='subtitle2' component='span'>
+                                                            {
+                                                                c.status === 'finished'
+                                                                ? `<span style="color: red">finished</span>`
+                                                                : c.status === 'started'
+                                                                    ? `<span style="color: green">started</span>`
+                                                                    : `<span style="color: yellow">pending</span>`
+                                                            }
                                                         </Typography>}
                                                                   secondary={`replied at ${new Date(c.createdAt.seconds * 1000).toLocaleTimeString()} 
                                                                   ${new Date(c.createdAt.seconds * 1000).toLocaleDateString()}`}
