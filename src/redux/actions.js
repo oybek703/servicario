@@ -29,10 +29,10 @@ import {
     FETCH_SERVICES_SUCCESS,
     FETCH_SINGLE_COLLABORATION_ERROR,
     FETCH_SINGLE_COLLABORATION_START,
-    FETCH_SINGLE_COLLABORATION_SUCCESS,
+    FETCH_SINGLE_COLLABORATION_SUCCESS, FETCH_SINGLE_COLLABORATION_UPDATED,
     FETCH_USER_SERVICES_ERROR,
     FETCH_USER_SERVICES_START,
-    FETCH_USER_SERVICES_SUCCESS,
+    FETCH_USER_SERVICES_SUCCESS, FINISH_COLLABORATION,
     LOGIN_USER_ERROR,
     LOGIN_USER_START,
     LOGIN_USER_SUCCESS,
@@ -41,7 +41,7 @@ import {
     MARK_AS_READ_SUCCESS, MEMBERS_STATUS_UPDATED,
     REGISTER_USER_ERROR,
     REGISTER_USER_START,
-    REGISTER_USER_SUCCESS, SEND_MESSAGE_START, SEND_MESSAGE_SUCCESS,
+    REGISTER_USER_SUCCESS, SEND_MESSAGE_START, SEND_MESSAGE_SUCCESS, START_COLLABORATION, START_COLLABORATION_LOADING,
     UPDATE_OFFER_START,
     UPDATE_OFFER_SUCCESS,
     USER_MESSAGES_RECEIVED
@@ -308,6 +308,14 @@ export const fetchCollaborationById = collaborationId => {
             const allowedPeople = snapshot.map(doc => doc.data())
             const members = allowedPeople.map(m => m.state === 'online' || m.uid === currentUserId ? m : null).filter(m => m)
             dispatch({type: FETCH_SINGLE_COLLABORATION_SUCCESS, payload: {id: doc.id, ...doc.data(), allowedPeople, joinedPeople: members}})
+            firestore.collection('collaborations').doc(collaborationId).onSnapshot(async snapshot => {
+                const {expiresAt} = snapshot.data()
+                if(new Date().getTime() > expiresAt.toDate().getTime()) {
+                    await firestore.collection('collaborations').doc(collaborationId).update({status: 'finished'})
+                    dispatch({type: FINISH_COLLABORATION})
+                }
+                dispatch({type:FETCH_SINGLE_COLLABORATION_UPDATED, payload: {id: snapshot.id, ...snapshot.data(), allowedPeople, joinedPeople: members} })
+            })
         } catch (e) {
             dispatch({type: FETCH_SINGLE_COLLABORATION_ERROR, payload: {code: e.code, message: e.message}})
         }
@@ -321,10 +329,23 @@ export const listenForMembersStatus = () => {
              const userIds = collaboration.allowedPeople.map(p => p.uid)
              firestore.collection('profiles').where('uid' , 'in', userIds).onSnapshot(snapshot => {
                  const members = snapshot.docs.map(doc => doc.data())
-                 dispatch({type: MEMBERS_STATUS_UPDATED, payload: {...collaboration, joinedPeople: members}})
+                 dispatch({type: MEMBERS_STATUS_UPDATED, payload: members})
              })
          }
      }
+}
+
+export const startCollaboration = (collaborationId, collaborationTime) => {
+    return async dispatch => {
+        dispatch({type: START_COLLABORATION_LOADING})
+        const expiresAt = Timestamp.fromDate(new Date(new Date().getTime() + collaborationTime * 1000))
+        await firestore.collection('collaborations').doc(collaborationId).update({expiresAt, status: 'started'})
+        dispatch({type: START_COLLABORATION})
+        setTimeout(async () => {
+            await firestore.collection('collaborations').doc(collaborationId).update({status: 'finished'})
+            dispatch({type: FINISH_COLLABORATION})
+        }, collaborationTime * 1000)
+    }
 }
 
 //CHAT MESSAGING

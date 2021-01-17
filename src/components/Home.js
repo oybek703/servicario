@@ -8,7 +8,6 @@ import {fetchServices} from "../redux/actions"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import Alert from "./UI/Alert"
 import {Link} from "react-router-dom"
-import Timer from "./UI/Timer"
 
 
 const useStyles = makeStyles(theme => ({
@@ -50,7 +49,6 @@ const Home = () => {
     return (
         <Fragment>
             <Container>
-                <Timer time={10800}/>
                 <Grid container alignItems='center' justify='space-evenly' className={classes.manage}>
                 <Grid item>
                     <Typography variant='h3' paragraph gutterBottom>Manage, Collaborate.</Typography>

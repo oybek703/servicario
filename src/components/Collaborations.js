@@ -72,10 +72,10 @@ const Collaborations = () => {
                                                         <Typography variant='subtitle2' component='span'>
                                                             {
                                                                 c.status === 'finished'
-                                                                ? `<span style="color: red">finished</span>`
+                                                                ? <span style={{color: 'red'}}>finished</span>
                                                                 : c.status === 'started'
-                                                                    ? `<span style="color: green">started</span>`
-                                                                    : `<span style="color: yellow">pending</span>`
+                                                                    ? <span style={{color: 'green'}}>started</span>
+                                                                    : <span style={{color: 'orange'}}>pending</span>
                                                             }
                                                         </Typography>}
                                                                   secondary={`replied at ${new Date(c.createdAt.seconds * 1000).toLocaleTimeString()} 

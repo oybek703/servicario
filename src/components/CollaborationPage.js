@@ -7,7 +7,7 @@ import {
     fetchCollaborationById,
     listenForChatMessagesUpdate,
     listenForMembersStatus,
-    sendUserMessage
+    sendUserMessage, startCollaboration
 } from "../redux/actions"
 import Reloader from "./UI/Reloader"
 import withAuth from "./hoc/withAuth"
@@ -30,6 +30,7 @@ import IconButton from "@material-ui/core/IconButton"
 import RefreshIcon from '@material-ui/icons/Refresh'
 import {firestore} from "../firebase"
 import {CHAT_MESSAGES_RECEIVED, MEMBERS_STATUS_UPDATED} from "../redux/types"
+import Timer from "./UI/Timer"
 
 const StyledBadge = withStyles((theme) => ({
     root: {
@@ -52,14 +53,12 @@ const useStyles = makeStyles(theme => ({
         }
     },
     membersList: {
-        minHeight: '50em'
+        minHeight: '23em'
     },
     memberUpdater: {
         position: 'sticky',
         bottom: '4%',
         left: '90%',
-        width: 0,
-        height: 0,
         backgroundColor: '#eeeeee',
         [theme.breakpoints.down('sm')]: {
             bottom: '5%',
@@ -75,7 +74,7 @@ const useStyles = makeStyles(theme => ({
         }
     },
     chatArea: {
-        minHeight: '40em',
+        minHeight: '23em',
         backgroundColor: 'gray',
         color: 'white',
         padding: '1em'
@@ -84,8 +83,6 @@ const useStyles = makeStyles(theme => ({
         position: 'sticky',
         bottom: '3%',
         left: '97%',
-        width: 0,
-        height: 0,
         [theme.breakpoints.down('sm')]: {
             bottom: '5%',
             left: '90%'
@@ -122,6 +119,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
     const dispatch = useDispatch()
     const matchXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
     const {collaboration, loading, error} = useSelector(state => state.collaboration)
+    const { collaborationStatus, loading: startCollaborationLoading} = useSelector(state => state.activeCollaboration)
     const {user} = useSelector(state => state.auth)
     const {messageId, loading:messageLoading, chatMessages} = useSelector(state => state.sendMessage)
     const [message, setMessage] = useState('')
@@ -130,9 +128,9 @@ const CollaborationPage = ({match: {params: {id}}}) => {
         const userIds = collaboration.allowedPeople.map(p => p.uid)
         const snapshot = await firestore.collection('profiles').where('uid' , 'in', userIds).get()
         const members = snapshot.docs.map(doc => doc.data())
-        dispatch({type: MEMBERS_STATUS_UPDATED, payload: {...collaboration, joinedPeople: members}})
+        dispatch({type: MEMBERS_STATUS_UPDATED, payload: members})
     }
-    const handleMessageUpdate = async () => {
+    const handleChatUpdate = async () => {
         const snapshot = await firestore.collection(`/collaborations/${collaboration.id}/messages`).get()
         const messages = snapshot.docs.map(doc => doc.data())
         dispatch({type: CHAT_MESSAGES_RECEIVED, payload: messages})
@@ -141,6 +139,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
         e.preventDefault()
         dispatch(sendUserMessage(collaboration.id, message))
     }
+    const handleStartCollaboration = () => dispatch(startCollaboration(id, collaboration.time))
     useEffect(() => {
         dispatch(fetchCollaborationById(id))
         dispatch(listenForMembersStatus())
@@ -176,7 +175,12 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                     </ListItem>
                                 </CardContent>
                                 <CardActions classes={{root: classes.cardContent}}>
-                                    <Button variant='contained' size='small' color='primary'>Start</Button>
+                                    {collaboration.status === 'started' || collaborationStatus === 'started'
+                                        ? collaboration.expiresAt && <Timer expiresAt={collaboration.expiresAt}/>
+                                        : collaboration.status === 'finished' || collaborationStatus === 'finished'
+                                            ? <Typography variant='h6' color='secondary'>Collaboration finished.</Typography>
+                                            : <Button onClick={handleStartCollaboration} disabled={startCollaborationLoading} endIcon={startCollaborationLoading && <CircularProgress size='10px'/>} variant='contained' size='small' color='primary'>Start</Button>
+                                    }
                                 </CardActions>
                             </Grid>
                             <Grid container>
@@ -215,7 +219,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                             ))
                                         }
                                     </Grid>
-                                    <IconButton title='Update chat status' size='small' className={classes.chatUpdater} onClick={handleMessageUpdate}><Fab component='span' size='small'><RefreshIcon/></Fab></IconButton>
+                                    <IconButton disabled={collaboration.status !== 'started'} title={collaboration.status !== 'started' ? 'Collaboration is not started' : 'Update chat status'} size='small' className={classes.chatUpdater} onClick={handleChatUpdate}><Fab disabled={collaboration.status !== 'started'} component='span' size='small'><RefreshIcon/></Fab></IconButton>
                                 </Grid>
                             </Grid>
                             <Grid component={Card} square elevation={0} item className={classes.form}>
@@ -227,11 +231,7 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                             </Grid>
                                             <Grid item sm={4} container justify={matchXS ? 'flex-start' : 'center'}>
                                                 {
-                                                    collaboration.status === 'started'
-                                                        ? 'Timer'
-                                                        : collaboration.status === 'finished'
-                                                            ? 'Collaboration finished'
-                                                            : <Button type='submit' variant='contained' color='primary' disabled={messageLoading || collaboration.status !== 'started'} endIcon={messageLoading && <CircularProgress color='secondary' size='15px'/>}><SendIcon/></Button>
+                                                   <Button type='submit' variant='contained' color='primary' disabled={messageLoading || collaboration.status !== 'started'} endIcon={messageLoading && <CircularProgress color='secondary' size='15px'/>}><SendIcon/></Button>
                                                 }
                                             </Grid>
                                         </Grid>
