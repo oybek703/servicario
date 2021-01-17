@@ -28,4 +28,4 @@ yarn-error.log*
 .firebase/
 ui-debug.log
 firebase/node_modules/
-firestore-debug.log
+firebase-debug.log
