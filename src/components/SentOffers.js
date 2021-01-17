@@ -65,13 +65,14 @@ const SentOffers = () => {
             toUser: offer.toUser.name,
             fromUser: offer.fromUser.name,
             fromOffer: offer.id,
-            createdAt: Timestamp.fromDate(new Date())
+            createdAt: Timestamp.fromDate(new Date()),
+            status: 'pending'
         }
         const newMessage = {
             isRead: false,
             type: 'invitation',
             text: `Hello ${offer.toUser.name}, please join collaboration as soon as possible`,
-            cta: `/collaborations/${collaborationId}`,
+            cta: `/collaborations`,
             fromUser: offer.fromUser.name,
             serviceTitle: offer.service.title,
             toUser: offer.toUser.uid,
@@ -81,9 +82,6 @@ const SentOffers = () => {
     }
     useEffect(() => {
         dispatch(fetchUserSentOffers(uid))
-    //    eslint-disable-next-line
-    }, [])
-    useEffect(() => {
         const unsubscribeFromUpdate = firestore.collection('offers').onSnapshot(() => dispatch(fetchUserSentOffers(uid)))
         return unsubscribeFromUpdate
     //    eslint-disable-next-line

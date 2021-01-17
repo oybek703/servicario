@@ -310,7 +310,7 @@ export const fetchCollaborationById = collaborationId => {
             dispatch({type: FETCH_SINGLE_COLLABORATION_SUCCESS, payload: {id: doc.id, ...doc.data(), allowedPeople, joinedPeople: members}})
             firestore.collection('collaborations').doc(collaborationId).onSnapshot(async snapshot => {
                 const {expiresAt} = snapshot.data()
-                if(new Date().getTime() > expiresAt.toDate().getTime()) {
+                if(expiresAt && new Date().getTime() > expiresAt.toDate().getTime()) {
                     await firestore.collection('collaborations').doc(collaborationId).update({status: 'finished'})
                     dispatch({type: FINISH_COLLABORATION})
                 }
