@@ -227,11 +227,15 @@ const CollaborationPage = ({match: {params: {id}}}) => {
                                     <Container>
                                         <Grid container alignItems='flex-start' justify='space-between'>
                                             <Grid item sm={8}>
-                                                <TextField disabled={messageLoading || collaboration.status !== 'started'} value={message} onChange={({target: {value}}) => setMessage(value)} variant='outlined' className={classes.textField} size='small' fullWidth placeholder='Enter message'/>
+                                                <TextField
+                                                    disabled={messageLoading || collaboration.status !== 'started'}
+                                                    value={message} onChange={({target: {value}}) => setMessage(value)} variant='outlined' className={classes.textField} size='small' fullWidth placeholder='Enter message'/>
                                             </Grid>
                                             <Grid item sm={4} container justify={matchXS ? 'flex-start' : 'center'}>
                                                 {
-                                                   <Button type='submit' variant='contained' color='primary' disabled={messageLoading || collaboration.status !== 'started'} endIcon={messageLoading && <CircularProgress color='secondary' size='15px'/>}><SendIcon/></Button>
+                                                   <Button type='submit' variant='contained' color='primary'
+                                                           disabled={messageLoading || collaboration.status !== 'started'}
+                                                           endIcon={messageLoading && <CircularProgress color='secondary' size='15px'/>}><SendIcon/></Button>
                                                 }
                                             </Grid>
                                         </Grid>

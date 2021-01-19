@@ -85,9 +85,14 @@ export function fetchService(serviceId) {
 
 export const createNewService = (newService) => {
     return async dispatch => {
+        try {
             dispatch({type: CREATE_SERVICE_START})
             const {id} = await firestore.collection('services').add(newService)
             dispatch({type: CREATE_SERVICE_SUCCESS, payload: id})
+        } catch (e) {
+            console.error(e)
+        }
+
     }
 }
 
@@ -184,7 +189,6 @@ export const checkUserStatus = uid => {
     const isOfflineForDatabase = {state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP}
     const isOnlineForDatabase = {state: 'online', last_changed: firebase.database.ServerValue.TIMESTAMP}
     firebase.database().ref('.info/connected').on('value', snapshot => {
-        console.log((snapshot.val() ? 'User Online' : 'User Offline'))
         if(!snapshot.val()) {return}
         userRealtimeDatabaseRef.onDisconnect().set(isOfflineForDatabase)
             .then(() => userRealtimeDatabaseRef.set(isOnlineForDatabase))
@@ -261,11 +265,15 @@ export const createNewCollaboration = (newCollaboration, newMessage) => {
 }
 
 export const listenForMessageUpdates = uid => {
-    return dispatch => {
-        firestore.collection('profiles').doc(uid).collection('messages').onSnapshot(snapshot => {
+    return (dispatch, getState) => {
+        const {user} = getState().auth
+        const unsubscribeFromMessages = firestore.collection('profiles').doc(uid).collection('messages').onSnapshot(snapshot => {
             const newMessages = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()})).filter(m => !m.isRead)
             dispatch({type: USER_MESSAGES_RECEIVED, payload: newMessages})
         })
+        if (!user) {
+            unsubscribeFromMessages()
+        }
     }
 
 }

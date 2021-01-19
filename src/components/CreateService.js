@@ -61,6 +61,8 @@ const CreateService = ({history}) => {
                                     <option value='Programming'>Programming</option>
                                     <option value='Mathematics'>Mathematics</option>
                                     <option value='Philosophy'>Philosophy</option>
+                                    <option value='English'>English</option>
+                                    <option value='Painting'>Painting</option>
                                 </Select>
                             </FormControl>
                         </Grid>

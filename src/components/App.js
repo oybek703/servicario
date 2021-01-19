@@ -1,7 +1,7 @@
 import React, {useEffect} from "react"
 import {ThemeProvider} from '@material-ui/core/styles'
 import theme from "./UI/Theme"
-import {BrowserRouter, Switch, Route} from "react-router-dom"
+import {Switch, Route} from "react-router-dom"
 import Header from "./UI/Header"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import Home from "./Home"
@@ -18,7 +18,6 @@ import ReceivedOffers from "./ReceivedOffers"
 import Collaborations from "./Collaborations"
 import CollaborationPage from "./CollaborationPage"
 import FaqPage from "./FaqPage"
-import ErrorBoundary from "./UI/ErrorBoundary"
 
 function App() {
     const dispatch = useDispatch()
@@ -35,8 +34,6 @@ function App() {
   return (
       <ThemeProvider theme={theme}>
           <CssBaseline/>
-          <ErrorBoundary>
-            <BrowserRouter>
               <Header/>
               <Switch>
                 <Route path='/' exact component={Home}/>
@@ -52,8 +49,6 @@ function App() {
                 <Route path='/register' component={RegisterPage}/>
                 <Route path='/login' component={LoginPage}/>
             </Switch>
-          </BrowserRouter>
-          </ErrorBoundary>
       </ThemeProvider>
   )
 }

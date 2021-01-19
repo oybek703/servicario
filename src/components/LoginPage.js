@@ -12,6 +12,7 @@ import CircularProgress from "@material-ui/core/CircularProgress"
 import {signInUser} from "../redux/actions"
 import Report from "./UI/Report"
 import withoutAuth from "./hoc/withoutAuth"
+import {Link as RouterLink} from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -101,11 +102,9 @@ const LoginPage = () => {
                     </Card>
                 </Grid>
                 <Grid item className={classes.formFields}>
-                    <Link>Sign In With Google</Link>
+                    <RouterLink to='/register'><Link component='span'>Sign Up</Link></RouterLink>
                     <Typography component='span' color='primary'>{' | '}</Typography>
-                    <Link>Sign Up</Link>
-                    <Typography component='span' color='primary'>{' | '}</Typography>
-                    <Link>Need Help?</Link>
+                    <RouterLink to='/faq'><Link component='span'>Need Help?</Link></RouterLink>
                 </Grid>
             </Grid>
         </Container>
